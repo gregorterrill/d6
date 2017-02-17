@@ -30,6 +30,7 @@
 		<audio ref="sound-sail" :src="getAudioSource('sail')" preload />
 		<audio ref="sound-hit" :src="getAudioSource('hit')" preload />
 		<audio ref="sound-die" :src="getAudioSource('die')" preload />
+		<audio ref="sound-pickup" :src="getAudioSource('pickup')" preload />
 
 	</div>
 </template>
@@ -136,11 +137,9 @@ export default {
 
   	// play a sound!
 		playSound(soundName) {
-			var soundEl = this.$refs['sound-' + soundName];
-			if (soundEl) {
-				soundEl.currentTime = 0;
-				soundEl.play();
-			}
+			const soundEl = this.$refs['sound-' + soundName];
+			soundEl.currentTime = 0;
+			soundEl.play();
 		},
 
 		// press some keys!
@@ -500,7 +499,12 @@ export default {
 		  //perform the actual move
 		  if (moved) {
 		  	this.movePlayerToTile(targetTile);
-		  	this.playSound('step');
+		  	
+		  	if (store.player.items.includes('boat')) {
+		  		this.playSound('sail');
+		  	} else {
+		  		this.playSound('step');
+		  	}
 
 		  	//check if player walked into an enemy
 		  	store.currentLevel.enemies.forEach(function (enemy, i) {
@@ -528,6 +532,10 @@ export default {
 					if (this.isObjectOnTile(pickup, store.player.location)) {
 						store.player.items.push(pickup.type); 
 						store.currentLevel.pickups.splice(i,1);
+
+						if (pickup.type !== 'boat') { 
+							this.playSound('pickup');
+						}
 					}
 				}, this);
 
@@ -568,8 +576,7 @@ export default {
 			if (store.player.hp <= 0) {
 				this.playSound('die');
 				alert('GAME OVER');
-				this.goToLevel(store.currentLevel);
-
+				this.goToLevel(store.currentLevelNum);
 			}
 		},
 
