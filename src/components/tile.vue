@@ -1,6 +1,6 @@
 <template>
 	<div :class="'die__tile die__tile--' + tileType">
-		<div :class="'game-object game-object--' + tileObject" v-if="tileObject"></div>
+		<div :class="'game-object game-object--' + object" v-for="object in tileObjects"></div>
 	</div>
 </template>
 
@@ -51,20 +51,22 @@ export default {
 			}
 			return type;
 		},
-		tileObject() {
-			let objectName = false;
+		tileObjects() {
+			let objects = [],
+				objectName = '';
 
 			if (store.player.location.face === this.face &&
 					store.player.location.row === this.row &&
 					store.player.location.col === this.col ) {
 				objectName = 'player';
-
+				
 				objectName += ' player--' + store.player.status;
 
 				for (let item of store.player.items) {
 					objectName += ' player--' + item;
 				}
-				
+
+				objects.push(objectName);
 			}
 
 			for (let enemy of store.currentLevel.enemies) {
@@ -73,6 +75,12 @@ export default {
 						enemy.location.col === this.col ) {
 
 					objectName = enemy.type;
+
+					if (enemy.status) {
+						objectName += ' ' + enemy.type + '--' + enemy.status;
+					}
+
+					objects.push(objectName);
 				}
 			}
 
@@ -81,11 +89,11 @@ export default {
 						pickup.location.row === this.row &&
 						pickup.location.col === this.col ) {
 
-					objectName = pickup.type;
+					objects.push(pickup.type);
 				}
 			}
 
-			return objectName;
+			return objects;
 		}
 	}
 }
@@ -96,6 +104,7 @@ export default {
 	display:block;
 }
 .die__tile {
+	position:relative;
 	float:left;
 	width:64px;
 	height:64px;
@@ -162,10 +171,12 @@ export default {
 
 // GENERAL GAME OBJECTS
 .game-object {
+	position:absolute;
+	top:0;right:0;bottom:0;left:0;
 	width:64px;
 	height:64px;
 	background-image:url('../assets/sprites.png');
-	background-size:128px 512px;
+	background-size:512px 512px;
 	image-rendering: optimizeSpeed;
   image-rendering: -moz-crisp-edges;
   image-rendering: -o-crisp-edges;
@@ -181,6 +192,9 @@ export default {
 }
 .game-object--boat {
 	background-position:0 -448px;
+}
+.game-object--message {
+	display:none;
 }
 
 // PLAYER OBJECTS
@@ -204,8 +218,12 @@ export default {
 	.player--boat { opacity:0.2; }
 }
 
-.player--hit {
-	animation:flash 0.1s linear infinite alternate;
+.player--hurt,
+.player--dead {
+	animation:playerHurt 0.5s linear infinite alternate;
+}
+.player--attacking {
+	animation:playerAttack 0.25s linear infinite alternate;
 }
 
 // ENEMY OBJECTS
@@ -215,13 +233,27 @@ export default {
   animation:objectBounce 0.5s infinite;
 }
 
+.blueslime--attacking {
+	animation:enemyAttack 0.5s infinite;
+}
+
 .game-object--purpleslime {
 	opacity:0.7;
 	background-position:0 -192px;
   animation:objectBounce 0.5s infinite;
 }
 
+.purpleslime--attacking {
+	animation:enemyAttack 0.5s infinite;
+}
+
 // ANIMATIONS
+@keyframes enemyAttack {
+	0% {background-position-x:-192px;}
+	50% {background-position-x:-192px;}
+  50.001% {background-position-x:-128px;}
+  100% {background-position-x:-128px;}
+}
 @keyframes objectBounce {
 	0% {background-position-x:0;}
 	50% {background-position-x:0;}
@@ -240,9 +272,19 @@ export default {
   50.001% {background-position:-192px -64px;}
   100% {background-position:-192px -64px;}
 }
-@keyframes flash {
-	from { opacity:1; }
-	to { opacity:0.3; }
+@keyframes playerHurt {
+	0% {opacity:1; background-position:-128px 0px;}
+	25 { opacity: 0.3; }
+	50% { opacity:0.7; background-position:-128px 0px;}
+  50.001% {background-position:-192px 0px;}
+  75% { opacity: 0.3; }
+  100% {opacity:1; background-position:-192px 0px;}
+}
+@keyframes playerAttack {
+	0% {background-position:-128px -64px;}
+	50% {background-position:-128px -64px;}
+  50.001% {background-position:-192px -64px;}
+  100% {background-position:-192px -64px;}
 }
 
 </style>

@@ -1,6 +1,17 @@
 <template>
   <div id="app">
 
+    <div :v-if="store.windows.menu.open" class="message message--full">
+      <p>MENU</p>
+      <p>&nbsp;</p>
+      <p>CONTROLS</p>
+      <p>Arrows to move</p>
+      <p>1-6 to view face</p>
+      <p>0 to view player</p>
+    </div>
+
+    <div v-if="store.windows.dialog.open" class="message message--dialog" v-html="store.windows.dialog.content"></div>
+
     <div class="message message--top-left">
       <p>WORLD {{ store.currentLevelNum }}</p>
       <p>{{ store.currentLevel.title }}<p>
@@ -25,10 +36,7 @@
 
 
      <div class="message message--bottom-right">
-      <p>CONTROLS</p>
-      <p>Arrows to move</p>
-      <p>1-6 to view face</p>
-      <p>0 to view player</p>
+      
     </div>
      -->
     
@@ -150,6 +158,21 @@ a {
   top:1rem;
   right:1rem;
   min-width: 13rem;
+}
+
+.message--dialog {
+  z-index:100;
+  bottom:1rem;
+  left:1rem;
+  width:80vw;
+  height:30vh;
+}
+
+.message--full {
+  display:none;
+  z-index:101;
+  position:fixed;
+  top:1rem;right:1rem;bottom:1rem;left:1rem;
 }
 
 @keyframes dayNightCycle {

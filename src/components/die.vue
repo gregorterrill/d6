@@ -138,8 +138,11 @@ export default {
   	// play a sound!
 		playSound(soundName) {
 			const soundEl = this.$refs['sound-' + soundName];
-			soundEl.currentTime = 0;
-			soundEl.play();
+
+			if (soundEl) {
+				soundEl.currentTime = 0;
+				soundEl.play();
+			}
 		},
 
 		// press some keys!
@@ -233,6 +236,7 @@ export default {
 					case '-':
 					case '|':
 					case 'Y':
+					case 'W':
 						passable = true;
 						break;
 
@@ -387,11 +391,18 @@ export default {
 
 		},
 
-		//move the player to a specific tile
-		movePlayerToTile(targetTile) {
-			store.player.location = targetTile;
-			this.rotateDie(this.currentFace, targetTile.face);
-			this.currentFace = targetTile.face;
+		//move an object to target tile
+		//object is either 'player' or an object in currentLevel
+		moveObjectToTile(targetTile, object = 'player') {
+
+			//if it's the player we need to also rotate the cube
+			if (object === 'player') {
+				store.player.location = targetTile;
+				this.rotateDie(this.currentFace, targetTile.face);
+				this.currentFace = targetTile.face;
+			} else {
+				object.location = targetTile;
+			}
 		},
 
 		// move a player in a given direction, moving to an adjacent face if needed
@@ -498,16 +509,25 @@ export default {
 
 		  //perform the actual move
 		  if (moved) {
-		  	this.movePlayerToTile(targetTile);
-		  	
+		  	this.moveObjectToTile(targetTile);
+
+		  	//close any open dialogs
+		  	store.windows.dialog.open = false;
+
+		  	//play sound based on mode of travel
 		  	if (store.player.items.includes('boat')) {
 		  		this.playSound('sail');
 		  	} else {
 		  		this.playSound('step');
 		  	}
 
-		  	//check if player walked into an enemy
+		  	//reset enemy status and check if player walked into an enemy
 		  	store.currentLevel.enemies.forEach(function (enemy, i) {
+
+		  		//reset enemy status
+		  		enemy.status = 'active';
+
+		  		//check if player walked into enemy
 		  		if (this.isObjectOnTile(enemy, store.player.location)) {
 
 		  			if (store.player.items.includes('sword')) {
@@ -515,14 +535,15 @@ export default {
 		  				store.currentLevel.enemies.splice(i,1);
 		  				this.playSound('hit');
 		  				store.player.xp++;
+		  				store.player.status = 'attacking';
 
 		  			} else {
 		  				//hurt player
 			  			this.damagePlayer();
-			  			//freeze the enemy so they dont move this turn
-			  			enemy.status = 'frozen';
+			  			//attacking enemies dont move this turn
+			  			enemy.status = 'attacking';
 			  			//move the player back to the tile they were on
-			  			this.movePlayerToTile(originTile);
+			  			this.moveObjectToTile(originTile);
 		  			}
 		  		}
 		  	}, this);
@@ -530,27 +551,24 @@ export default {
 		  	//check if player walked into a pickup
 		  	store.currentLevel.pickups.forEach(function (pickup, i) {
 					if (this.isObjectOnTile(pickup, store.player.location)) {
-						store.player.items.push(pickup.type); 
-						store.currentLevel.pickups.splice(i,1);
 
-						if (pickup.type !== 'boat') { 
-							this.playSound('pickup');
-						}
+						if (pickup.type == 'message') {
+
+							store.windows.dialog.open = true;
+							store.windows.dialog.content = pickup.content;
+
+						} else {
+							store.player.items.push(pickup.type); 
+							store.currentLevel.pickups.splice(i,1);
+
+							if (pickup.type !== 'boat') { 
+								this.playSound('pickup');
+							}
+						}	
 					}
 				}, this);
 
 		  	this.doEnemyStep();
-
-		  	//check if an enemy has walked into player
-		  	for (let enemy of store.currentLevel.enemies) {
-		  		if (this.isObjectOnTile(enemy, store.player.location)) {
-		  			this.damagePlayer();
-
-		  			//TODO: move th enemy back to the tile they were on
-		  		}
-		  	}
-
-		  	
 		  }		  
 		},
 
@@ -565,34 +583,20 @@ export default {
 			return onTile;
 		},
 
-		//damage the player
-		damagePlayer() {
-			store.player.hp--;
-
-			this.playSound('hit');
-			store.player.status = 'hit';
-
-			//if player died, restart the level
-			if (store.player.hp <= 0) {
-				this.playSound('die');
-				alert('GAME OVER');
-				this.goToLevel(store.currentLevelNum);
-			}
-		},
-
 		// move enemies
 		doEnemyStep() {
 
 			let targetTile = null,
-					originTile = null;
+					originTile = null,
+					originDirection = null;
 
 			for (let enemy of store.currentLevel.enemies) {
 
 				//if the enemy is frozen (due to a player collision) they dont move this step
-				if (enemy.status === 'frozen') {
-					enemy.status = 'active';
-					continue;
-				}
+				if (enemy.status === 'attacking') continue;
+
+				originTile = enemy.location;
+				originDirection = enemy.direction;
 
 				let adjacentTile = null;
 				
@@ -692,6 +696,16 @@ export default {
 						}
 						break;
 				}
+
+				//if we're touching the player, hurt the player and move back
+				if (this.isObjectOnTile(enemy, store.player.location)) {
+	  			this.damagePlayer();
+	  			//move the enemy back to the tile they were on
+			  	this.moveObjectToTile(originTile, enemy);
+			  	enemy.direction = originDirection;
+			  	enemy.status = 'attacking';
+	  		}
+
 			}
 
 		},
@@ -811,6 +825,23 @@ export default {
 			
 		},
 
+		//damage the player
+		damagePlayer() {
+			store.player.hp--;
+
+			this.playSound('hit');
+			store.player.status = 'hurt';
+
+			//if player died, restart the level
+			if (store.player.hp <= 0) {
+				this.playSound('die');
+				store.player.status = 'dead';
+				store.player.xp = 0;
+				alert('GAME OVER');
+				this.goToLevel(store.currentLevelNum);
+			}
+		},
+
 		// load a level and reset player location / die rotation
 		goToLevel(levelNum) {
 
@@ -824,8 +855,7 @@ export default {
 			//reset player info and progress
 			store.player.location = store.currentLevel.entrance;
 			store.player.hp = 5;
-			store.player.xp = 0;
-			store.player.items = [];
+			store.player.items = ['torch'];
 			store.pips = 0;
 			
 			//reset the rotation
