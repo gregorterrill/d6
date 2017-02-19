@@ -27,6 +27,7 @@ const player = {
   hp: 5,
   xp: 0,
   location: { 'face': 0, 'row': 2, 'col': 3 },
+  direction: 'right',
   items: ['torch']
 };
 

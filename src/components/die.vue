@@ -32,6 +32,10 @@
 		<audio ref="sound-die" :src="getAudioSource('die')" preload />
 		<audio ref="sound-pickup" :src="getAudioSource('pickup')" preload />
 
+		<!-- http://ericskiff.com/music/ 
+		<audio ref="music" :src="getAudioSource('music')" preload autoplay loop />
+		-->
+
 	</div>
 </template>
 
@@ -46,6 +50,9 @@ export default {
 	props: ['level'],
 	created() {
 		window.addEventListener('keyup', this.handleKeyPress);
+  },
+  mounted() {
+  	this.$refs['music'].volume = 0.25;
   },
   data() {
   	return {
@@ -132,6 +139,11 @@ export default {
 
 		// require the audio file, because webpack chokes on these when treated like other files
 		getAudioSource(soundName) {
+
+			if (soundName == 'music') {
+				return require('../assets/sound/come-and-find-me-by-eric-skiff.mp3');
+			}
+
   		return require('../assets/sound/' + soundName + '.wav');
   	},
 
@@ -171,6 +183,7 @@ export default {
 		    	if (store.player.location.face != this.currentFace) {
   					this.resetDieRotation();
 					} else {
+						store.player.direction = 'left';
 		    		this.movePlayer('left');
 		    	}
 		      break;
@@ -189,6 +202,7 @@ export default {
 		    	if (store.player.location.face != this.currentFace) {
   					this.resetDieRotation();
 					} else {
+						store.player.direction = 'right';
 		    		this.movePlayer('right');
 		    	}
 		      break;
@@ -491,15 +505,23 @@ export default {
 	  			moved = true;
 	  			blocked = false;
 	  		
-	  		//activate pip
-	  		} else if (this.getTileValue(targetTile) == '●') {
+	  		//activate land pip (from land)
+	  		} else if (this.getTileValue(targetTile) == '●' && !store.player.items.includes('boat')) {
 			  	this.$set(this.level.faces[targetTile.face][targetTile.row], [targetTile.col], '○');
+			  	
 			  	store.pips++;
 			  	this.playSound('flame');
 
-			  	if (store.pips === 21) {
-			  		this.goToLevel(store.currentLevelNum + 1);
-			  	}
+			  	this.checkForLevelComplete();
+
+			  //activate water pip (from boat)
+			  } else if (this.getTileValue(targetTile) == '▪' && store.player.items.includes('boat')) {
+			  	this.$set(this.level.faces[targetTile.face][targetTile.row], [targetTile.col], '□');
+
+			  	store.pips++;
+			  	this.playSound('flame');
+
+			  	this.checkForLevelComplete();
 
 			  //you're just blocked
 			  } else {
@@ -528,7 +550,8 @@ export default {
 		  		enemy.status = 'active';
 
 		  		//check if player walked into enemy
-		  		if (this.isObjectOnTile(enemy, store.player.location)) {
+		  		//dont bother if the player is on a boat - overlaps mean they are under a bridge with an enemy on it
+		  		if (this.isObjectOnTile(enemy, store.player.location) && !store.player.items.includes('boat')) {
 
 		  			if (store.player.items.includes('sword')) {
 		  				//kill that sucker
@@ -552,11 +575,22 @@ export default {
 		  	store.currentLevel.pickups.forEach(function (pickup, i) {
 					if (this.isObjectOnTile(pickup, store.player.location)) {
 
+						//messages open their content in a dialog
 						if (pickup.type == 'message') {
 
 							store.windows.dialog.open = true;
 							store.windows.dialog.content = pickup.content;
 
+						//sword that are on pedestals get replaced by empty pedestals
+						} else if (pickup.type == 'sword' && pickup.status != 'hidden') {
+
+							if (pickup.status != 'taken') { 
+								store.player.items.push(pickup.type);
+								pickup.status = 'taken';
+								this.playSound('pickup');
+							}
+
+						//all other pickups are added to inventory and removed from level
 						} else {
 							store.player.items.push(pickup.type); 
 							store.currentLevel.pickups.splice(i,1);
@@ -698,7 +732,8 @@ export default {
 				}
 
 				//if we're touching the player, hurt the player and move back
-				if (this.isObjectOnTile(enemy, store.player.location)) {
+				//dont bother if the player is on a boat - overlaps mean they are under a bridge with an enemy on it
+				if (this.isObjectOnTile(enemy, store.player.location) && !store.player.items.includes('boat')) {
 	  			this.damagePlayer();
 	  			//move the enemy back to the tile they were on
 			  	this.moveObjectToTile(originTile, enemy);
@@ -837,9 +872,15 @@ export default {
 				this.playSound('die');
 				store.player.status = 'dead';
 				store.player.xp = 0;
-				alert('GAME OVER');
 				this.goToLevel(store.currentLevelNum);
 			}
+		},
+
+		checkForLevelComplete() {
+			if (store.pips === 21) {
+	  		this.goToLevel(store.currentLevelNum + 1);
+	  		store.player.xp += 10;
+	  	}
 		},
 
 		// load a level and reset player location / die rotation

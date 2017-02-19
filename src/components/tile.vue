@@ -1,6 +1,6 @@
 <template>
 	<div :class="'die__tile die__tile--' + tileType">
-		<div :class="'game-object game-object--' + object" v-for="object in tileObjects"></div>
+		<div :class="'entity ' + entity" v-for="entity in tileEntities"></div>
 	</div>
 </template>
 
@@ -22,12 +22,24 @@ export default {
 					type += 'pip-active';
 					break;
 
+				case '▪':
+					type += 'wpip';
+					break;
+				
+				case '□':
+					type += 'wpip-active';
+					break;
+
 				case 'Y':
 					type += 'tree'
 					break;
 
 				case 'X':
 					type += 'water'
+					break;
+
+				case 'V':
+					type += 'rocks'
 					break;
 
 				case 'A':
@@ -51,22 +63,26 @@ export default {
 			}
 			return type;
 		},
-		tileObjects() {
-			let objects = [],
-				objectName = '';
+		tileEntities() {
+			let entities = [],
+				entity = '';
 
 			if (store.player.location.face === this.face &&
 					store.player.location.row === this.row &&
 					store.player.location.col === this.col ) {
-				objectName = 'player';
+				entity = 'player';
 				
-				objectName += ' player--' + store.player.status;
+				entity += ' player--' + store.player.status;
 
 				for (let item of store.player.items) {
-					objectName += ' player--' + item;
+					entity += ' player--' + item;
 				}
 
-				objects.push(objectName);
+				if (store.player.direction === 'left') {
+					entity += ' player--left';
+				}
+
+				entities.push(entity);
 			}
 
 			for (let enemy of store.currentLevel.enemies) {
@@ -74,13 +90,13 @@ export default {
 						enemy.location.row === this.row &&
 						enemy.location.col === this.col ) {
 
-					objectName = enemy.type;
+					entity = 'enemy--' + enemy.type;
 
 					if (enemy.status) {
-						objectName += ' ' + enemy.type + '--' + enemy.status;
+						entity += ' enemy--' + enemy.status;
 					}
 
-					objects.push(objectName);
+					entities.push(entity);
 				}
 			}
 
@@ -89,11 +105,17 @@ export default {
 						pickup.location.row === this.row &&
 						pickup.location.col === this.col ) {
 
-					objects.push(pickup.type);
+					entity = 'pickup--' + pickup.type;
+
+					if (pickup.status) {
+						entity += ' pickup--' + pickup.status;
+					}
+
+					entities.push(entity);
 				}
 			}
 
-			return objects;
+			return entities;
 		}
 	}
 }
@@ -140,37 +162,54 @@ export default {
 
 .die__tile--water {
 	opacity:0.85;
-	background-position:0 -64px;
-	animation:water 0.5s infinite;
+	background-position-x: 0;
+	animation:animateTile 0.5s infinite;
+}
+
+.die__tile--rocks {
+	opacity:0.85;
+	background-position-x: -192px;
+	animation:animateTile 0.5s infinite;
 }
 
 .die__tile--bridge-hor {
-	background-position:-64px -64px;
+	background-position:0 -64px;
 }
 
 .die__tile--bridge-vert {
-	background-position:-128px -64px;
+	background-position:-192px -64px;
 }
 
 .die__tile--mountain {
-	background-position:-64px -128px;
-}
-
-.die__tile--town {
-	background-position:-192px -128px;
-}
-
-.die__tile--pip {
 	background-position:-128px 0;
 }
 
-.die__tile--pip-active {
+.die__tile--town {
 	background-position:-192px 0;
-	animation:pip 0.5s infinite;
 }
 
-// GENERAL GAME OBJECTS
-.game-object {
+.die__tile--pip {
+	background-position:-128px -64px;
+}
+
+.die__tile--pip-active {
+	background-position-x: -128px;
+	animation:animateTile 0.5s infinite;
+}
+
+.die__tile--wpip {
+	opacity:0.85;
+	background-position:-64px -64px;
+}
+
+.die__tile--wpip-active {
+	opacity:0.85;
+	background-position-x: -64px;
+	animation:animateTile 0.5s infinite;
+}
+
+// GENERAL GAME ENTITIES
+.entity {
 	position:absolute;
 	top:0;right:0;bottom:0;left:0;
 	width:64px;
@@ -186,38 +225,36 @@ export default {
   -ms-interpolation-mode: nearest-neighbor;
 }
 
-// PICKUP OBJECTS
-.game-object--sword {
-	background-position:0 -320px;
+// PICKUP ENTITIES
+.pickup--generic {
+	background-position:0 -256px;
+	&.pickup--taken {	background-position:-64px -256px;	}
 }
-.game-object--boat {
+.pickup--sword {
+	background-position:0 -320px;
+	&.pickup--taken {	background-position:-64px -320px;	}
+}
+.pickup--boat {
 	background-position:0 -448px;
 }
-.game-object--message {
+.pickup--message,
+.pickup--hidden {
 	display:none;
 }
 
-// PLAYER OBJECTS
-.game-object--player {
+// PLAYER ENTITIES
+.player {
 	background-position:0 0;
-  animation:objectBounce 0.75s infinite;
+  animation:animateSprite 0.5s infinite;
+  z-index:2;
 }
-
+.player--left {
+	transform:scaleX(-1);
+}
 .player--sword {
 	background-position:0 -64px;
-  animation:objectBounce 0.75s infinite;
+  animation:animateSprite 0.5s infinite;
 }
-
-.player--boat {
-	background-position:0 -384px;
-  animation:objectBounce 0.5s infinite;
-}
-
-.die__tile--bridge-hor,
-.die__tile--bridge-vert {
-	.player--boat { opacity:0.2; }
-}
-
 .player--hurt,
 .player--dead {
 	animation:playerHurt 0.5s linear infinite alternate;
@@ -225,52 +262,48 @@ export default {
 .player--attacking {
 	animation:playerAttack 0.25s linear infinite alternate;
 }
+.player--boat {
+	background-position:0 -384px;
+  animation:animateSprite 0.5s infinite;
+}
+.die__tile--bridge-hor,
+.die__tile--bridge-vert {
+	.player--boat { opacity:0.2; }
+}
 
-// ENEMY OBJECTS
-.game-object--blueslime {
+// ENEMY ENTITY
+.enemy--blueslime {
 	opacity:0.7;
 	background-position:0 -128px;
-  animation:objectBounce 0.5s infinite;
+  animation:animateSprite 0.5s infinite;
 }
-
-.blueslime--attacking {
-	animation:enemyAttack 0.5s infinite;
-}
-
-.game-object--purpleslime {
+.enemy--purpleslime {
 	opacity:0.7;
 	background-position:0 -192px;
-  animation:objectBounce 0.5s infinite;
+  animation:animateSprite 0.5s infinite;
 }
-
-.purpleslime--attacking {
+.enemy--attacking {
 	animation:enemyAttack 0.5s infinite;
 }
 
 // ANIMATIONS
-@keyframes enemyAttack {
-	0% {background-position-x:-192px;}
-	50% {background-position-x:-192px;}
-  50.001% {background-position-x:-128px;}
-  100% {background-position-x:-128px;}
-}
-@keyframes objectBounce {
+@keyframes animateSprite {
 	0% {background-position-x:0;}
 	50% {background-position-x:0;}
   50.001% {background-position-x:-64px;}
   100% {background-position-x:-64px;}
 }
-@keyframes water {
-	0% {background-position:0 -64px;}
-	50% {background-position:0 -64px;}
-  50.001% {background-position:0 -128px;}
-  100% {background-position:0 -128px;}
+@keyframes animateTile {
+	0% {background-position-y: -128px;}
+	50% {background-position-y: -128px;}
+  50.001% {background-position-y: -192px;}
+  100% {background-position-y: -192px;}
 }
-@keyframes pip {
-	0% {background-position:-192px 0;}
-	50% {background-position:-192px 0;}
-  50.001% {background-position:-192px -64px;}
-  100% {background-position:-192px -64px;}
+@keyframes enemyAttack {
+	0% {background-position-x:-192px;}
+	50% {background-position-x:-192px;}
+  50.001% {background-position-x:-128px;}
+  100% {background-position-x:-128px;}
 }
 @keyframes playerHurt {
 	0% {opacity:1; background-position:-128px 0px;}
