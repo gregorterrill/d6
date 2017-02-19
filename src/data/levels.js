@@ -218,7 +218,7 @@ const levels = [{
   ]
 }, {
   title: 'The Hills of Daventry',
-  tileset: 'snow',
+  tileset: 'grass',
   entrance: { 'face': 0, 'row': 2, 'col': 3 },
   pickups: [{
     type: 'sword',
@@ -317,7 +317,7 @@ const levels = [{
     ]
   ]
 },{
-  title: 'Archipelago',
+  title: 'The Lake of Hylia',
   tileset: 'grass',
   entrance: { 'face': 0, 'row': 2, 'col': 3 },
   pickups: [{

@@ -32,9 +32,8 @@
 		<audio ref="sound-die" :src="getAudioSource('die')" preload />
 		<audio ref="sound-pickup" :src="getAudioSource('pickup')" preload />
 
-		<!-- http://ericskiff.com/music/ 
+		<!-- http://ericskiff.com/music/ -->
 		<audio ref="music" :src="getAudioSource('music')" preload autoplay loop />
-		-->
 
 	</div>
 </template>
@@ -968,22 +967,70 @@ export default {
 			store.player.status = 'hurt';
 
 			store.windows.dialog.open = true;
-			store.windows.dialog.content = '<p>' + cause.replace('-',' ').toUpperCase() + ' hit for ' + amount + ' DMG!</p>';
+			store.windows.dialog.content = '<p>' + cause.replace('-',' ').toUpperCase() + ' hit you for ' + amount + ' DMG!</p>';
 
 			//if player died, restart the level
 			if (store.player.hp <= 0) {
 				this.playSound('die');
 				store.player.status = 'dead';
+
+				let xpLost = store.player.xp;
 				store.player.xp = 0;
-				this.goToLevel(store.currentLevelNum);
+
+				store.windows.dialog.content = '<p>' + cause.replace('-',' ').toUpperCase() + ' hit for ' + amount + ' DMG, and you were DEFEATED! You lost ' + xpLost + ' XP!</p><p>&nbsp;<p>Press any key to RETRY.</p>';
+
+				//require a player input, then continue murdering player
+				window.removeEventListener('keyup', this.handleKeyPress);
+				window.addEventListener('keyup', this.killPlayer);
 			}
+		},
+
+		//reset the player and reload the level
+		killPlayer() {
+			store.player.xp = 0;
+			store.player.direction = 'right';
+			store.player.status = 'active';
+			store.windows.dialog.open = false;
+			this.goToLevel(store.currentLevelNum);
+
+			window.removeEventListener('keyup', this.killPlayer);
+			window.addEventListener('keyup', this.handleKeyPress);
 		},
 
 		checkForLevelComplete() {
 			if (store.pips === 21) {
-	  		this.goToLevel(store.currentLevelNum + 1);
-	  		store.player.xp += 10;
+
+				//we'll randomly tack one of these on to the level complete message
+				const successPhrases = [
+					'Everyone is very impressed!',
+					'You recieve a ton of FAN MAIL!',
+					'The LOCALS hold a CELEBRATION in your honor!',
+					'Your MOTHER sends you a LETTER OF CONGRATULATIONS!',
+					'A BAR in town offers you a 50% OFF COUPON!',
+					'The PRINCESS still refuses to go on a DATE with you.',
+					'An ADORABLE CHILD names her pet SLIME after you.',
+					'An OLD WOMAN makes you a delicious CASSEROLE.',
+					'VILLAGES erect STATUES of you, but they don\'t really capture your ESSENCE.',
+					'The KING insists his ROYAL GUARD could have handled it.'
+				];
+
+				store.player.xp += 10;
+				store.windows.dialog.open = true;
+				store.windows.dialog.content = '<p>You brought LIGHT back to ' + store.currentLevel.title.toUpperCase() + '! ' + successPhrases[Math.floor(Math.random() * successPhrases.length)] + ' You gain 10 XP!</p><p>&nbsp;</p><p>Press any key to CONTINUE.</p>';
+
+				//require a player input, then continue murdering player
+				window.removeEventListener('keyup', this.handleKeyPress);
+				window.addEventListener('keyup', this.completeLevel);
+	  		
 	  	}
+		},
+
+		completeLevel() {
+			store.windows.dialog.open = false;
+			this.goToLevel(store.currentLevelNum + 1);
+
+	  	window.removeEventListener('keyup', this.completeLevel);
+			window.addEventListener('keyup', this.handleKeyPress);
 		},
 
 		// load a level and reset player location / die rotation
