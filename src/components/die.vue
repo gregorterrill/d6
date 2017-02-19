@@ -23,18 +23,7 @@
 		
 		</div>
 
-		<!-- audio embeds -->
-		<audio ref="sound-step" :src="getAudioSource('step')" preload />
-		<audio ref="sound-bump" :src="getAudioSource('bump')" preload />
-		<audio ref="sound-flame" :src="getAudioSource('flame')" preload />
-		<audio ref="sound-sail" :src="getAudioSource('sail')" preload />
-		<audio ref="sound-hit" :src="getAudioSource('hit')" preload />
-		<audio ref="sound-die" :src="getAudioSource('die')" preload />
-		<audio ref="sound-pickup" :src="getAudioSource('pickup')" preload />
-		<audio ref="sound-fireball" :src="getAudioSource('fireball')" preload />
-		<audio ref="sound-fizzle" :src="getAudioSource('fizzle')" preload />
-
-
+		<audio v-for="sound in sounds" :ref="'sound-' + sound" :src="getAudioSource(sound)" preload />
 		<!-- http://ericskiff.com/music/ -->
 		<audio ref="music" :src="getAudioSource('music')" preload autoplay loop />
 
@@ -59,7 +48,8 @@ export default {
   data() {
   	return {
   		currentFace: 0,
-	  	dieRotation: { x: 0, y: 0, z:0 }
+	  	dieRotation: { x: 0, y: 0, z:0 },
+	  	sounds: ['step','bump','flame','sail','hit','die','pickup','fireball','fizzle','win'],
 	  }
   },
   computed: {
@@ -151,7 +141,7 @@ export default {
 
   	// play a sound!
 		playSound(soundName) {
-			const soundEl = this.$refs['sound-' + soundName];
+			const soundEl = this.$refs['sound-' + soundName][0];
 
 			if (soundEl) {
 				soundEl.currentTime = 0;
@@ -175,6 +165,10 @@ export default {
 					break;
 				case 221: //}
 					this.goToLevel(store.currentLevelNum + 3);
+					break;
+
+				case 27: //esc
+					store.windows.menu.open = !store.windows.menu.open;
 					break;
 
 		    case 87: //w
@@ -1026,6 +1020,7 @@ export default {
 				];
 
 				store.player.xp += 10;
+				this.playSound('win');
 				store.windows.dialog.open = true;
 				store.windows.dialog.content = '<p>You brought LIGHT back to ' + store.currentLevel.title.toUpperCase() + '! ' + successPhrases[Math.floor(Math.random() * successPhrases.length)] + ' You gain 10 XP!</p><p>&nbsp;</p><p>Press SPACE to travel to a NEW WORLD.</p>';
 

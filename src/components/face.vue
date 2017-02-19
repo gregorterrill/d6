@@ -1,12 +1,12 @@
 <template>
 	<div class="die__face" :data-pips="pips" :id="face">
-		<tile v-for="(tile, col) in tiles[0]" :value="tile" :face="pips-1" :row="0" :col="col"></tile>
-		<tile v-for="(tile, col) in tiles[1]" :value="tile" :face="pips-1" :row="1" :col="col"></tile>
-		<tile v-for="(tile, col) in tiles[2]" :value="tile" :face="pips-1" :row="2" :col="col"></tile>
-		<tile v-for="(tile, col) in tiles[3]" :value="tile" :face="pips-1" :row="3" :col="col"></tile>
-		<tile v-for="(tile, col) in tiles[4]" :value="tile" :face="pips-1" :row="4" :col="col"></tile>
-		<tile v-for="(tile, col) in tiles[5]" :value="tile" :face="pips-1" :row="5" :col="col"></tile>
-		<tile v-for="(tile, col) in tiles[6]" :value="tile" :face="pips-1" :row="6" :col="col"></tile>
+		<tile v-for="(tile, col) in tiles[0]" :value="tile" :face="pips - 1" :row="0" :col="col"></tile>
+		<tile v-for="(tile, col) in tiles[1]" :value="tile" :face="pips - 1" :row="1" :col="col"></tile>
+		<tile v-for="(tile, col) in tiles[2]" :value="tile" :face="pips - 1" :row="2" :col="col"></tile>
+		<tile v-for="(tile, col) in tiles[3]" :value="tile" :face="pips - 1" :row="3" :col="col"></tile>
+		<tile v-for="(tile, col) in tiles[4]" :value="tile" :face="pips - 1" :row="4" :col="col"></tile>
+		<tile v-for="(tile, col) in tiles[5]" :value="tile" :face="pips - 1" :row="5" :col="col"></tile>
+		<tile v-for="(tile, col) in tiles[6]" :value="tile" :face="pips - 1" :row="6" :col="col"></tile>
 	</div>
 </template>
 

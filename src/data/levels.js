@@ -399,11 +399,15 @@ const levels = [{
     location: { 'face': 0, 'row': 1, 'col': 1 },
     direction: 'right',
     behavior: 'sentry'
+  },{
+    type: 'blue-slime',
+    location: { 'face': 0, 'row': 1, 'col': 6 },
+    direction: 'right',
   }],
   faces: [
     [
       ['Y','Y','Y','X','Y','Y','Y'],
-      ['Y','X','X','X','X','X','Y'], // ONE
+      ['Y','X','X','X','X','X',' '], // ONE
       ['Y','X','Y','Y','Y','X','Y'], // ↑ right edge of 5
       ['X','X','Y','●','Y','X','X'], // → top edge of 3
       ['Y','X','Y','Y','Y','X','Y'], // ↓ right edge of 2
@@ -420,7 +424,7 @@ const levels = [{
       ['X','X','X','X','X','|','X']
     ],
     [
-      ['X','V','V','X','Y','Y','Y'],
+      ['X','V','V','X','Y','A','A'],
       ['-',' ','V','X','Y','●',' '], // THREE
       ['X','Y','X','X','X','Y',' '], // ↑ right edge of 1
       ['X','Y','X','▪','X','Y',' '], // → top edge of 5
@@ -438,9 +442,9 @@ const levels = [{
       [' ',' ',' ','X','Y','A','A']
     ],
     [
-      [' ',' ',' ',' ',' ',' ',' '],
-      [' ','●',' ',' ',' ','●',' '], // FIVE
-      [' ',' ',' ',' ',' ',' ',' '], // ↑ right edge of 3
+      [' ',' ',' ',' ',' ',' ','A'],
+      [' ','●',' ',' ',' ','●','A'], // FIVE
+      [' ',' ',' ',' ',' ',' ','A'], // ↑ right edge of 3
       [' ',' ',' ','●',' ','X','X'], // → top edge of 1
       [' ',' ',' ',' ',' ',' ',' '], // ↓ right edge of 4
       [' ','●',' ',' ',' ','●','A'], // ← bottom edge of 6

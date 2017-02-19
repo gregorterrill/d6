@@ -1,7 +1,7 @@
 <template>
   <div id="app">
 
-    <div :v-if="store.windows.menu.open" class="message message--full">
+    <div v-if="store.windows.menu.open" class="message message--full">
       <p>MENU</p>
       <p>&nbsp;</p>
       <p>CONTROLS</p>
@@ -113,7 +113,6 @@ a {
 #app {
   position:relative;
   min-height:100vh;
-  padding-top:200px;
 
   &::before {
     z-index:0;
@@ -137,6 +136,7 @@ a {
 
 .die-container {
   position:relative;
+  top:calc(50vh - 225px);
   z-index:2;
   animation:dayNightCycleInner 30s ease-in-out infinite alternate;
 }
@@ -179,7 +179,6 @@ a {
 }
 
 .message--full {
-  display:none;
   z-index:101;
   position:fixed;
   top:1rem;right:1rem;bottom:1rem;left:1rem;
