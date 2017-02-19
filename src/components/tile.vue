@@ -155,8 +155,12 @@ export default {
 }
 
 
-.die--tileset-desert .die__tile { background-image:url('../assets/tiles-desert.png'); }
-.die--tileset-snow .die__tile { background-image:url('../assets/tiles-snow.png'); }
+.die--tileset-desert {
+	.die__tile, .die__tile--water::before { background-image:url('../assets/tiles-desert.png'); }
+}
+.die--tileset-snow {
+	.die__tile, .die__tile--water::before { background-image:url('../assets/tiles-snow.png'); }
+}
 
 // TILE TYPES
 .die__tile--open {
