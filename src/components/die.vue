@@ -229,6 +229,27 @@ export default {
 		  };
 		},
 
+		getOppositeDirection(direction){
+			let oppositeDirection = 'left';
+
+			switch (direction) {
+				case 'right':
+					oppositeDirection = 'left';
+					break;
+				case 'left':
+					oppositeDirection = 'right';
+					break;
+				case 'up':
+					oppositeDirection = 'down';
+					break;
+				case 'down':
+					oppositeDirection = 'up';
+					break;
+			}
+
+			return oppositeDirection;
+		},
+
 		getTileValue(targetTile) {
 			return this.level.faces[targetTile.face][targetTile.row][targetTile.col];
 		},
@@ -576,9 +597,12 @@ export default {
 		  				store.player.xp++;
 		  				store.player.status = 'attacking';
 
+		  				store.windows.dialog.open = true;
+							store.windows.dialog.content = '<p>Defeated ' + enemy.type.replace('-',' ').toUpperCase() + ' and gained 1 XP!</p>';
+
 		  			} else {
 		  				//hurt player
-			  			this.damagePlayer();
+			  			this.damagePlayer(1, enemy.type);
 			  			//attacking enemies dont move this turn
 			  			enemy.status = 'attacking';
 			  			//move the player back to the tile they were on
@@ -708,7 +732,7 @@ export default {
 
 						//regular enemies turn around
 						} else {
-							enemy.direction = 'left';
+							enemy.direction = this.getOppositeDirection(enemy.direction);
 						}
 
 						break;
@@ -737,7 +761,7 @@ export default {
 
 						//regular enemies turn around
 						} else {
-							enemy.direction = 'right';
+							enemy.direction = this.getOppositeDirection(enemy.direction);
 						}
 
 						break;
@@ -766,7 +790,7 @@ export default {
 
 						//regular enemies turn around
 						} else {
-							enemy.direction = 'up';
+							enemy.direction = this.getOppositeDirection(enemy.direction);
 						}
 
 						break;
@@ -795,22 +819,28 @@ export default {
 
 						//regular enemies turn around
 						} else {
-							enemy.direction = 'down';
+							enemy.direction = this.getOppositeDirection(enemy.direction);
 						}
 
 						break;
 				}
 
 				//if we're touching the player, hurt the player and move back
-				//dont bother if the player is on a boat - overlaps mean they are under a bridge with an enemy on it
-				if (this.isObjectOnTile(enemy, store.player.location) && !store.player.items.includes('boat')) {
-	  			this.damagePlayer();
-	  			//move the enemy back to the tile they were on
-			  	this.moveObjectToTile(originTile, enemy);
-			  	enemy.direction = originDirection;
-			  	enemy.status = 'attacking';
-	  		}
+				if (this.isObjectOnTile(enemy, store.player.location)) {
 
+					//projectiles immediately kill you
+					if (enemy.behavior === 'projectile') {
+						this.damagePlayer(5, enemy.type);
+
+					//dont do damage if the player is on a boat - overlaps mean they are under a bridge with an enemy on it
+					} else if (!store.player.items.includes('boat')) {
+		  			this.damagePlayer(1, enemy.type);
+		  			//move the enemy back to the tile they were on
+				  	this.moveObjectToTile(originTile, enemy);
+				  	enemy.direction = originDirection;
+				  	enemy.status = 'attacking';
+		  		}
+		  	}
 			}
 
 		},
@@ -931,11 +961,14 @@ export default {
 		},
 
 		//damage the player
-		damagePlayer() {
-			store.player.hp--;
+		damagePlayer(amount = 1, cause = '?') {
+			store.player.hp -= amount;
 
 			this.playSound('hit');
 			store.player.status = 'hurt';
+
+			store.windows.dialog.open = true;
+			store.windows.dialog.content = '<p>' + cause.replace('-',' ').toUpperCase() + ' hit for ' + amount + ' DMG!</p>';
 
 			//if player died, restart the level
 			if (store.player.hp <= 0) {

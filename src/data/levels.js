@@ -144,19 +144,19 @@ const levels = [{
     content: '<p>LOCAL MYSTIC: The LIGHT is returning to our land at long last! You must be the HERO the PROPHECY foretold!</p>'
   }],
   enemies: [{
-    type: 'purpleslime',
+    type: 'purple-slime',
     location: { 'face': 1, 'row': 5 , 'col': 1 },
     direction: 'right'
   },{
-    type: 'purpleslime',
+    type: 'purple-slime',
     location: { 'face': 2, 'row': 5 , 'col': 3 },
     direction: 'right'
   },{
-    type: 'blueslime',
+    type: 'blue-slime',
     location: { 'face': 2, 'row': 1 , 'col': 4 },
     direction: 'down'
   },{
-    type: 'purpleslime',
+    type: 'purple-slime',
     location: { 'face': 3, 'row': 2 , 'col': 4 },
     direction: 'right'
   }],
@@ -236,27 +236,27 @@ const levels = [{
     content: '<p>ADVENTURER: Never let a SLIME trap you in the MOUNTAINS! They\'re deadly when you have nowhere to run!</p>'
   }],
   enemies: [{
-    type: 'blueslime',
+    type: 'blue-slime',
     location: { 'face': 0, 'row': 2 , 'col': 2 },
     direction: 'down'
   },{
-    type: 'purpleslime',
+    type: 'purple-slime',
     location: { 'face': 0, 'row': 5 , 'col': 1 },
     direction: 'right'
   },{
-    type: 'blueslime',
+    type: 'blue-slime',
     location: { 'face': 0, 'row': 1 , 'col': 6 },
     direction: 'down'
   },{
-    type: 'purpleslime',
+    type: 'purple-slime',
     location: { 'face': 2, 'row': 3 , 'col': 5 },
     direction: 'down'
   },{
-    type: 'purpleslime',
+    type: 'purple-slime',
     location: { 'face': 4, 'row': 4 , 'col': 3 },
     direction: 'right'
   },{
-    type: 'blueslime',
+    type: 'blue-slime',
     location: { 'face': 5, 'row': 0 , 'col': 5 },
     direction: 'right'
   }],

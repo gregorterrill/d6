@@ -96,7 +96,7 @@ export default {
 						entity += ' enemy--' + enemy.status;
 					}
 
-					if (enemy.direction === 'left') {
+					if (enemy.direction === 'left' || enemy.direction === 'down') {
 						entity += ' enemy--left';
 					}
 
@@ -286,12 +286,12 @@ export default {
 }
 
 // ENEMY ENTITY
-.enemy--blueslime {
+.enemy--blue-slime {
 	opacity:0.7;
 	background-position:0 -128px;
   animation:animateSprite 0.5s infinite;
 }
-.enemy--purpleslime {
+.enemy--purple-slime {
 	opacity:0.7;
 	background-position:0 -192px;
   animation:animateSprite 0.5s infinite;
@@ -312,8 +312,8 @@ export default {
 	animation:enemyAttack 0.5s infinite;
 }
 
-.die--tileset-snow .enemy--blueslime,
-.die--tileset-snow .enemy--purpleslime {
+.die--tileset-snow .enemy--blue-slime,
+.die--tileset-snow .enemy--purple-slime {
 	opacity:0.85;
 }
 
