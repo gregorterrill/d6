@@ -21,7 +21,7 @@
       <p>PIPS&nbsp;{{ store.pips }}/21</p>
       <p>&nbsp;</p>
       <p>STATUS</p>
-      <p>HP&nbsp;&nbsp;{{ store.player.hp }}/5</p>
+      <p :class="hpLevel">HP&nbsp;&nbsp;{{ store.player.hp }}/5</p>
       <p>XP&nbsp;&nbsp;{{ store.player.xp }}</p>
       <p>&nbsp;</p>
       <!--<p>STATUS</p>
@@ -61,6 +61,15 @@ export default {
   data() {
     return {
       store
+    }
+  },
+  computed: {
+    hpLevel() {
+      if (store.player.hp <= 1) {
+        return 'hp-critical';
+      } else {
+        return 'hp-normal';
+      }
     }
   },
   beforeCreate() {
@@ -174,6 +183,10 @@ a {
   z-index:101;
   position:fixed;
   top:1rem;right:1rem;bottom:1rem;left:1rem;
+}
+
+p.hp-critical {
+  color:#de7c70;
 }
 
 @keyframes dayNightCycle {

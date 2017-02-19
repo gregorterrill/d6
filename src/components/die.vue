@@ -959,8 +959,8 @@ export default {
 			
 		},
 
-		//damage the player
-		damagePlayer(amount = 1, cause = '?') {
+		//damage the player (cause is the enemy type, eg 'purple-slime')
+		damagePlayer(amount = 1, cause = 'an-enemy') {
 			store.player.hp -= amount;
 
 			this.playSound('hit');
@@ -977,7 +977,7 @@ export default {
 				let xpLost = store.player.xp;
 				store.player.xp = 0;
 
-				store.windows.dialog.content = '<p>' + cause.replace('-',' ').toUpperCase() + ' hit for ' + amount + ' DMG, and you were DEFEATED! You lost ' + xpLost + ' XP!</p><p>&nbsp;<p>Press any key to RETRY.</p>';
+				store.windows.dialog.content = '<p>' + cause.replace('-',' ').toUpperCase() + ' hit you for ' + amount + ' DMG, and you were DEFEATED! You lost ' + xpLost + ' XP!</p><p>&nbsp;<p>Press SPACE to RETRY.</p>';
 
 				//require a player input, then continue murdering player
 				window.removeEventListener('keyup', this.handleKeyPress);
@@ -985,18 +985,21 @@ export default {
 			}
 		},
 
-		//reset the player and reload the level
-		killPlayer() {
-			store.player.xp = 0;
-			store.player.direction = 'right';
-			store.player.status = 'active';
-			store.windows.dialog.open = false;
-			this.goToLevel(store.currentLevelNum);
+		//reset the player, reload the level, and re-enable normal keypresses
+		killPlayer(e) {
+			if (e.keyCode === 32) {
+				store.player.xp = 0;
+				store.player.direction = 'right';
+				store.player.status = 'active';
+				store.windows.dialog.open = false;
+				this.goToLevel(store.currentLevelNum);
 
-			window.removeEventListener('keyup', this.killPlayer);
-			window.addEventListener('keyup', this.handleKeyPress);
+				window.removeEventListener('keyup', this.killPlayer);
+				window.addEventListener('keyup', this.handleKeyPress);
+			}
 		},
 
+		//if we have 21 lit pips, display a success message and wait for input to continue
 		checkForLevelComplete() {
 			if (store.pips === 21) {
 
@@ -1016,7 +1019,7 @@ export default {
 
 				store.player.xp += 10;
 				store.windows.dialog.open = true;
-				store.windows.dialog.content = '<p>You brought LIGHT back to ' + store.currentLevel.title.toUpperCase() + '! ' + successPhrases[Math.floor(Math.random() * successPhrases.length)] + ' You gain 10 XP!</p><p>&nbsp;</p><p>Press any key to CONTINUE.</p>';
+				store.windows.dialog.content = '<p>You brought LIGHT back to ' + store.currentLevel.title.toUpperCase() + '! ' + successPhrases[Math.floor(Math.random() * successPhrases.length)] + ' You gain 10 XP!</p><p>&nbsp;</p><p>Press SPACE to travel to a NEW WORLD.</p>';
 
 				//require a player input, then continue murdering player
 				window.removeEventListener('keyup', this.handleKeyPress);
@@ -1025,12 +1028,15 @@ export default {
 	  	}
 		},
 
-		completeLevel() {
-			store.windows.dialog.open = false;
-			this.goToLevel(store.currentLevelNum + 1);
+		//change levels and re-enable normal keypresses
+		completeLevel(e) {
+			if (e.keyCode === 32) {
+				store.windows.dialog.open = false;
+				this.goToLevel(store.currentLevelNum + 1);
 
-	  	window.removeEventListener('keyup', this.completeLevel);
-			window.addEventListener('keyup', this.handleKeyPress);
+		  	window.removeEventListener('keyup', this.completeLevel);
+				window.addEventListener('keyup', this.handleKeyPress);
+			}
 		},
 
 		// load a level and reset player location / die rotation
