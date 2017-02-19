@@ -280,6 +280,8 @@ export default {
 .player--attacking {
 	animation:playerAttack 0.25s linear infinite alternate;
 }
+
+//PLAYER IN BOAT
 .player--boat {
 	background-position:0 -384px;
   animation:animateSprite 0.5s infinite;
@@ -287,6 +289,10 @@ export default {
 .die__tile--bridge-hor,
 .die__tile--bridge-vert {
 	.player--boat { opacity:0.2; }
+}
+.player--boat.player--hurt,
+.player--boat.player--dead {
+	animation:playerShipwreck 0.5s linear infinite alternate;
 }
 
 // ENEMY ENTITY
@@ -353,6 +359,14 @@ export default {
   50.001% {background-position:-192px 0px;}
   75% { opacity: 0.3; }
   100% {opacity:1; background-position:-192px 0px;}
+}
+@keyframes playerShipwreck {
+	0% {opacity:1; background-position:0 -384px;}
+	25 { opacity: 0.3; }
+	50% { opacity:0.7; background-position:0 -384px;}
+  50.001% {background-position:-64px -384px;}
+  75% { opacity: 0.3; }
+  100% {opacity:1; background-position:-64px -384px;}
 }
 @keyframes playerAttack {
 	0% {background-position:-128px -64px;}

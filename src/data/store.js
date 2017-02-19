@@ -11,7 +11,7 @@ const windows = {
 };
 
 const pips = 0;
-const currentLevelNum = 1;
+const currentLevelNum = 4;
 
 const currentLevel = {
   title: 'Hello World',

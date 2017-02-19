@@ -31,6 +31,9 @@
 		<audio ref="sound-hit" :src="getAudioSource('hit')" preload />
 		<audio ref="sound-die" :src="getAudioSource('die')" preload />
 		<audio ref="sound-pickup" :src="getAudioSource('pickup')" preload />
+		<audio ref="sound-fireball" :src="getAudioSource('fireball')" preload />
+		<audio ref="sound-fizzle" :src="getAudioSource('fizzle')" preload />
+
 
 		<!-- http://ericskiff.com/music/ -->
 		<audio ref="music" :src="getAudioSource('music')" preload autoplay loop />
@@ -689,6 +692,7 @@ export default {
 								'location': originTile,
 								'direction': enemy.direction,
 							});
+							this.playSound('fireball');
 
 						}
 					}
@@ -728,6 +732,7 @@ export default {
 						// projectiles fizzle if they can't move
 						} else if (enemy.behavior === 'projectile') {
 							store.currentLevel.enemies.splice(i,1);
+							this.playSound('fizzle');
 
 						//regular enemies turn around
 						} else {
@@ -757,6 +762,7 @@ export default {
 						// projectiles fizzle if they can't move
 						} else if (enemy.behavior === 'projectile') {
 							store.currentLevel.enemies.splice(i,1);
+							this.playSound('fizzle');
 
 						//regular enemies turn around
 						} else {
@@ -786,6 +792,7 @@ export default {
 						// projectiles fizzle if they can't move
 						} else if (enemy.behavior === 'projectile') {
 							store.currentLevel.enemies.splice(i,1);
+							this.playSound('fizzle');
 
 						//regular enemies turn around
 						} else {
@@ -815,6 +822,7 @@ export default {
 						// projectiles fizzle if they can't move
 						} else if (enemy.behavior === 'projectile') {
 							store.currentLevel.enemies.splice(i,1);
+							this.playSound('fizzle');
 
 						//regular enemies turn around
 						} else {
