@@ -96,6 +96,10 @@ export default {
 						entity += ' enemy--' + enemy.status;
 					}
 
+					if (enemy.direction === 'left') {
+						entity += ' enemy--left';
+					}
+
 					entities.push(entity);
 				}
 			}
@@ -125,7 +129,8 @@ export default {
 .die__row {
 	display:block;
 }
-.die__tile {
+.die__tile,
+.die__tile--water::before {
 	position:relative;
 	float:left;
 	width:64px;
@@ -149,7 +154,9 @@ export default {
   &:nth-of-type(1n+43) { border-bottom:none;}
 }
 
+
 .die--tileset-desert .die__tile { background-image:url('../assets/tiles-desert.png'); }
+.die--tileset-snow .die__tile { background-image:url('../assets/tiles-snow.png'); }
 
 // TILE TYPES
 .die__tile--open {
@@ -161,9 +168,16 @@ export default {
 }
 
 .die__tile--water {
-	opacity:0.85;
-	background-position-x: 0;
-	animation:animateTile 0.5s infinite;
+	background-image:none !important;
+
+	&::before {
+		content: "";
+		position:absolute;
+		top:0;right:0;left:0;bottom:0;
+		opacity:0.85;
+		background-position-x: 0;
+		animation:animateTile 0.5s infinite;
+	}
 }
 
 .die__tile--rocks {
@@ -282,8 +296,25 @@ export default {
 	background-position:0 -192px;
   animation:animateSprite 0.5s infinite;
 }
+.enemy--serpent {
+	background-position:0 -256px;
+  animation:animateSprite 0.5s infinite;
+}
+.enemy--fireball {
+	background-position:0 -256px;
+  animation:animateFireball 0.5s infinite;
+}
+.enemy--left {
+	transform:scaleX(-1);
+}
+
 .enemy--attacking {
 	animation:enemyAttack 0.5s infinite;
+}
+
+.die--tileset-snow .enemy--blueslime,
+.die--tileset-snow .enemy--purpleslime {
+	opacity:0.85;
 }
 
 // ANIMATIONS
@@ -298,6 +329,12 @@ export default {
 	50% {background-position-y: -128px;}
   50.001% {background-position-y: -192px;}
   100% {background-position-y: -192px;}
+}
+@keyframes animateFireball {
+	0% {background-position-x:-256px;}
+	50% {background-position-x:-256px;}
+  50.001% {background-position-x:-320px;}
+  100% {background-position-x:-320px;}
 }
 @keyframes enemyAttack {
 	0% {background-position-x:-192px;}

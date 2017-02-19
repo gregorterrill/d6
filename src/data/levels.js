@@ -1,26 +1,33 @@
 
 /*
 
+TUTORIAL
 The Lost Land of Tutoria
 
+GRASS LEVELS
 The Hills of Daventry (King's Quest)
 The Mountains of Nibelheim (Final Fantasy 7)
 The Gardens of Balamb (Final Fantasy 8)
-The Lake of Hylia (Zelda)
-The Desert of Aveh (Xenogears)
-The Safari Zone of Kanto (Pokemon)
-The Walls of Lothric (Dark Souls)
-The Isle of Vvardenfell (Morrowind)
+The Lake of Hylia (Legend of Zelda)
 The Forest of Guardia (Chrono Trigger)
+
+DESERT LEVELS
+The Oasis of Aveh (Xenogears)
+The Dunes of Varant (Gothic 3)
+The Sands of Figaro (Final Fantasy 6)
+The Wastes of Lut Gholein (Diablo 2)
+The Desert of Calico (Stardew Valley)
+
+SNOW LEVELS
+The Cliffs of Lothric (Dark Souls)
 The Outskirts of Bowerstone (Fable)
 The Steppes of Tulga (Mount & Blade)
+The Ruins of Lordaeron (Warcraft)
+The Shores of Solstheim (Morrowind: Bloodmoon)
 
-
-The Fields of Alefgard (Dragon Warrior)
-The Plains of Ferelden (Dragon Age)
-The _____ of Lordaeron (Warcraft)
+MAYBES
+The _____ of Alefgard (Dragon Warrior)
 The _____ of Tristram (Diablo)
-
 The _____ of Khorinis (Gothic 2)
 
  */
@@ -40,7 +47,7 @@ The _____ of Khorinis (Gothic 2)
 
 const levels = [{
   title: 'Blankland',
-  tileset: 'desert',
+  tileset: 'snow',
   entrance: { 'face': 0, 'row': 2, 'col': 3 },
   pickups: [],
   enemies: [],
@@ -134,7 +141,7 @@ const levels = [{
   },{
     type: 'message',
     location: { 'face': 5, 'row': 3, 'col': 3 },
-    content: '<p>VILLAGER: The LIGHT is returning to our land at long last! You must be the HERO the PROPHECY foretold!</p>'
+    content: '<p>LOCAL MYSTIC: The LIGHT is returning to our land at long last! You must be the HERO the PROPHECY foretold!</p>'
   }],
   enemies: [{
     type: 'purpleslime',
@@ -211,7 +218,7 @@ const levels = [{
   ]
 }, {
   title: 'The Hills of Daventry',
-  tileset: 'grass',
+  tileset: 'snow',
   entrance: { 'face': 0, 'row': 2, 'col': 3 },
   pickups: [{
     type: 'sword',
@@ -315,9 +322,14 @@ const levels = [{
   entrance: { 'face': 0, 'row': 2, 'col': 3 },
   pickups: [{
     type: 'boat',
-    location: { 'face': 0, 'row': 5, 'col': 4 },
+    location: { 'face': 0, 'row': 5, 'col': 2 },
   }],
-  enemies: [],
+  enemies: [{
+    type: 'serpent',
+    location: { 'face': 0, 'row': 5, 'col': 5 },
+    direction: 'left',
+    behavior: 'sentry'
+  }],
   faces: [
     [
       ['V','V','X','|','X','X','X'],
@@ -375,7 +387,7 @@ const levels = [{
     ]
   ]
 },{
-  title: 'The Desert of Aveh',
+  title: 'The Oasis of Aveh',
   tileset: 'desert',
   entrance: { 'face': 0, 'row': 2, 'col': 3 },
   pickups: [{
@@ -387,10 +399,10 @@ const levels = [{
     [
       ['A',' ',' ',' ',' ',' ',' '],
       ['A','Y',' ',' ','Y',' ',' '],
-      ['A',' ',' ',' ',' ',' ',' '],
+      ['A',' ',' ',' ',' ','W',' '],
       ['A','A',' ','●',' ','X','Y'],
       ['A','A','A',' ',' ','Y',' '],
-      ['A','A','W',' ','Y',' ',' '],
+      ['A','A',' ',' ','Y',' ',' '],
       ['A','A','Y',' ',' ',' ',' ']
     ],
     [

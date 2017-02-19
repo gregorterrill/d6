@@ -168,6 +168,12 @@ export default {
 				case 190: //>
 					this.goToLevel(store.currentLevelNum + 1);
 					break;
+				case 219: //{
+					this.goToLevel(store.currentLevelNum - 3);
+					break;
+				case 221: //}
+					this.goToLevel(store.currentLevelNum + 3);
+					break;
 
 		    case 87: //w
 		    case 38: //up
@@ -238,6 +244,16 @@ export default {
 					case 'X':
 					case '-':
 					case '|':
+						passable = true;
+						break;
+				}
+
+			// projectiles can move over open water and open land
+			} else if (objectType === 'projectile') {
+				
+				switch(this.getTileValue(targetTile)) {
+					case 'X':
+					case ' ':
 						passable = true;
 						break;
 				}
@@ -626,13 +642,45 @@ export default {
 
 			for (let enemy of store.currentLevel.enemies) {
 
-				//if the enemy is frozen (due to a player collision) they dont move this step
-				if (enemy.status === 'attacking') continue;
-
 				originTile = enemy.location;
 				originDirection = enemy.direction;
 
+				// SENTRY
+				// sentries check if the player is in their row in the direction they're facing
+				if (enemy.behavior === 'sentry') {
+
+					//check if the player is in the same face and row
+					if (store.player.location.face == originTile.face && store.player.location.row == originTile.row) {
+
+						//check if the player is in the correct direction
+						if ((enemy.direction === 'left' && store.player.location.col < originTile.col) ||
+							(enemy.direction === 'right' && store.player.location.col > originTile.col)) {
+							
+							enemy.status = 'attacking';
+							
+							//spawn a fireball at the sentry's location (it will move one tile in the correct direction
+							//because this loop will still run it at the end)
+							store.currentLevel.enemies.push({
+								'type': 'fireball',
+								'behavior': 'projectile',
+								'location': originTile,
+								'direction': enemy.direction,
+							});
+
+						}
+					}
+
+					//sentries don't move, so we can skip the rest of this function
+					continue;
+				}
+
+				// REGULAR ENEMY
+				// if the enemy is frozen (due to a player collision) they dont move this step
+				if (enemy.status === 'attacking') continue;
+
 				let adjacentTile = null;
+				let enemyType = (enemy.behavior) ? enemy.behavior : 'enemy';
+				let i = store.currentLevel.enemies.indexOf(enemy);
 				
 				switch (enemy.direction) {
 
@@ -647,13 +695,18 @@ export default {
 						}
 						
 						// check if the tile is passable to see if we can move
-						if (this.isTilePassable(targetTile, 'enemy')) {
+						if (this.isTilePassable(targetTile, enemyType)) {
 							//move and update the direction if we changed faces
 							enemy.location = targetTile;
 							if (adjacentTile) {
 								enemy.direction = adjacentTile.newDirection;
 							}
-						//otherwise turn around
+
+						// projectiles fizzle if they can't move
+						} else if (enemy.behavior === 'projectile') {
+							store.currentLevel.enemies.splice(i,1);
+
+						//regular enemies turn around
 						} else {
 							enemy.direction = 'left';
 						}
@@ -671,13 +724,18 @@ export default {
 						}
 						
 						// check if the tile is passable to see if we can move
-						if (this.isTilePassable(targetTile, 'enemy')) {
+						if (this.isTilePassable(targetTile, enemyType)) {
 							//move and update the direction if we changed faces
 							enemy.location = targetTile;
 							if (adjacentTile) {
 								enemy.direction = adjacentTile.newDirection;
 							}
-						//otherwise turn around
+
+						// projectiles fizzle if they can't move
+						} else if (enemy.behavior === 'projectile') {
+							store.currentLevel.enemies.splice(i,1);
+
+						//regular enemies turn around
 						} else {
 							enemy.direction = 'right';
 						}
@@ -695,16 +753,22 @@ export default {
 						}
 						
 						// check if the tile is passable to see if we can move
-						if (this.isTilePassable(targetTile, 'enemy')) {
+						if (this.isTilePassable(targetTile, enemyType)) {
 							//move and update the direction if we changed faces
 							enemy.location = targetTile;
 							if (adjacentTile) {
 								enemy.direction = adjacentTile.newDirection;
 							}
-						//otherwise turn around
+						
+						// projectiles fizzle if they can't move
+						} else if (enemy.behavior === 'projectile') {
+							store.currentLevel.enemies.splice(i,1);
+
+						//regular enemies turn around
 						} else {
 							enemy.direction = 'up';
 						}
+
 						break;
 
 					case 'up':
@@ -718,16 +782,22 @@ export default {
 						}
 						
 						// check if the tile is passable to see if we can move
-						if (this.isTilePassable(targetTile, 'enemy')) {
+						if (this.isTilePassable(targetTile, enemyType)) {
 							//move and update the direction if we changed faces
 							enemy.location = targetTile;
 							if (adjacentTile) {
 								enemy.direction = adjacentTile.newDirection;
 							}
-						//otherwise turn around
+						
+						// projectiles fizzle if they can't move
+						} else if (enemy.behavior === 'projectile') {
+							store.currentLevel.enemies.splice(i,1);
+
+						//regular enemies turn around
 						} else {
 							enemy.direction = 'down';
 						}
+
 						break;
 				}
 
