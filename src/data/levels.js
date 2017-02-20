@@ -400,6 +400,11 @@ const levels = [{
     direction: 'right',
     behavior: 'sentry'
   },{
+    type: 'serpent',
+    location: { 'face': 0, 'row': 5, 'col': 1 },
+    direction: 'right',
+    behavior: 'sentry'
+  },{
     type: 'blue-slime',
     location: { 'face': 0, 'row': 1, 'col': 6 },
     direction: 'right',

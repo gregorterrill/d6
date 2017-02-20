@@ -265,12 +265,14 @@ export default {
 						break;
 				}
 
-			// projectiles can move over open water and open land
+			// projectiles can move over open water and open land, and bridges
 			} else if (objectType === 'projectile') {
 				
 				switch(this.getTileValue(targetTile)) {
 					case 'X':
 					case ' ':
+					case '-':
+					case '|':
 						passable = true;
 						break;
 				}
@@ -656,194 +658,146 @@ export default {
 		// move enemies
 		doEnemyStep() {
 
-			let targetTile = null,
-					originTile = null,
-					originDirection = null;
-
+			//activate all enemies
 			for (let enemy of store.currentLevel.enemies) {
-
-				originTile = enemy.location;
-				originDirection = enemy.direction;
-
-				// SENTRY
-				// sentries check if the player is in their row in the direction they're facing
-				if (enemy.behavior === 'sentry') {
-
-					//check if the player is in the same face and row
-					if (store.player.location.face == originTile.face && store.player.location.row == originTile.row) {
-
-						//check if the player is in the correct direction
-						if ((enemy.direction === 'left' && store.player.location.col < originTile.col) ||
-							(enemy.direction === 'right' && store.player.location.col > originTile.col)) {
-							
-							enemy.status = 'attacking';
-							
-							//spawn a fireball at the sentry's location (it will move one tile in the correct direction
-							//because this loop will still run it at the end)
-							store.currentLevel.enemies.push({
-								'type': 'fireball',
-								'behavior': 'projectile',
-								'location': originTile,
-								'direction': enemy.direction,
-							});
-							this.playSound('fireball');
-
-						}
-					}
-
-					//sentries don't move, so we can skip the rest of this function
-					continue;
-				}
-
-				// REGULAR ENEMY
-				// if the enemy is frozen (due to a player collision) they dont move this step
-				if (enemy.status === 'attacking') continue;
-
-				let adjacentTile = null;
-				let enemyType = (enemy.behavior) ? enemy.behavior : 'enemy';
-				let i = store.currentLevel.enemies.indexOf(enemy);
-				
-				switch (enemy.direction) {
-
-					case 'right':
-						
-						// get target tile from this or adjacent face
-						if (enemy.location.col+1 > 6) {
-							adjacentTile = this.getAdjacentTileFromOtherFace(enemy.direction, enemy.location);
-							targetTile = adjacentTile.tile;
-						} else {
-							targetTile = { 'face': enemy.location.face, 'row': enemy.location.row, 'col': enemy.location.col+1 };
-						}
-						
-						// check if the tile is passable to see if we can move
-						if (this.isTilePassable(targetTile, enemyType)) {
-							//move and update the direction if we changed faces
-							enemy.location = targetTile;
-							if (adjacentTile) {
-								enemy.direction = adjacentTile.newDirection;
-							}
-
-						// projectiles fizzle if they can't move
-						} else if (enemy.behavior === 'projectile') {
-							store.currentLevel.enemies.splice(i,1);
-							this.playSound('fizzle');
-
-						//regular enemies turn around
-						} else {
-							enemy.direction = this.getOppositeDirection(enemy.direction);
-						}
-
-						break;
-
-					case 'left':
-						
-						// get target tile from this or adjacent face
-						if (enemy.location.col-1 < 0) {
-							adjacentTile = this.getAdjacentTileFromOtherFace(enemy.direction, enemy.location);
-							targetTile = adjacentTile.tile;
-						} else {
-							targetTile = { 'face': enemy.location.face, 'row': enemy.location.row, 'col': enemy.location.col-1 };
-						}
-						
-						// check if the tile is passable to see if we can move
-						if (this.isTilePassable(targetTile, enemyType)) {
-							//move and update the direction if we changed faces
-							enemy.location = targetTile;
-							if (adjacentTile) {
-								enemy.direction = adjacentTile.newDirection;
-							}
-
-						// projectiles fizzle if they can't move
-						} else if (enemy.behavior === 'projectile') {
-							store.currentLevel.enemies.splice(i,1);
-							this.playSound('fizzle');
-
-						//regular enemies turn around
-						} else {
-							enemy.direction = this.getOppositeDirection(enemy.direction);
-						}
-
-						break;
-
-					case 'down':
-	
-						// get target tile from this or adjacent face
-						if (enemy.location.row+1 > 6) {
-							adjacentTile = this.getAdjacentTileFromOtherFace(enemy.direction, enemy.location);
-							targetTile = adjacentTile.tile;
-						} else {
-							targetTile = { 'face': enemy.location.face, 'row': enemy.location.row+1, 'col': enemy.location.col };
-						}
-						
-						// check if the tile is passable to see if we can move
-						if (this.isTilePassable(targetTile, enemyType)) {
-							//move and update the direction if we changed faces
-							enemy.location = targetTile;
-							if (adjacentTile) {
-								enemy.direction = adjacentTile.newDirection;
-							}
-						
-						// projectiles fizzle if they can't move
-						} else if (enemy.behavior === 'projectile') {
-							store.currentLevel.enemies.splice(i,1);
-							this.playSound('fizzle');
-
-						//regular enemies turn around
-						} else {
-							enemy.direction = this.getOppositeDirection(enemy.direction);
-						}
-
-						break;
-
-					case 'up':
-
-						// get target tile from this or adjacent face
-						if (enemy.location.row-1 < 0) {
-							adjacentTile = this.getAdjacentTileFromOtherFace(enemy.direction, enemy.location);
-							targetTile = adjacentTile.tile;
-						} else {
-							targetTile = { 'face': enemy.location.face, 'row': enemy.location.row-1, 'col': enemy.location.col };
-						}
-						
-						// check if the tile is passable to see if we can move
-						if (this.isTilePassable(targetTile, enemyType)) {
-							//move and update the direction if we changed faces
-							enemy.location = targetTile;
-							if (adjacentTile) {
-								enemy.direction = adjacentTile.newDirection;
-							}
-						
-						// projectiles fizzle if they can't move
-						} else if (enemy.behavior === 'projectile') {
-							store.currentLevel.enemies.splice(i,1);
-							this.playSound('fizzle');
-
-						//regular enemies turn around
-						} else {
-							enemy.direction = this.getOppositeDirection(enemy.direction);
-						}
-
-						break;
-				}
-
-				//if we're touching the player, hurt the player and move back
-				if (this.isObjectOnTile(enemy, store.player.location)) {
-
-					//projectiles immediately kill you
-					if (enemy.behavior === 'projectile') {
-						this.damagePlayer(5, enemy.type);
-
-					//dont do damage if the player is on a boat - overlaps mean they are under a bridge with an enemy on it
-					} else if (!store.player.items.includes('boat')) {
-		  			this.damagePlayer(1, enemy.type);
-		  			//move the enemy back to the tile they were on
-				  	this.moveObjectToTile(originTile, enemy);
-				  	enemy.direction = originDirection;
-				  	enemy.status = 'attacking';
-		  		}
-		  	}
+				this.activateEnemy(enemy);
 			}
 
+			//remove any enemies that were marked for deletion
+			store.currentLevel.enemies = store.currentLevel.enemies.filter(function(enemy){
+				return (enemy.status != 'dead');
+			});
+		},
+
+		activateEnemy(enemy) {
+
+			let targetTile = null;
+			let originTile = enemy.location;
+			let originDirection = enemy.direction;
+
+			// SENTRY
+			// sentries check if the player is in their row in the direction they're facing
+			if (enemy.behavior === 'sentry') {
+
+				//check if the player is in the same face and row
+				if (store.player.location.face == originTile.face && store.player.location.row == originTile.row) {
+
+					//check if the player is in the correct direction
+					if ((enemy.direction === 'left' && store.player.location.col < originTile.col) ||
+						(enemy.direction === 'right' && store.player.location.col > originTile.col)) {
+						
+						enemy.status = 'attacking';
+						
+						//spawn a fireball at the sentry's location (it will move one tile in the correct direction
+						//because this loop will still run it at the end)
+						store.currentLevel.enemies.push({
+							'type': 'fireball',
+							'behavior': 'projectile',
+							'location': originTile,
+							'direction': enemy.direction,
+						});
+						this.playSound('fireball');
+
+					}
+				}
+
+				//sentries don't move, so we can skip the rest of this function
+				return;
+			}
+
+			// REGULAR ENEMY
+			// if the enemy is attacking (due to a player collision) they dont move this step
+			if (enemy.status === 'attacking') return;
+
+			let adjacentTile = null;
+			let enemyType = (enemy.behavior) ? enemy.behavior : 'enemy';
+			
+			//STEP 1: get target tile
+			switch (enemy.direction) {
+
+				case 'right':
+					
+					// get target tile from this or adjacent face
+					if (enemy.location.col+1 > 6) {
+						adjacentTile = this.getAdjacentTileFromOtherFace(enemy.direction, enemy.location);
+						targetTile = adjacentTile.tile;
+					} else {
+						targetTile = { 'face': enemy.location.face, 'row': enemy.location.row, 'col': enemy.location.col+1 };
+					}
+
+					break;
+
+				case 'left':
+					
+					// get target tile from this or adjacent face
+					if (enemy.location.col-1 < 0) {
+						adjacentTile = this.getAdjacentTileFromOtherFace(enemy.direction, enemy.location);
+						targetTile = adjacentTile.tile;
+					} else {
+						targetTile = { 'face': enemy.location.face, 'row': enemy.location.row, 'col': enemy.location.col-1 };
+					}
+
+					break;
+
+				case 'down':
+
+					// get target tile from this or adjacent face
+					if (enemy.location.row+1 > 6) {
+						adjacentTile = this.getAdjacentTileFromOtherFace(enemy.direction, enemy.location);
+						targetTile = adjacentTile.tile;
+					} else {
+						targetTile = { 'face': enemy.location.face, 'row': enemy.location.row+1, 'col': enemy.location.col };
+					}
+
+					break;
+
+				case 'up':
+
+					// get target tile from this or adjacent face
+					if (enemy.location.row-1 < 0) {
+						adjacentTile = this.getAdjacentTileFromOtherFace(enemy.direction, enemy.location);
+						targetTile = adjacentTile.tile;
+					} else {
+						targetTile = { 'face': enemy.location.face, 'row': enemy.location.row-1, 'col': enemy.location.col };
+					}
+
+					break;
+			}
+	
+			// STEP 2: check if the tile is passable to see if we can move or if we need to do something else
+			if (this.isTilePassable(targetTile, enemyType)) {
+				//move and update the direction if we changed faces
+				enemy.location = targetTile;
+				if (adjacentTile) {
+					enemy.direction = adjacentTile.newDirection;
+				}
+			
+			// projectiles fizzle if they can't move
+			} else if (enemy.behavior === 'projectile') {
+				enemy.status = 'dead';
+				this.playSound('fizzle');
+
+			//regular enemies turn around
+			} else {
+				enemy.direction = this.getOppositeDirection(enemy.direction);
+			}
+
+			// STEP 3: if we're touching the player, hurt the player and move back
+			if (this.isObjectOnTile(enemy, store.player.location)) {
+
+				//projectiles immediately kill you
+				if (enemy.behavior === 'projectile') {
+					this.damagePlayer(5, enemy.type);
+
+				//dont do damage if the player is on a boat - overlaps mean they are under a bridge with an enemy on it
+				} else if (!store.player.items.includes('boat')) {
+	  			this.damagePlayer(1, enemy.type);
+	  			//move the enemy back to the tile they were on
+			  	this.moveObjectToTile(originTile, enemy);
+			  	enemy.direction = originDirection;
+			  	enemy.status = 'attacking';
+	  		}
+	  	}
 		},
 
 		// find the tile on an adjacent face (in a given direction) that shares an edge with this one
@@ -1008,7 +962,7 @@ export default {
 				//we'll randomly tack one of these on to the level complete message
 				const successPhrases = [
 					'Everyone is very impressed!',
-					'You recieve a ton of FAN MAIL!',
+					'You receive a ton of FAN MAIL!',
 					'The LOCALS hold a CELEBRATION in your honor!',
 					'Your MOTHER sends you a LETTER OF CONGRATULATIONS!',
 					'A BAR in town offers you a 50% OFF COUPON!',

@@ -254,6 +254,7 @@ export default {
 }
 .pickup--boat {
 	background-position:0 -448px;
+	animation:animateSprite 0.5s infinite;
 }
 .pickup--message,
 .pickup--hidden {
@@ -285,10 +286,6 @@ export default {
 .player--boat {
 	background-position:0 -384px;
   animation:animateSprite 0.5s infinite;
-}
-.die__tile--bridge-hor,
-.die__tile--bridge-vert {
-	.player--boat { opacity:0.2; }
 }
 .player--boat.player--hurt,
 .player--boat.player--dead {
@@ -325,6 +322,13 @@ export default {
 .die--tileset-snow .enemy--blue-slime,
 .die--tileset-snow .enemy--purple-slime {
 	opacity:0.85;
+}
+
+// STUFF THAT GOES UNDER BRIDGES!
+.die__tile--bridge-hor,
+.die__tile--bridge-vert {
+	.player--boat,
+	.enemy--fireball { opacity:0.2; }
 }
 
 // ANIMATIONS
