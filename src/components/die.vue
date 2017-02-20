@@ -594,12 +594,9 @@ export default {
 			  			if (store.player.items.includes('sword')) {
 			  				//kill that sucker
 			  				store.currentLevel.enemies.splice(i,1);
-			  				this.playSound('hit');
 			  				store.player.xp++;
 			  				store.player.status = 'attacking';
-
-			  				store.windows.dialog.open = true;
-								store.windows.dialog.content = '<p>Defeated ' + enemy.type.replace('-',' ').toUpperCase() + ' and gained 1 XP!</p>';
+			  				this.showDialog('<p>Defeated ' + enemy.type.replace('-',' ').toUpperCase() + ' and gained 1 XP!</p>', 'hit');
 
 			  			} else {
 			  				//hurt player
@@ -619,9 +616,7 @@ export default {
 
 						//messages open their content in a dialog
 						if (pickup.type == 'message') {
-
-							store.windows.dialog.open = true;
-							store.windows.dialog.content = pickup.content;
+							this.showDialog(pickup.content, false, true);
 
 						//sword that are on pedestals get replaced by empty pedestals
 						} else if (pickup.type == 'sword' && pickup.status != 'hidden') {
@@ -629,7 +624,7 @@ export default {
 							if (pickup.status != 'taken') { 
 								store.player.items.push(pickup.type);
 								pickup.status = 'taken';
-								this.playSound('pickup');
+								this.showDialog('<p>You found a ' + pickup.type.toUpperCase() + '!</p>', 'pickup');
 							}
 
 						//all other pickups are added to inventory and removed from level
@@ -638,7 +633,7 @@ export default {
 							store.currentLevel.pickups.splice(i,1);
 
 							if (pickup.type !== 'boat') { 
-								this.playSound('pickup');
+								this.showDialog('<p>You found a ' + pickup.type.toUpperCase() + '!</p>', 'pickup');
 							}
 						}	
 					}
@@ -646,6 +641,19 @@ export default {
 
 		  	this.doEnemyStep();
 		  }		  
+		},
+
+		//display a dialog and optionally, play a sound
+		showDialog(messageContent, sound = false, overrideOtherMessages = false) {
+
+			if (!store.windows.dialog.open || (store.windows.dialog.open && overrideOtherMessages)) {
+				store.windows.dialog.open = true;
+				store.windows.dialog.content = messageContent;
+			}
+
+			if (sound) {
+				this.playSound(sound);
+			}
 		},
 
 		//check if an object is on a tile
@@ -810,23 +818,34 @@ export default {
 	  		}
 	  	}
 
-	  	// STEP 4: projectiles only - check if we're on an enemy a pip
+	  	// STEP 4: projectiles only - check if we're on an enemy, pip, or boat
 	  	if (enemy.behavior === 'projectile') {
 	  		//light pips
 	  		if (this.getTileValue(targetTile) === '●' || this.getTileValue(targetTile) === '▪') {
 	  			this.lightPip(targetTile);
 	  			enemy.status = 'dead';
+	  			//dont need to play fizzle sound as pip lighting noise will play
 	  		}
 
 	  		//kill enemies
 	  		for (let otherEnemy of store.currentLevel.enemies) {
 					if (this.isObjectOnTile(otherEnemy, enemy.location) && otherEnemy.behavior != 'projectile') {
-						console.log(otherEnemy.type);
 						otherEnemy.status = 'dead';
 						enemy.status = 'dead';
 						this.playSound('fizzle');
 					}
 				}
+
+				//stop at pickups, if its a boat, sink it
+				store.currentLevel.pickups.forEach(function (pickup, i) {
+					if (this.isObjectOnTile(pickup, enemy.location)) {
+						if (pickup.type === 'boat') {
+							pickup.type = 'debris';
+						}
+						enemy.status = 'dead';
+						this.playSound('fizzle');
+					}
+				}, this);
 	  	}
 		},
 
@@ -953,21 +972,16 @@ export default {
 				store.player.hp = 0;
 			}
 
-			this.playSound('hit');
 			store.player.status = 'hurt';
-
-			store.windows.dialog.open = true;
-			store.windows.dialog.content = '<p>' + cause.replace('-',' ').toUpperCase() + ' hit you for ' + amount + ' DMG!</p>';
+			this.showDialog('<p>' + cause.replace('-',' ').toUpperCase() + ' hit you for ' + amount + ' DMG!</p>', 'hit');
 
 			//if player died, restart the level
 			if (store.player.hp === 0) {
-				this.playSound('die');
 				store.player.status = 'dead';
 
 				let xpLost = store.player.xp;
 				store.player.xp = 0;
-
-				store.windows.dialog.content = '<p>' + cause.replace('-',' ').toUpperCase() + ' hit you for ' + amount + ' DMG, and you were DEFEATED! You lost ' + xpLost + ' XP!</p><p>&nbsp;<p>Press SPACE to RETRY.</p>';
+				this.showDialog('<p>' + cause.replace('-',' ').toUpperCase() + ' hit you for ' + amount + ' DMG, and you were DEFEATED! You lost ' + xpLost + ' XP!</p><p>&nbsp;<p>Press SPACE to RETRY.</p>', 'die', true);
 
 				//require a player input, then continue murdering player
 				window.removeEventListener('keyup', this.handleKeyPress);
@@ -1008,9 +1022,7 @@ export default {
 				];
 
 				store.player.xp += 10;
-				this.playSound('win');
-				store.windows.dialog.open = true;
-				store.windows.dialog.content = '<p>You brought LIGHT back to ' + store.currentLevel.title.toUpperCase() + '! ' + successPhrases[Math.floor(Math.random() * successPhrases.length)] + ' You gain 10 XP!</p><p>&nbsp;</p><p>Press SPACE to travel to a NEW WORLD.</p>';
+				this.showDialog('<p>You brought LIGHT back to ' + store.currentLevel.title.toUpperCase() + '! ' + successPhrases[Math.floor(Math.random() * successPhrases.length)] + ' You gain 10 XP!</p><p>&nbsp;</p><p>Press SPACE to travel to a NEW WORLD.</p>', 'win', true);
 
 				//require a player input, then continue murdering player
 				window.removeEventListener('keyup', this.handleKeyPress);

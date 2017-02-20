@@ -52,6 +52,9 @@ const levels = [{
   pickups: [{
     type: 'boat',
     location: { 'face': 0, 'row': 1, 'col': 3 },
+  },{
+    type: 'boat',
+    location: { 'face': 0, 'row': 2, 'col': 6 },
   }],
   enemies: [{
     type: 'serpent',

@@ -135,8 +135,7 @@ export default {
 	height:64px;
 	font-size: 64px;
   line-height: 64px;
-  border-right:1px solid rgba(0,0,0,0.1);
-  border-bottom:1px solid rgba(0,0,0,0.1);
+  outline:1px solid rgba(0,0,0,0.1);
   background-size:256px 256px;
   background-image:url('../assets/tiles-grass.png');
   background-position:0 0;
@@ -254,6 +253,11 @@ export default {
 	background-position:0 -448px;
 	animation:animateSprite 0.5s infinite;
 }
+.pickup--debris {
+	background-position:0 -448px;
+	animation:animateSpriteTwo 0.5s infinite;
+}
+
 .pickup--message,
 .pickup--hidden {
 	display:none;
@@ -325,7 +329,7 @@ export default {
 }
 
 .enemy--attacking {
-	animation:enemyAttack 0.5s infinite;
+	animation:animateSpriteTwo 0.5s infinite;
 }
 
 .die--tileset-snow .enemy--blue-slime,
@@ -347,6 +351,12 @@ export default {
   50.001% {background-position-x:-64px;}
   100% {background-position-x:-64px;}
 }
+@keyframes animateSpriteTwo {
+	0% {background-position-x:-128px;}
+	50% {background-position-x:-128px;}
+  50.001% {background-position-x:-192px;}
+  100% {background-position-x:-192px;}
+}
 @keyframes animateTile {
 	0% {background-position-y: -128px;}
 	50% {background-position-y: -128px;}
@@ -358,12 +368,6 @@ export default {
 	50% {background-position-x:-256px;}
   50.001% {background-position-x:-320px;}
   100% {background-position-x:-320px;}
-}
-@keyframes enemyAttack {
-	0% {background-position-x:-192px;}
-	50% {background-position-x:-192px;}
-  50.001% {background-position-x:-128px;}
-  100% {background-position-x:-128px;}
 }
 @keyframes playerHurt {
 	0% {opacity:1; background-position:-128px 0px;}
