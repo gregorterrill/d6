@@ -43,7 +43,7 @@ export default {
 		window.addEventListener('keyup', this.handleKeyPress);
   },
   mounted() {
-  	this.$refs['music'].volume = 0.25;
+  	this.$refs['music'].volume = 0; //0.25;
   },
   data() {
   	return {
@@ -440,6 +440,19 @@ export default {
 
 		},
 
+		//light up a pip!
+		lightPip(targetTile) {
+			//we have to use the $set syntax so it gets watched properly
+			if (this.getTileValue(targetTile) === '●') {
+			  this.$set(this.level.faces[targetTile.face][targetTile.row], [targetTile.col], '○');
+		  } else if (this.getTileValue(targetTile) === '▪') {
+		  	this.$set(this.level.faces[targetTile.face][targetTile.row], [targetTile.col], '□');
+		  }
+		  store.pips++;
+	  	this.playSound('flame');
+	  	this.checkForLevelComplete();
+		},
+
 		//move an object to target tile
 		//object is either 'player' or an object in currentLevel
 		moveObjectToTile(targetTile, object = 'player') {
@@ -540,23 +553,10 @@ export default {
 	  			moved = true;
 	  			blocked = false;
 	  		
-	  		//activate land pip (from land)
-	  		} else if (this.getTileValue(targetTile) == '●' && !store.player.items.includes('boat')) {
-			  	this.$set(this.level.faces[targetTile.face][targetTile.row], [targetTile.col], '○');
-			  	
-			  	store.pips++;
-			  	this.playSound('flame');
-
-			  	this.checkForLevelComplete();
-
-			  //activate water pip (from boat)
-			  } else if (this.getTileValue(targetTile) == '▪' && store.player.items.includes('boat')) {
-			  	this.$set(this.level.faces[targetTile.face][targetTile.row], [targetTile.col], '□');
-
-			  	store.pips++;
-			  	this.playSound('flame');
-
-			  	this.checkForLevelComplete();
+	  		//activate land pip from land, or sea pip from boat
+	  		} else if ((this.getTileValue(targetTile) == '●' && !store.player.items.includes('boat')) ||
+	  			(this.getTileValue(targetTile) == '▪' && store.player.items.includes('boat'))) {
+			  	this.lightPip(targetTile);
 
 			  //you're just blocked
 			  } else {
@@ -584,28 +584,32 @@ export default {
 		  		//reset enemy status
 		  		enemy.status = 'active';
 
-		  		//check if player walked into enemy
-		  		//dont bother if the player is on a boat - overlaps mean they are under a bridge with an enemy on it
-		  		if (this.isObjectOnTile(enemy, store.player.location) && !store.player.items.includes('boat')) {
+		  		//check if player moved into enemy
+		  		if (this.isObjectOnTile(enemy, store.player.location)) {
 
-		  			if (store.player.items.includes('sword')) {
-		  				//kill that sucker
-		  				store.currentLevel.enemies.splice(i,1);
-		  				this.playSound('hit');
-		  				store.player.xp++;
-		  				store.player.status = 'attacking';
+		  			//dont bother if the player is on a boat - overlaps mean they are under a bridge with an enemy on it
+		  			if (!store.player.items.includes('boat') || 
+		  				(store.player.items.includes('boat') && enemy.type === 'serpent')) {
 
-		  				store.windows.dialog.open = true;
-							store.windows.dialog.content = '<p>Defeated ' + enemy.type.replace('-',' ').toUpperCase() + ' and gained 1 XP!</p>';
+			  			if (store.player.items.includes('sword')) {
+			  				//kill that sucker
+			  				store.currentLevel.enemies.splice(i,1);
+			  				this.playSound('hit');
+			  				store.player.xp++;
+			  				store.player.status = 'attacking';
 
-		  			} else {
-		  				//hurt player
-			  			this.damagePlayer(1, enemy.type);
-			  			//attacking enemies dont move this turn
-			  			enemy.status = 'attacking';
-			  			//move the player back to the tile they were on
-			  			this.moveObjectToTile(originTile);
-		  			}
+			  				store.windows.dialog.open = true;
+								store.windows.dialog.content = '<p>Defeated ' + enemy.type.replace('-',' ').toUpperCase() + ' and gained 1 XP!</p>';
+
+			  			} else {
+			  				//hurt player
+				  			this.damagePlayer(1, enemy.type);
+				  			//attacking enemies dont move this turn
+				  			enemy.status = 'attacking';
+				  			//move the player back to the tile they were on
+				  			this.moveObjectToTile(originTile);
+			  			}
+			  		}
 		  		}
 		  	}, this);
 
@@ -663,7 +667,7 @@ export default {
 				this.activateEnemy(enemy);
 			}
 
-			//remove any enemies that were marked for deletion
+			//remove any enemies that were marked for death
 			store.currentLevel.enemies = store.currentLevel.enemies.filter(function(enemy){
 				return (enemy.status != 'dead');
 			});
@@ -679,25 +683,32 @@ export default {
 			// sentries check if the player is in their row in the direction they're facing
 			if (enemy.behavior === 'sentry') {
 
-				//check if the player is in the same face and row
-				if (store.player.location.face == originTile.face && store.player.location.row == originTile.row) {
+				//check if the player is in the same face
+				if (store.player.location.face == originTile.face) {
 
 					//check if the player is in the correct direction
 					if ((enemy.direction === 'left' && store.player.location.col < originTile.col) ||
 						(enemy.direction === 'right' && store.player.location.col > originTile.col)) {
-						
-						enemy.status = 'attacking';
-						
-						//spawn a fireball at the sentry's location (it will move one tile in the correct direction
-						//because this loop will still run it at the end)
-						store.currentLevel.enemies.push({
-							'type': 'fireball',
-							'behavior': 'projectile',
-							'location': originTile,
-							'direction': enemy.direction,
-						});
-						this.playSound('fireball');
 
+						//if the player is in this row, shoot at them
+						if (store.player.location.row == originTile.row) {
+						
+							enemy.status = 'attacking';
+							
+							//spawn a fireball at the sentry's location (it will move one tile in the correct direction
+							//because this loop will still run it at the end)
+							store.currentLevel.enemies.push({
+								'type': 'fireball',
+								'behavior': 'projectile',
+								'location': originTile,
+								'direction': enemy.direction,
+							});
+							this.playSound('fireball');
+						}
+
+					//if the player is in the other direction, turn to face them
+					} else if (store.player.location.col !== originTile.col) {
+						enemy.direction = this.getOppositeDirection(enemy.direction);
 					}
 				}
 
@@ -705,7 +716,7 @@ export default {
 				return;
 			}
 
-			// REGULAR ENEMY
+			// REGULAR ENEMIES AND PROJECTILES
 			// if the enemy is attacking (due to a player collision) they dont move this step
 			if (enemy.status === 'attacking') return;
 
@@ -797,6 +808,25 @@ export default {
 			  	enemy.direction = originDirection;
 			  	enemy.status = 'attacking';
 	  		}
+	  	}
+
+	  	// STEP 4: projectiles only - check if we're on an enemy a pip
+	  	if (enemy.behavior === 'projectile') {
+	  		//light pips
+	  		if (this.getTileValue(targetTile) === '●' || this.getTileValue(targetTile) === '▪') {
+	  			this.lightPip(targetTile);
+	  			enemy.status = 'dead';
+	  		}
+
+	  		//kill enemies
+	  		for (let otherEnemy of store.currentLevel.enemies) {
+					if (this.isObjectOnTile(otherEnemy, enemy.location) && otherEnemy.behavior != 'projectile') {
+						console.log(otherEnemy.type);
+						otherEnemy.status = 'dead';
+						enemy.status = 'dead';
+						this.playSound('fizzle');
+					}
+				}
 	  	}
 		},
 
@@ -919,6 +949,10 @@ export default {
 		damagePlayer(amount = 1, cause = 'an-enemy') {
 			store.player.hp -= amount;
 
+			if (store.player.hp <= 0) {
+				store.player.hp = 0;
+			}
+
 			this.playSound('hit');
 			store.player.status = 'hurt';
 
@@ -926,7 +960,7 @@ export default {
 			store.windows.dialog.content = '<p>' + cause.replace('-',' ').toUpperCase() + ' hit you for ' + amount + ' DMG!</p>';
 
 			//if player died, restart the level
-			if (store.player.hp <= 0) {
+			if (store.player.hp === 0) {
 				this.playSound('die');
 				store.player.status = 'dead';
 

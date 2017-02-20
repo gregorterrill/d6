@@ -49,17 +49,40 @@ const levels = [{
   title: 'Blankland',
   tileset: 'snow',
   entrance: { 'face': 0, 'row': 2, 'col': 3 },
-  pickups: [],
-  enemies: [],
+  pickups: [{
+    type: 'boat',
+    location: { 'face': 0, 'row': 1, 'col': 3 },
+  }],
+  enemies: [{
+    type: 'serpent',
+    location: { 'face': 0, 'row': 3, 'col': 3 },
+    behavior: 'sentry',
+    direction: 'right'
+  },{
+    type: 'serpent',
+    location: { 'face': 0, 'row': 4, 'col': 3 },
+    behavior: 'sentry',
+    direction: 'right'
+  },{
+    type: 'serpent',
+    location: { 'face': 0, 'row': 5, 'col': 3 },
+    behavior: 'sentry',
+    direction: 'right'
+  },{
+    type: 'serpent',
+    location: { 'face': 0, 'row': 6, 'col': 3 },
+    behavior: 'sentry',
+    direction: 'right'
+  }],
   faces: [
     [
-      [' ',' ',' ',' ',' ',' ',' '],
-      [' ',' ',' ',' ',' ',' ',' '], // ONE
-      [' ',' ',' ',' ',' ',' ',' '], // ↑ right edge of 5
-      [' ',' ',' ','●',' ',' ',' '], // → top edge of 3
-      [' ',' ',' ',' ',' ',' ',' '], // ↓ right edge of 2
-      [' ',' ',' ',' ',' ',' ',' '], // ← bottom edge of 4
-      [' ',' ',' ',' ',' ',' ',' ']
+      ['X','X','X','X','X','X','X'],
+      ['X','X','X','X','X','X','X'], // ONE
+      ['X','X','X',' ','X','X','X'], // ↑ right edge of 5
+      ['X','X','X','X','X','X',' '], // → top edge of 3
+      ['X','X','X','X','X','X',' '], // ↓ right edge of 2
+      ['X','X','X','X','X','X',' '], // ← bottom edge of 4
+      ['X','X','X','X','X','X',' ']
     ],
     [
       [' ',' ',' ',' ',' ',' ',' '],

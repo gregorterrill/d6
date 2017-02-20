@@ -96,9 +96,7 @@ export default {
 						entity += ' enemy--' + enemy.status;
 					}
 
-					if (enemy.direction === 'left' || enemy.direction === 'down') {
-						entity += ' enemy--left';
-					}
+					entity += ' enemy--' + enemy.direction;
 
 					entities.push(entity);
 				}
@@ -287,7 +285,9 @@ export default {
 	background-position:0 -384px;
   animation:animateSprite 0.5s infinite;
 }
-.player--boat.player--hurt,
+.player--boat.player--hurt {
+	animation:playerShipHurt 0.5s linear infinite alternate;
+}
 .player--boat.player--dead {
 	animation:playerShipwreck 0.5s linear infinite alternate;
 }
@@ -307,12 +307,21 @@ export default {
 	background-position:0 -256px;
   animation:animateSprite 0.5s infinite;
 }
-.enemy--fireball {
+.enemy--fireball, 
+.enemy--fireball.enemy--attacking {
 	background-position:0 -256px;
   animation:animateFireball 0.5s infinite;
 }
-.enemy--left {
+.enemy--left,
+.enemy--down {
 	transform:scaleX(-1);
+}
+
+.enemy--fireball.enemy--down {
+	transform:rotate(90deg);
+}
+.enemy--fireball.enemy--up {
+	transform:rotate(-90deg);
 }
 
 .enemy--attacking {
@@ -364,13 +373,21 @@ export default {
   75% { opacity: 0.3; }
   100% {opacity:1; background-position:-192px 0px;}
 }
-@keyframes playerShipwreck {
+@keyframes playerShipHurt {
 	0% {opacity:1; background-position:0 -384px;}
 	25 { opacity: 0.3; }
 	50% { opacity:0.7; background-position:0 -384px;}
   50.001% {background-position:-64px -384px;}
   75% { opacity: 0.3; }
   100% {opacity:1; background-position:-64px -384px;}
+}
+@keyframes playerShipwreck {
+	0% {opacity:1; background-position:-128px -384px;}
+	25 { opacity: 0.3; }
+	50% { opacity:0.7; background-position:-128px -384px;}
+  50.001% {background-position:-192px -384px;}
+  75% { opacity: 0.3; }
+  100% {opacity:1; background-position:-192px -384px;}
 }
 @keyframes playerAttack {
 	0% {background-position:-128px -64px;}
