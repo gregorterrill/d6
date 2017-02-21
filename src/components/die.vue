@@ -43,7 +43,7 @@ export default {
 		window.addEventListener('keyup', this.handleKeyPress);
   },
   mounted() {
-  	this.$refs['music'].volume = 0; //0.25;
+  	this.$refs['music'].volume = 0.25; //0.25;
   },
   data() {
   	return {
@@ -480,62 +480,27 @@ export default {
 			store.player.status = 'active';
 
 			// check if there is a spot on the current face to move to
-			switch(direction) {
-		    case 'right':
-		    	if (originTile.col+1 <= 6) {
-		    		targetTile = { 'face': originTile.face, 'row': originTile.row, 'col': originTile.col+1 };
-		    		if (this.isTilePassable(targetTile)) {
-				    	moved = true;
-				    } else {
-				    	blocked = true;
-				    }
-			    }
-		      break;
+			if (direction === 'right' && (originTile.col+1) <= 6) {
+				targetTile = { 'face': originTile.face, 'row': originTile.row, 'col': originTile.col+1 };
+			} else if (direction === 'left' && (originTile.col-1) >= 0) {
+				targetTile = { 'face': originTile.face, 'row': originTile.row, 'col': originTile.col-1 };
+			} else if (direction === 'down' && (originTile.row+1) <= 6) {
+				targetTile = { 'face': originTile.face, 'row': originTile.row+1, 'col': originTile.col };
+			} else if (direction === 'up' && (originTile.row-1) >= 0) {
+				targetTile = { 'face': originTile.face, 'row': originTile.row-1, 'col': originTile.col };
+			}
 
-		    case 'left':
-		    	if (originTile.col-1 >= 0) {
-		    		targetTile = { 'face': originTile.face, 'row': originTile.row, 'col': originTile.col-1 };
-		    		if (this.isTilePassable(targetTile)) {
-				    	moved = true;
-				    } else {
-				    	blocked = true;
-				    	
-				    }
-			    }
-		      break;
+			// if we didn't find a target, it's on a different face
+			if (!targetTile) {
+				targetTile = this.getAdjacentTileFromOtherFace(direction, store.player.location).tile;
+			}
 
-		   	case 'down':
-		    	if (originTile.row+1 <= 6) {
-		    		targetTile = { 'face': originTile.face, 'row': originTile.row+1, 'col': originTile.col };
-		    		if (this.isTilePassable(targetTile)) {
-				    	moved = true;
-			    	} else {
-				    	blocked = true;
-				    }
-			    }
-		      break;
-
-		    case 'up':
-		    	if (originTile.row-1 >= 0) {
-		    		targetTile = { 'face': originTile.face, 'row': originTile.row-1, 'col': originTile.col };
-		    		if (this.isTilePassable(targetTile)) {
-				    	moved = true;
-			    	} else {
-				    	blocked = true;
-				    }
-			    }
-		      break;
-		  }
-
-		  // if position hasn't changed yet, we need to change face
-		  if (!moved && !blocked) {
-	    	targetTile = this.getAdjacentTileFromOtherFace(direction, store.player.location).tile;
-	    	if (this.isTilePassable(targetTile)) {
-	  			moved = true;
-	  		} else {
-	  			blocked = true;
-	  		}
-	  	}
+			// check if the target tile is passable or not
+			if (this.isTilePassable(targetTile)) {
+	    	moved = true;
+	    } else {
+	    	blocked = true;
+	    }
 
 	  	//perform the blocked effects
 	  	if (blocked) {
@@ -700,6 +665,8 @@ export default {
 
 						//if the player is in this row, shoot at them
 						if (store.player.location.row == originTile.row) {
+
+							//TODO: check if there are any obstacles in the columns between and dont shoot if so
 						
 							enemy.status = 'attacking';
 							
@@ -730,57 +697,23 @@ export default {
 
 			let adjacentTile = null;
 			let enemyType = (enemy.behavior) ? enemy.behavior : 'enemy';
-			
-			//STEP 1: get target tile
-			switch (enemy.direction) {
 
-				case 'right':
-					
-					// get target tile from this or adjacent face
-					if (enemy.location.col+1 > 6) {
-						adjacentTile = this.getAdjacentTileFromOtherFace(enemy.direction, enemy.location);
-						targetTile = adjacentTile.tile;
-					} else {
-						targetTile = { 'face': enemy.location.face, 'row': enemy.location.row, 'col': enemy.location.col+1 };
-					}
+			// STEP 1: get target tile to move to
+			// try to get target on same face
+			if (enemy.direction === 'right' && (enemy.location.col+1) <= 6) {
+				targetTile = { 'face': enemy.location.face, 'row': enemy.location.row, 'col': enemy.location.col+1 };
+			} else if (enemy.direction === 'left' && (enemy.location.col-1) >= 0) {
+				targetTile = { 'face': enemy.location.face, 'row': enemy.location.row, 'col': enemy.location.col-1 };
+			} else if (enemy.direction === 'down' && (enemy.location.row+1) <= 6) {
+				targetTile = { 'face': enemy.location.face, 'row': enemy.location.row+1, 'col': enemy.location.col };
+			} else if (enemy.direction === 'up' && (enemy.location.row-1) >= 0) {
+				targetTile = { 'face': enemy.location.face, 'row': enemy.location.row-1, 'col': enemy.location.col };
+			}
 
-					break;
-
-				case 'left':
-					
-					// get target tile from this or adjacent face
-					if (enemy.location.col-1 < 0) {
-						adjacentTile = this.getAdjacentTileFromOtherFace(enemy.direction, enemy.location);
-						targetTile = adjacentTile.tile;
-					} else {
-						targetTile = { 'face': enemy.location.face, 'row': enemy.location.row, 'col': enemy.location.col-1 };
-					}
-
-					break;
-
-				case 'down':
-
-					// get target tile from this or adjacent face
-					if (enemy.location.row+1 > 6) {
-						adjacentTile = this.getAdjacentTileFromOtherFace(enemy.direction, enemy.location);
-						targetTile = adjacentTile.tile;
-					} else {
-						targetTile = { 'face': enemy.location.face, 'row': enemy.location.row+1, 'col': enemy.location.col };
-					}
-
-					break;
-
-				case 'up':
-
-					// get target tile from this or adjacent face
-					if (enemy.location.row-1 < 0) {
-						adjacentTile = this.getAdjacentTileFromOtherFace(enemy.direction, enemy.location);
-						targetTile = adjacentTile.tile;
-					} else {
-						targetTile = { 'face': enemy.location.face, 'row': enemy.location.row-1, 'col': enemy.location.col };
-					}
-
-					break;
+			// if we didnt get a tile from same face, get target tile from other face
+			if (!targetTile) {
+				adjacentTile = this.getAdjacentTileFromOtherFace(enemy.direction, enemy.location);
+				targetTile = adjacentTile.tile;
 			}
 	
 			// STEP 2: check if the tile is passable to see if we can move or if we need to do something else
