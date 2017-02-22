@@ -65,7 +65,7 @@ export default {
   },
   computed: {
     hpLevel() {
-      if (store.player.hp <= 1) {
+      if (store.player.hp <= 2) {
         return 'hp-critical';
       } else {
         return 'hp-normal';

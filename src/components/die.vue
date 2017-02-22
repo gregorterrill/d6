@@ -161,14 +161,15 @@ export default {
 					this.goToLevel(store.currentLevelNum + 1);
 					break;
 				case 219: //{
-					this.goToLevel(store.currentLevelNum - 3);
+					this.goToLevel(store.currentLevelNum - 5);
 					break;
 				case 221: //}
-					this.goToLevel(store.currentLevelNum + 3);
+					this.goToLevel(store.currentLevelNum + 5);
 					break;
 
 				case 27: //esc
 					store.windows.menu.open = !store.windows.menu.open;
+					//TODO: dont allow other keypresses until this closes
 					break;
 
 		    case 87: //w
@@ -223,83 +224,6 @@ export default {
 		    	this.resetDieRotation();
 		    	break;
 		  };
-		},
-
-		getOppositeDirection(direction){
-			let oppositeDirection = 'left';
-
-			switch (direction) {
-				case 'right':
-					oppositeDirection = 'left';
-					break;
-				case 'left':
-					oppositeDirection = 'right';
-					break;
-				case 'up':
-					oppositeDirection = 'down';
-					break;
-				case 'down':
-					oppositeDirection = 'up';
-					break;
-			}
-
-			return oppositeDirection;
-		},
-
-		getTileValue(targetTile) {
-			return this.level.faces[targetTile.face][targetTile.row][targetTile.col];
-		},
-
-		// check if a tile blocks movement
-		isTilePassable(targetTile, objectType = 'player') {
-			let passable = false;
-
-			//if you're on a boat, you can pass water and bridges
-			if (store.player.items.includes('boat') && objectType === 'player') {
-
-				switch(this.getTileValue(targetTile)) {
-					case 'X':
-					case '-':
-					case '|':
-						passable = true;
-						break;
-				}
-
-			// projectiles can move over open water and open land, and bridges
-			} else if (objectType === 'projectile') {
-				
-				switch(this.getTileValue(targetTile)) {
-					case 'X':
-					case ' ':
-					case '-':
-					case '|':
-						passable = true;
-						break;
-				}
-
-			} else {
-			
-				//if you're on foot, you can pass these
-				switch(this.getTileValue(targetTile)) {
-					case ' ':
-					case '-':
-					case '|':
-					case 'Y':
-					case 'W':
-						passable = true;
-						break;
-
-					//for water, check if it has a boat on it
-					case 'X':
-						for (let pickup of store.currentLevel.pickups) {
-							if (objectType === 'player' && pickup.type === 'boat' && this.isObjectOnTile(pickup, targetTile)) {
-								passable = true;
-							}
-						}
-				}
-			}
-			
-			return passable;
 		},
 
 		// rotate the die back to the face the player is on
@@ -440,9 +364,109 @@ export default {
 
 		},
 
+		getOppositeDirection(direction){
+			let oppositeDirection = 'left';
+
+			switch (direction) {
+				case 'right':
+					oppositeDirection = 'left';
+					break;
+				case 'left':
+					oppositeDirection = 'right';
+					break;
+				case 'up':
+					oppositeDirection = 'down';
+					break;
+				case 'down':
+					oppositeDirection = 'up';
+					break;
+			}
+
+			return oppositeDirection;
+		},
+
+		// get the contents of a tile, which will just be one character, eg. "X" for water
+		getTileValue(targetTile) {
+			return this.level.faces[targetTile.face][targetTile.row][targetTile.col];
+		},
+
+		// check if a tile blocks movement
+		isTilePassable(targetTile, objectType = 'player') {
+			let passable = false;
+
+			//if you're on a boat, you can pass water and bridges
+			if (store.player.items.includes('boat') && objectType === 'player') {
+
+				switch(this.getTileValue(targetTile)) {
+					case 'X':
+					case '-':
+					case '|':
+						passable = true;
+						break;
+				}
+
+			// projectiles can move over open water and open land, pits and bridges
+			} else if (objectType === 'projectile') {
+				
+				switch(this.getTileValue(targetTile)) {
+					case 'X':
+					case ' ':
+					case '-':
+					case '|':
+					case 'P':
+						passable = true;
+						break;
+				}
+
+			// player on foot, and land-based enemies
+			} else {
+				switch(this.getTileValue(targetTile)) {
+					case ' ':
+					case '-':
+					case '|':
+					case 'Y':
+					case 'W':
+						passable = true;
+						break;
+				}
+			}
+
+			//the player on foot only
+			if (!store.player.items.includes('boat') && objectType === 'player') {
+				switch(this.getTileValue(targetTile)) {
+
+					case 'P':
+						passable = true;
+						break;
+
+					//if the player is trying to move onto a water tile, check if it has a boat on it
+					case 'X':
+							for (let pickup of store.currentLevel.pickups) {
+								if (pickup.type === 'boat' && this.isObjectOnTile(pickup, targetTile)) {
+									passable = true;
+								}
+							}
+						break;
+				}
+			}
+
+			//for enemies, we need to check if there's another (non-projectile) enemy on the tile
+			//as enemies can't move into other enemies
+			if (objectType === 'enemy') {
+				for (let otherEnemy of store.currentLevel.enemies) {
+					if (this.isObjectOnTile(otherEnemy, targetTile) && otherEnemy.behavior != 'projectile') {
+						passable = false;
+					}
+				}
+			}
+			
+			return passable;
+		},
+
 		//light up a pip!
 		lightPip(targetTile) {
-			//we have to use the $set syntax so it gets watched properly
+			//we have to use the set syntax so the array gets watched properly
+			//see: https://vuejs.org/v2/guide/list.html#Caveats
 			if (this.getTileValue(targetTile) === '●') {
 			  this.$set(this.level.faces[targetTile.face][targetTile.row], [targetTile.col], '○');
 		  } else if (this.getTileValue(targetTile) === '▪') {
@@ -451,6 +475,30 @@ export default {
 		  store.pips++;
 	  	this.playSound('flame');
 	  	this.checkForLevelComplete();
+		},
+
+		//display a dialog and optionally, play a sound. 
+		showDialog(messageContent, sound = false, overrideOtherMessages = false) {
+
+			if (!store.windows.dialog.open || (store.windows.dialog.open && overrideOtherMessages)) {
+				store.windows.dialog.open = true;
+				store.windows.dialog.content = messageContent;
+			}
+
+			if (sound) {
+				this.playSound(sound);
+			}
+		},
+
+		//check if an object is on a tile
+		isObjectOnTile(object, tile) {
+			let onTile = false;
+			if (tile.face === object.location.face &&
+  				tile.row === object.location.row &&
+  				tile.col === object.location.col) {
+				onTile = true;
+			}
+			return onTile;
 		},
 
 		//move an object to target tile
@@ -467,19 +515,13 @@ export default {
 			}
 		},
 
-		// move a player in a given direction, moving to an adjacent face if needed
-		// also trigger any collision events and play sounds
-		movePlayer(direction) {
+		//get the tile adjacent to any other tile
+		findAdjacentTile(originTile, direction) {
 
-			let originTile = store.player.location,
-					targetTile = null,
-					moved = false,
-					blocked = false;
+			let targetTile = null,
+					newDirection = direction;
 
-			//reset player status
-			store.player.status = 'active';
-
-			// check if there is a spot on the current face to move to
+			//check if tile is on the same face
 			if (direction === 'right' && (originTile.col+1) <= 6) {
 				targetTile = { 'face': originTile.face, 'row': originTile.row, 'col': originTile.col+1 };
 			} else if (direction === 'left' && (originTile.col-1) >= 0) {
@@ -490,10 +532,129 @@ export default {
 				targetTile = { 'face': originTile.face, 'row': originTile.row-1, 'col': originTile.col };
 			}
 
-			// if we didn't find a target, it's on a different face
+			//tile is on a different face, so we need to get the tile and figure out the directional change
 			if (!targetTile) {
-				targetTile = this.getAdjacentTileFromOtherFace(direction, store.player.location).tile;
+
+				// ONE
+				if (originTile.face === 0) {
+					if (direction === 'right') {
+						targetTile = { 'face': 2, 'row': 0, 'col': 6 - originTile.row };
+						newDirection = 'down';
+					} else if (direction === 'left') {
+						targetTile = { 'face': 3, 'row': 6, 'col': 6 - originTile.row };
+						newDirection = 'up';
+					} else if (direction === 'up') {
+						targetTile = { 'face': 4, 'row': 6 - originTile.col, 'col': 6 };
+						newDirection = 'left';
+					} else if (direction === 'down') {
+						targetTile = { 'face': 1, 'row': originTile.col, 'col': 6 };
+						newDirection = 'left';
+					}
+				}
+
+				// TWO
+				if (originTile.face === 1) {
+					if (direction === 'right') {
+						targetTile = { 'face': 0, 'row': 6, 'col': originTile.row };
+						newDirection = 'up';
+					} else if (direction === 'left') {
+						targetTile = { 'face': 5, 'row': 0, 'col': originTile.row };
+						newDirection = 'down';
+					} else if (direction === 'up') {
+						targetTile = { 'face': 3, 'row': originTile.col, 'col': 0 };
+						newDirection = 'right';
+					} else if (direction === 'down') {
+						targetTile = { 'face': 2, 'row': 6 - originTile.col, 'col': 0 };
+						newDirection = 'right';
+					}
+				}
+
+				// THREE
+				if (originTile.face === 2) {
+					if (direction === 'right') {
+						targetTile = { 'face': 4, 'row': 0, 'col': 6 - originTile.row };
+						newDirection = 'down';
+					} else if (direction === 'left') {
+						targetTile = { 'face': 1, 'row': 6, 'col': 6 - originTile.row };
+						newDirection = 'up';
+					} else if (direction === 'up') {
+						targetTile = { 'face': 0, 'row': 6 - originTile.col, 'col': 6 };
+						newDirection = 'left';
+					} else if (direction === 'down') {
+						targetTile = { 'face': 5, 'row': originTile.col, 'col': 6 };
+						newDirection = 'left';
+					}
+				}
+
+				// FOUR
+				if (originTile.face === 3) {
+					if (direction === 'right') {
+						targetTile = { 'face': 4, 'row': 6, 'col': originTile.row };
+						newDirection = 'up';
+					} else if (direction === 'left') {
+						targetTile = { 'face': 1, 'row': 0, 'col': originTile.row };
+						newDirection = 'down';
+					} else if (direction === 'up') {
+						targetTile = { 'face': 5, 'row': originTile.col, 'col': 0 };
+						newDirection = 'right';
+					} else if (direction === 'down') {
+						targetTile = { 'face': 0, 'row': 6 - originTile.col, 'col': 0 };
+						newDirection = 'right';
+					}
+				}
+
+				// FIVE
+				if (originTile.face === 4) {
+					if (direction === 'right') {
+						targetTile = { 'face': 0, 'row': 0, 'col': 6 - originTile.row };
+						newDirection = 'down';
+					} else if (direction === 'left') {
+						targetTile = { 'face': 5, 'row': 6, 'col': 6 - originTile.row };
+						newDirection = 'up';
+					} else if (direction === 'up') {
+						targetTile = { 'face': 2, 'row': 6 - originTile.col, 'col': 6 };
+						newDirection = 'left';
+					} else if (direction === 'down') {
+						targetTile = { 'face': 3, 'row': originTile.col, 'col': 6 };
+						newDirection = 'left';
+					}
+				}
+
+				// SIX
+				if (originTile.face === 5) {
+					if (direction === 'right') {
+						targetTile = { 'face': 2, 'row': 6, 'col': originTile.row };
+						newDirection = 'up';
+					} else if (direction === 'left') {
+						targetTile = { 'face': 3, 'row': 0, 'col': originTile.row };
+						newDirection = 'down';
+					} else if (direction === 'up') {
+						targetTile = { 'face': 1, 'row': originTile.col, 'col': 0 };
+						newDirection = 'right';
+					} else if (direction === 'down') {
+						targetTile = { 'face': 4, 'row': 6 - originTile.col, 'col': 0 };
+						newDirection = 'right';
+					}
+				}
 			}
+
+			return { 
+				'tile': targetTile, 
+				'newDirection': newDirection
+			};
+		},
+
+		// move a player in a given direction, moving to an adjacent face if needed
+		// also trigger any collision events and play sounds
+		movePlayer(direction) {
+
+			let originTile = store.player.location,
+					targetTile = this.findAdjacentTile(originTile, direction).tile,
+					moved = false,
+					blocked = false;
+
+			//reset player status
+			store.player.status = 'active';
 
 			// check if the target tile is passable or not
 			if (this.isTilePassable(targetTile)) {
@@ -543,101 +704,101 @@ export default {
 		  		this.playSound('step');
 		  	}
 
-		  	//reset enemy status and check if player walked into an enemy
-		  	store.currentLevel.enemies.forEach(function (enemy, i) {
+		  	//damage player if they walked into a pit
+		  	if (this.getTileValue(store.player.location) === 'P') {
+		  		this.damagePlayer(2, 'pit');
+		  	}
 
-		  		//reset enemy status
-		  		enemy.status = 'active';
+		  	//if the player moved into an enemy, attack them
+		  	this.resolvePlayerAttack(originTile);
 
-		  		//check if player moved into enemy
-		  		if (this.isObjectOnTile(enemy, store.player.location)) {
+		  	//if the player moved into a pickup, get it
+		  	this.collectPickups();
 
-		  			//dont bother if the player is on a boat - overlaps mean they are under a bridge with an enemy on it
-		  			if (!store.player.items.includes('boat') || 
-		  				(store.player.items.includes('boat') && enemy.type === 'serpent')) {
-
-			  			if (store.player.items.includes('sword')) {
-			  				//kill that sucker
-			  				store.currentLevel.enemies.splice(i,1);
-			  				store.player.xp++;
-			  				store.player.status = 'attacking';
-			  				this.showDialog('<p>Defeated ' + enemy.type.replace('-',' ').toUpperCase() + ' and gained 1 XP!</p>', 'hit');
-
-			  			} else {
-			  				//hurt player
-				  			this.damagePlayer(1, enemy.type);
-				  			//attacking enemies dont move this turn
-				  			enemy.status = 'attacking';
-				  			//move the player back to the tile they were on
-				  			this.moveObjectToTile(originTile);
-			  			}
-			  		}
-		  		}
-		  	}, this);
-
-		  	//check if player walked into a pickup
-		  	store.currentLevel.pickups.forEach(function (pickup, i) {
-					if (this.isObjectOnTile(pickup, store.player.location)) {
-
-						//messages open their content in a dialog
-						if (pickup.type == 'message') {
-							this.showDialog(pickup.content, false, true);
-
-						//sword that are on pedestals get replaced by empty pedestals
-						} else if (pickup.type == 'sword' && pickup.status != 'hidden') {
-
-							if (pickup.status != 'taken') { 
-								store.player.items.push(pickup.type);
-								pickup.status = 'taken';
-								this.showDialog('<p>You found a ' + pickup.type.toUpperCase() + '!</p>', 'pickup');
-							}
-
-						//all other pickups are added to inventory and removed from level
-						} else {
-							store.player.items.push(pickup.type); 
-							store.currentLevel.pickups.splice(i,1);
-
-							if (pickup.type !== 'boat') { 
-								this.showDialog('<p>You found a ' + pickup.type.toUpperCase() + '!</p>', 'pickup');
-							}
-						}	
-					}
-				}, this);
-
+		  	//enemies move and shoot
 		  	this.doEnemyStep();
 		  }		  
 		},
 
-		//display a dialog and optionally, play a sound
-		showDialog(messageContent, sound = false, overrideOtherMessages = false) {
+		//resolve attacks against enemies - we need the origin tile in case we get repelled back
+		resolvePlayerAttack(originTile) {
 
-			if (!store.windows.dialog.open || (store.windows.dialog.open && overrideOtherMessages)) {
-				store.windows.dialog.open = true;
-				store.windows.dialog.content = messageContent;
-			}
+	  	//reset enemy status and check if player walked into an enemy
+	  	store.currentLevel.enemies.forEach(function (enemy, i) {
 
-			if (sound) {
-				this.playSound(sound);
-			}
+	  		//reset enemy status
+	  		enemy.status = 'active';
+
+	  		//check if player moved into enemy
+	  		if (this.isObjectOnTile(enemy, store.player.location)) {
+
+	  			//dont bother if the player is on a boat - overlaps mean they are under a bridge with an enemy on it
+	  			if (!store.player.items.includes('boat') || 
+	  				(store.player.items.includes('boat') && enemy.type === 'serpent')) {
+
+		  			if (store.player.items.includes('sword')) {
+		  				//kill that sucker
+		  				store.currentLevel.enemies.splice(i,1);
+		  				store.player.xp++;
+		  				store.player.status = 'attacking';
+		  				this.showDialog('<p>Defeated ' + enemy.type.replace('-',' ').toUpperCase() + ' and gained 1 XP!</p>', 'hit');
+
+		  			} else {
+		  				//hurt player
+			  			this.damagePlayer(1, enemy.type);
+			  			//attacking enemies dont move this turn
+			  			enemy.status = 'attacking';
+			  			//move the player back to the tile they were on
+			  			this.moveObjectToTile(originTile);
+		  			}
+		  		}
+	  		}
+		  }, this);
 		},
 
-		//check if an object is on a tile
-		isObjectOnTile(object, tile) {
-			let onTile = false;
-			if (tile.face === object.location.face &&
-  				tile.row === object.location.row &&
-  				tile.col === object.location.col) {
-				onTile = true;
-			}
-			return onTile;
+		//player collects any pickups they're standing on
+		collectPickups() {
+			store.currentLevel.pickups.forEach(function (pickup, i) {
+				if (this.isObjectOnTile(pickup, store.player.location)) {
+
+					//messages open their content in a dialog
+					if (pickup.type == 'message') {
+						this.showDialog(pickup.content, false, true);
+
+					//sword that are on pedestals get replaced by empty pedestals
+					} else if (pickup.type == 'sword' && pickup.status != 'hidden') {
+
+						if (pickup.status != 'taken') { 
+							store.player.items.push(pickup.type);
+							pickup.status = 'taken';
+							this.showDialog('<p>You found a ' + pickup.type.toUpperCase() + '!</p>', 'pickup');
+						}
+
+					//all other pickups are added to inventory and removed from level
+					} else {
+						store.player.items.push(pickup.type); 
+						store.currentLevel.pickups.splice(i,1);
+
+						if (pickup.type !== 'boat') { 
+							this.showDialog('<p>You found a ' + pickup.type.toUpperCase() + '!</p>', 'pickup');
+						}
+					}	
+				}
+			}, this);
 		},
 
 		// move enemies
 		doEnemyStep() {
 
-			//activate all enemies
+			//activate all enemies - any new enemies created during this step (eg. fireballs) will be appended to the array and also activated this step
 			for (let enemy of store.currentLevel.enemies) {
-				this.activateEnemy(enemy);
+				//sentries have unique activations
+				if (enemy.behavior === 'sentry') {
+					this.activateSentry(enemy);
+				//attacking enemies don't activate
+				} else if (enemy.status !== 'attacking') {
+					this.activateEnemy(enemy);
+				}
 			}
 
 			//remove any enemies that were marked for death
@@ -646,83 +807,58 @@ export default {
 			});
 		},
 
+		//activate a sentry enemy, which is stationary and shoots a seen player
+		activateSentry(enemy) {
+
+			//check if the player is in the same face
+			if (store.player.location.face == enemy.location.face) {
+
+				//check if the player is in the correct direction
+				if ((enemy.direction === 'left' && store.player.location.col < enemy.location.col) ||
+					(enemy.direction === 'right' && store.player.location.col > enemy.location.col)) {
+
+					//if the player is in this row, shoot at them
+					if (store.player.location.row == enemy.location.row) {
+
+						//TODO: check if there are any obstacles in the columns between and dont shoot if so
+					
+						enemy.status = 'attacking';
+						
+						//spawn a fireball at the sentry's location (it will move one tile in the correct direction
+						//because this loop will still run it at the end)
+						store.currentLevel.enemies.push({
+							'type': 'fireball',
+							'behavior': 'projectile',
+							'location': enemy.location,
+							'direction': enemy.direction,
+						});
+						this.playSound('fireball');
+					}
+
+				//if the player is in the other direction, turn to face them
+				} else if (store.player.location.col !== enemy.location.col) {
+					enemy.direction = this.getOppositeDirection(enemy.direction);
+				}
+			}
+		},
+
+		//activate an individual moving enemy
 		activateEnemy(enemy) {
 
-			let targetTile = null;
-			let originTile = enemy.location;
-			let originDirection = enemy.direction;
-
-			// SENTRY
-			// sentries check if the player is in their row in the direction they're facing
-			if (enemy.behavior === 'sentry') {
-
-				//check if the player is in the same face
-				if (store.player.location.face == originTile.face) {
-
-					//check if the player is in the correct direction
-					if ((enemy.direction === 'left' && store.player.location.col < originTile.col) ||
-						(enemy.direction === 'right' && store.player.location.col > originTile.col)) {
-
-						//if the player is in this row, shoot at them
-						if (store.player.location.row == originTile.row) {
-
-							//TODO: check if there are any obstacles in the columns between and dont shoot if so
-						
-							enemy.status = 'attacking';
-							
-							//spawn a fireball at the sentry's location (it will move one tile in the correct direction
-							//because this loop will still run it at the end)
-							store.currentLevel.enemies.push({
-								'type': 'fireball',
-								'behavior': 'projectile',
-								'location': originTile,
-								'direction': enemy.direction,
-							});
-							this.playSound('fireball');
-						}
-
-					//if the player is in the other direction, turn to face them
-					} else if (store.player.location.col !== originTile.col) {
-						enemy.direction = this.getOppositeDirection(enemy.direction);
-					}
-				}
-
-				//sentries don't move, so we can skip the rest of this function
-				return;
-			}
-
-			// REGULAR ENEMIES AND PROJECTILES
-			// if the enemy is attacking (due to a player collision) they dont move this step
-			if (enemy.status === 'attacking') return;
-
-			let adjacentTile = null;
-			let enemyType = (enemy.behavior) ? enemy.behavior : 'enemy';
+			let targetTile = null,
+					originTile = enemy.location,
+					originDirection = enemy.direction,
+					adjacentTile = this.findAdjacentTile(originTile, enemy.direction),
+					enemyType = (enemy.behavior) ? enemy.behavior : 'enemy';
 
 			// STEP 1: get target tile to move to
-			// try to get target on same face
-			if (enemy.direction === 'right' && (enemy.location.col+1) <= 6) {
-				targetTile = { 'face': enemy.location.face, 'row': enemy.location.row, 'col': enemy.location.col+1 };
-			} else if (enemy.direction === 'left' && (enemy.location.col-1) >= 0) {
-				targetTile = { 'face': enemy.location.face, 'row': enemy.location.row, 'col': enemy.location.col-1 };
-			} else if (enemy.direction === 'down' && (enemy.location.row+1) <= 6) {
-				targetTile = { 'face': enemy.location.face, 'row': enemy.location.row+1, 'col': enemy.location.col };
-			} else if (enemy.direction === 'up' && (enemy.location.row-1) >= 0) {
-				targetTile = { 'face': enemy.location.face, 'row': enemy.location.row-1, 'col': enemy.location.col };
-			}
-
-			// if we didnt get a tile from same face, get target tile from other face
-			if (!targetTile) {
-				adjacentTile = this.getAdjacentTileFromOtherFace(enemy.direction, enemy.location);
-				targetTile = adjacentTile.tile;
-			}
+			targetTile = adjacentTile.tile;
 	
 			// STEP 2: check if the tile is passable to see if we can move or if we need to do something else
 			if (this.isTilePassable(targetTile, enemyType)) {
 				//move and update the direction if we changed faces
-				enemy.location = targetTile;
-				if (adjacentTile) {
-					enemy.direction = adjacentTile.newDirection;
-				}
+				this.moveObjectToTile(targetTile, enemy);
+				enemy.direction = adjacentTile.newDirection;
 			
 			// projectiles fizzle if they can't move
 			} else if (enemy.behavior === 'projectile') {
@@ -782,131 +918,24 @@ export default {
 	  	}
 		},
 
-		// find the tile on an adjacent face (in a given direction) that shares an edge with this one
-		// also figure out the directional change if moving from origin tile to that new tile
-		getAdjacentTileFromOtherFace(direction, originTile) {
-			let targetTile = { 'face': 0, 'row': 0, 'col': 0 },
-					newDirection = 'up';
-
-			// ONE
-			if (originTile.face === 0) {
-				if (direction === 'right') {
-					targetTile = { 'face': 2, 'row': 0, 'col': 6 - originTile.row };
-					newDirection = 'down';
-				} else if (direction === 'left') {
-					targetTile = { 'face': 3, 'row': 6, 'col': 6 - originTile.row };
-					newDirection = 'up';
-				} else if (direction === 'up') {
-					targetTile = { 'face': 4, 'row': 6 - originTile.col, 'col': 6 };
-					newDirection = 'left';
-				} else if (direction === 'down') {
-					targetTile = { 'face': 1, 'row': originTile.col, 'col': 6 };
-					newDirection = 'left';
-				}
-			}
-
-			// TWO
-			if (originTile.face === 1) {
-				if (direction === 'right') {
-					targetTile = { 'face': 0, 'row': 6, 'col': originTile.row };
-					newDirection = 'up';
-				} else if (direction === 'left') {
-					targetTile = { 'face': 5, 'row': 0, 'col': originTile.row };
-					newDirection = 'down';
-				} else if (direction === 'up') {
-					targetTile = { 'face': 3, 'row': originTile.col, 'col': 0 };
-					newDirection = 'right';
-				} else if (direction === 'down') {
-					targetTile = { 'face': 2, 'row': 6 - originTile.col, 'col': 0 };
-					newDirection = 'right';
-				}
-			}
-
-			// THREE
-			if (originTile.face === 2) {
-				if (direction === 'right') {
-					targetTile = { 'face': 4, 'row': 0, 'col': 6 - originTile.row };
-					newDirection = 'down';
-				} else if (direction === 'left') {
-					targetTile = { 'face': 1, 'row': 6, 'col': 6 - originTile.row };
-					newDirection = 'up';
-				} else if (direction === 'up') {
-					targetTile = { 'face': 0, 'row': 6 - originTile.col, 'col': 6 };
-					newDirection = 'left';
-				} else if (direction === 'down') {
-					targetTile = { 'face': 5, 'row': originTile.col, 'col': 6 };
-					newDirection = 'left';
-				}
-			}
-
-			// FOUR
-			if (originTile.face === 3) {
-				if (direction === 'right') {
-					targetTile = { 'face': 4, 'row': 6, 'col': originTile.row };
-					newDirection = 'up';
-				} else if (direction === 'left') {
-					targetTile = { 'face': 1, 'row': 0, 'col': originTile.row };
-					newDirection = 'down';
-				} else if (direction === 'up') {
-					targetTile = { 'face': 5, 'row': originTile.col, 'col': 0 };
-					newDirection = 'right';
-				} else if (direction === 'down') {
-					targetTile = { 'face': 0, 'row': 6 - originTile.col, 'col': 0 };
-					newDirection = 'right';
-				}
-			}
-
-			// FIVE
-			if (originTile.face === 4) {
-				if (direction === 'right') {
-					targetTile = { 'face': 0, 'row': 0, 'col': 6 - originTile.row };
-					newDirection = 'down';
-				} else if (direction === 'left') {
-					targetTile = { 'face': 5, 'row': 6, 'col': 6 - originTile.row };
-					newDirection = 'up';
-				} else if (direction === 'up') {
-					targetTile = { 'face': 2, 'row': 6 - originTile.col, 'col': 6 };
-					newDirection = 'left';
-				} else if (direction === 'down') {
-					targetTile = { 'face': 3, 'row': originTile.col, 'col': 6 };
-					newDirection = 'left';
-				}
-			}
-
-			// SIX
-			if (originTile.face === 5) {
-				if (direction === 'right') {
-					targetTile = { 'face': 2, 'row': 6, 'col': originTile.row };
-					newDirection = 'up';
-				} else if (direction === 'left') {
-					targetTile = { 'face': 3, 'row': 0, 'col': originTile.row };
-					newDirection = 'down';
-				} else if (direction === 'up') {
-					targetTile = { 'face': 1, 'row': originTile.col, 'col': 0 };
-					newDirection = 'right';
-				} else if (direction === 'down') {
-					targetTile = { 'face': 4, 'row': 6 - originTile.col, 'col': 0 };
-					newDirection = 'right';
-				}
-			}
-
-			return { 
-				'tile': targetTile, 
-				'newDirection': newDirection
-			};
-			
-		},
-
 		//damage the player (cause is the enemy type, eg 'purple-slime')
 		damagePlayer(amount = 1, cause = 'an-enemy') {
+
+			let message = '';
+
 			store.player.hp -= amount;
 
 			if (store.player.hp <= 0) {
 				store.player.hp = 0;
 			}
-
 			store.player.status = 'hurt';
-			this.showDialog('<p>' + cause.replace('-',' ').toUpperCase() + ' hit you for ' + amount + ' DMG!</p>', 'hit');
+
+			if (cause === 'pit') {
+				message = '<p>You fell into a PIT taking ' + amount + ' DMG!</p>';
+			} else {
+				message = '<p>' + cause.replace('-',' ').toUpperCase() + ' hit you for ' + amount + ' DMG!</p>';
+			}
+			this.showDialog(message, 'hit');
 
 			//if player died, restart the level
 			if (store.player.hp === 0) {
@@ -914,7 +943,11 @@ export default {
 
 				let xpLost = store.player.xp;
 				store.player.xp = 0;
-				this.showDialog('<p>' + cause.replace('-',' ').toUpperCase() + ' hit you for ' + amount + ' DMG, and you were DEFEATED! You lost ' + xpLost + ' XP!</p><p>&nbsp;<p>Press SPACE to RETRY.</p>', 'die', true);
+
+				message = message.slice(0,-5); //strip off "!</p>";
+				message += ', and you were DEFEATED! You lost ' + xpLost + ' XP!</p><p>&nbsp;<p>Press SPACE to RETRY.</p>';
+
+				this.showDialog(message, 'die', true);
 
 				//require a player input, then continue murdering player
 				window.removeEventListener('keyup', this.handleKeyPress);

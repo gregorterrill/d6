@@ -50,6 +50,10 @@ export default {
 					type += 'town'
 					break;
 
+				case 'P':
+					type += 'pit'
+					break;
+
 				case '-':
 					type += 'bridge-hor'
 					break;
@@ -128,7 +132,8 @@ export default {
 	display:block;
 }
 .die__tile,
-.die__tile--water::before {
+.die__tile--water::before,
+.die__tile--bridge-vert::before {
 	position:relative;
 	float:left;
 	width:64px;
@@ -153,10 +158,10 @@ export default {
 
 
 .die--tileset-desert {
-	.die__tile, .die__tile--water::before { background-image:url('../assets/tiles-desert.png'); }
+	.die__tile, .die__tile--water::before, .die__tile--bridge-vert::before { background-image:url('../assets/tiles-desert.png'); }
 }
 .die--tileset-snow {
-	.die__tile, .die__tile--water::before { background-image:url('../assets/tiles-snow.png'); }
+	.die__tile, .die__tile--water::before, .die__tile--bridge-vert::before { background-image:url('../assets/tiles-snow.png'); }
 }
 
 // TILE TYPES
@@ -166,6 +171,10 @@ export default {
 
 .die__tile--tree {
 	background-position:-64px 0;
+}
+
+.die__tile--pit {
+	background-position:-192px -64px;
 }
 
 .die__tile--water {
@@ -192,7 +201,15 @@ export default {
 }
 
 .die__tile--bridge-vert {
-	background-position:-192px -64px;
+	background-image:none !important;
+
+	&::before {
+		content: "";
+		position:absolute;
+		top:0;right:0;left:0;bottom:0;
+		background-position:0 -64px;
+		transform:rotate(90deg);
+	}
 }
 
 .die__tile--mountain {
