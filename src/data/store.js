@@ -4,6 +4,7 @@ import daventry from './levels/daventry.js'
 import hylia from './levels/hylia.js'
 import balamb from './levels/balamb.js'
 import aveh from './levels/aveh.js'
+import lutgholein from './levels/lut-gholein.js'
 /*
 TUTORIAL
 The Lost Land of Tutoria
@@ -30,8 +31,15 @@ The Steppes of Tulga (Mount & Blade)
 The Ruins of Lordaeron (Warcraft)
 The Shores of Solstheim (Morrowind: Bloodmoon)
 */
-const levels = [thevoid,tutoria,daventry,hylia,balamb,aveh];
-
+const levels = [
+  thevoid,
+  tutoria,
+  daventry,
+  hylia,
+  balamb,
+  aveh,
+  lutgholein
+];
 
 const windows = {
   menu: {
@@ -44,7 +52,7 @@ const windows = {
 };
 
 const pips = 0;
-const currentLevelNum = 0;
+const currentLevelNum = 6;
 
 const currentLevel = {
   title: 'Hello World',

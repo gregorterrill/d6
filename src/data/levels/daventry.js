@@ -5,6 +5,7 @@ const level = {
   pickups: [{
     type: 'sword',
     location: { 'face': 5, 'row': 5, 'col': 2 },
+    container: 'stone',
   },{
     type: 'boat',
     location: { 'face': 4, 'row': 3, 'col': 5 },

@@ -109,11 +109,16 @@ export default {
 			}
 
 			for (let pickup of store.currentLevel.pickups) {
-				if (pickup.location.face === this.face &&
+				if (pickup.type !== 'message' &&
+						pickup.location.face === this.face &&
 						pickup.location.row === this.row &&
 						pickup.location.col === this.col ) {
 
 					entity = 'pickup--' + pickup.type;
+
+					if (pickup.container) {
+						entity += ' pickup--' + pickup.container;
+					}
 
 					if (pickup.status) {
 						entity += ' pickup--' + pickup.status;
@@ -247,11 +252,11 @@ export default {
 }
 
 // PICKUP ENTITIES
-.pickup--generic {
-	background-position:0 -256px;
-	&.pickup--taken {	background-position:-64px -256px;	}
+.pickup--chest {
+	background-position:-128px -320px;
+	&.pickup--taken {	background-position:-192px -320px; }
 }
-.pickup--sword {
+.pickup--stone {
 	background-position:0 -320px;
 	&.pickup--taken {	background-position:-64px -320px;	}
 }
@@ -263,7 +268,6 @@ export default {
 	background-position:0 -448px;
 	animation:animateSpriteTwo 0.5s infinite;
 }
-
 .pickup--message,
 .pickup--hidden {
 	display:none;

@@ -28,7 +28,7 @@ const level = {
   },{
     type: 'sword',
     location: { 'face': 3, 'row': 5, 'col': 3 },
-    status: 'hidden'
+    container: 'hidden'
   },{
     type: 'message',
     location: { 'face': 5, 'row': 3, 'col': 3 },

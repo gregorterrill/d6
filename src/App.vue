@@ -5,9 +5,13 @@
       <p>MENU</p>
       <p>&nbsp;</p>
       <p>CONTROLS</p>
-      <p>Arrows to move</p>
-      <p>1-6 to view face</p>
-      <p>0 to view player</p>
+      <p>Use the arrows keys or WASD to move</p>
+      <p>Press 1-6 to view the corresponding face</p>
+      <p>Press 0 to reset the view</p>
+      <p>Press ESC to toggle the menu</p>
+      <p>&nbsp;</p>
+      <p>ABOUT</p>
+      <p>d6 was created by <a href="http://gregorterrill.com" target="_blank">Gregor Terrill</a>.</p>
     </div>
 
     <div v-if="store.windows.dialog.open" class="message message--dialog" v-html="store.windows.dialog.content"></div>
@@ -23,12 +27,14 @@
       <p>STATUS</p>
       <p :class="hpLevel">HP&nbsp;&nbsp;{{ store.player.hp }}/5</p>
       <p>XP&nbsp;&nbsp;{{ store.player.xp }}</p>
+      <!--
       <p>&nbsp;</p>
       <p>STATUS</p>
       <p>{{ store.player.status.charAt(0).toUpperCase() + store.player.status.slice(1) }}</p>
+      -->
       <p>&nbsp;</p>
       <p>INVENTORY</p>
-      <p v-for="item in store.player.items">{{ item.charAt(0).toUpperCase() + item.slice(1) }}</p>
+      <p v-for="item in store.player.items">{{ item.charAt(0).toUpperCase() + item.slice(1).replace('-',' ') }}</p>
     </div>
 
     <!--

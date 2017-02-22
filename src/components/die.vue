@@ -43,7 +43,11 @@ export default {
 		window.addEventListener('keyup', this.handleKeyPress);
   },
   mounted() {
+  	//set the music volume
   	this.$refs['music'].volume = 0; //0.25;
+  	//rotate the cube to the player face
+  	store.player.location = store.currentLevel.entrance;
+  	this.resetDieRotation();
   },
   data() {
   	return {
@@ -432,12 +436,12 @@ export default {
 				passable = true;
 
 				for (let otherEnemy of store.currentLevel.enemies) {
-					if (this.isEntityOnTile(otherEnemy, targetTile) && otherEnemy.behavior != 'projectile') {
+					if (this.isEntityOnTile(otherEnemy, targetTile) && otherEnemy.behavior !== 'projectile') {
 						passable = false;
 					}
 				}
 				for (let pickup of store.currentLevel.pickups) {
-					if (this.isEntityOnTile(pickup, targetTile) && pickup.type != 'message') {
+					if (this.isEntityOnTile(pickup, targetTile) && pickup.type !== 'message') {
 						//fix for if player just got onto a boat
 						if (targetTile.col !== store.player.location.col) {
 							passable = false;
@@ -796,12 +800,22 @@ export default {
 						this.showDialog(pickup.content, false, true);
 
 					//sword that are on pedestals get replaced by empty pedestals
-					} else if (pickup.type == 'sword' && pickup.status != 'hidden') {
+					//generic pickups open their chests
+					} else if (pickup.type !== 'boat' && pickup.status != 'hidden') {
 
-						if (pickup.status != 'taken') { 
+						//consumables are used right away
+						if (pickup.type === 'potion' && pickup.status !== 'taken') {
+							if (store.player.hp < 5) {
+								pickup.status = 'taken';
+								this.healPlayer(2, pickup.type); //dialog will be shown by healPlayer
+							} else {
+								this.showDialog('<p>You found a ' + pickup.type.replace('-',' ').toUpperCase() + ' but decided to leave it for now. You might need it later if you hurt yourself!</p>', 'pickup');
+							}
+						//take the thing
+						} else if (pickup.status != 'taken') { 
 							store.player.items.push(pickup.type);
 							pickup.status = 'taken';
-							this.showDialog('<p>You found a ' + pickup.type.toUpperCase() + '!</p>', 'pickup');
+							this.showDialog('<p>You found a ' + pickup.type.replace('-',' ').toUpperCase() + '!</p>', 'pickup');
 						}
 
 					//all other pickups are added to inventory and removed from level
@@ -810,7 +824,7 @@ export default {
 						store.currentLevel.pickups.splice(i,1);
 
 						if (pickup.type !== 'boat') { 
-							this.showDialog('<p>You found a ' + pickup.type.toUpperCase() + '!</p>', 'pickup');
+							this.showDialog('<p>You found a ' + pickup.type.replace('-',' ').toUpperCase() + '!</p>', 'pickup');
 						}
 					}	
 				}
@@ -861,7 +875,7 @@ export default {
 							}
 						} else {
 							for (let i = enemy.location.col + 1; i <= store.player.location.col; i++) {
-								if (!this.isTilePassable({ 'face': enemy.location.face, 'row': enemy.location.row, 'col': i }, 'projectile')) {
+								if (!this.isTilePassable({ 'face': enemy.location.face, 'row': enemy.location.row, 'col': i }, 'lineOfSight')) {
 									shotBlocked = true;
 								}
 							}
@@ -965,6 +979,23 @@ export default {
 					}
 				}, this);
 	  	}
+		},
+
+		healPlayer(amount = 1, cause = 'potion') {
+			let message = '<p>';
+
+			store.player.hp += amount;
+
+			if (store.player.hp > 5) {
+				store.player.hp = 5;
+			}
+
+			if (cause === 'potion') {
+				message += 'You found a ' + cause.replace('-',' ').toUpperCase() + ' and took a swig. ';
+			}
+
+			message += 'You were healed ' + amount + ' HP!</p>';
+			this.showDialog(message, 'pickup');
 		},
 
 		//damage the player (cause is the enemy type, eg 'purple-slime')

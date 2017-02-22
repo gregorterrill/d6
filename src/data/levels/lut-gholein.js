@@ -11,26 +11,32 @@ X water
 - horizontal bridge
 | vertical bridge
 W town
-
-PICKUPS
-type: (message,boat,debris,sword,potion)
-location: { 'face': 0, 'row': 0, 'col': 0 }
-container: (null,hidden,chest,stone)
-content: (html content, message type only)
-
-ENEMIES
-type: (purple-slime,blue-slime,sea-serpent)
-location: { 'face': 0, 'row': 0, 'col': 0 }
-direction: (left,right,up,down)
-behavior: (null,sentry,projectile)
 */
 
 const level = {
-  title: 'The Void',
-  tileset: 'snow',
-  entrance: { 'face': 0, 'row': 2, 'col': 3 },
-  pickups: [],
-  enemies: [],
+  title: 'The Pits of Lut Gholein',
+  tileset: 'desert',
+  entrance: { 'face': 5, 'row': 3, 'col': 3 },
+  pickups: [{
+    type: 'potion',
+    location: { 'face': 0, 'row': 4, 'col': 0 },
+    container: 'chest'
+  },{
+    type: 'old-key',
+    location: { 'face': 0, 'row': 5, 'col': 1 },
+    container: 'chest'
+  }],
+  enemies: [{
+    type: 'sea-serpent',
+    location: { 'face': 5, 'row': 4, 'col': 0 },
+    direction: 'right',
+    behavior: 'sentry'
+  },{
+    type: 'sea-serpent',
+    location: { 'face': 5, 'row': 4, 'col': 6 },
+    direction: 'left',
+    behavior: 'sentry'
+  }],
   faces: [
     [
       [' ',' ',' ',' ',' ',' ',' '],
@@ -79,12 +85,12 @@ const level = {
     ],
     [
       [' ',' ',' ',' ',' ',' ',' '],
-      [' ','●',' ',' ',' ','●',' '], // SIX
-      [' ',' ',' ',' ',' ',' ',' '], // ↑ left edge of 2
-      [' ','●',' ',' ',' ','●',' '], // → bottom edge of 3
-      [' ',' ',' ',' ',' ',' ',' '], // ↓ left edge of 5
-      [' ','●',' ',' ',' ','●',' '], // ← top edge of 4
-      [' ',' ',' ',' ',' ',' ',' ']
+      [' ','●','P','P','P','●',' '], // SIX
+      [' ','P','P','P','P','P',' '], // ↑ left edge of 2
+      [' ','●','P',' ','P','●',' '], // → bottom edge of 3
+      ['X','P','P',' ','P','P','X'], // ↓ left edge of 5
+      [' ','●','P',' ','P','●',' '], // ← top edge of 4
+      [' ',' ','P',' ','P',' ',' ']
     ]
   ]
 }
