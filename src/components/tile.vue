@@ -51,6 +51,14 @@ export default {
 					type += 'town';
 					break;
 
+				case 'H':
+					type += 'gate-closed';
+					break;
+
+				case 'I':
+					type += 'gate-open';
+					break;
+
 				case 'P':
 					type += 'pit';
 					break;
@@ -147,7 +155,7 @@ export default {
 	font-size: 64px;
   line-height: 64px;
   outline:1px solid rgba(0,0,0,0.1);
-  background-size:256px 256px;
+  background-size:320px 256px;
   background-image:url('../assets/tiles-grass.png');
   background-position:0 0;
   image-rendering: optimizeSpeed;
@@ -193,6 +201,12 @@ export default {
 }
 .die__tile--town {
 	background-position:-192px 0;
+}
+.die__tile--gate-closed {
+	background-position:-256px 0;
+}
+.die__tile--gate-open {
+	background-position:-256px -64px;
 }
 .die__tile--pip {
 	background-position:-128px -64px;

@@ -413,7 +413,7 @@ export default {
 			if (typeOfEntity === 'player' && !store.player.items.includes('boat')) {
 				
 				//on foot, you can pass through most terrain
-				if ([' ','-','|','Y','W','P'].includes(tileValue)) {
+				if ([' ','-','|','Y','W','P','I'].includes(tileValue)) {
 					passable = true;
 
 				//if the player is trying to move onto a water tile, check if it has a boat on it
@@ -426,13 +426,13 @@ export default {
 				}
 			}
 
-			//PROJECTILES can move over open water and open land and pits
-			if (typeOfEntity === 'projectile' && ['X','P',' '].includes(tileValue)) {
+			//PROJECTILES can move over open water and open land, open gates and pits
+			if (typeOfEntity === 'projectile' && ['X','P',' ','I'].includes(tileValue)) {
 				passable = true;
 			}
 
 			//LINE OF SIGHT is the same as projectiles, but is also blocked by enemies and pickups
-			if (typeOfEntity === 'lineOfSight' && ['X','P',' '].includes(tileValue)) {
+			if (typeOfEntity === 'lineOfSight' && ['X','P',' ','I'].includes(tileValue)) {
 				passable = true;
 
 				for (let otherEnemy of store.currentLevel.enemies) {
@@ -450,8 +450,8 @@ export default {
 				}
 			}
 
-			//NORMAL ENEMIES can move through land, bridges, and trees
-			if (typeOfEntity === 'enemy' && [' ','-','|','Y'].includes(tileValue)) {
+			//NORMAL ENEMIES can move through land, bridges, gates, and trees
+			if (typeOfEntity === 'enemy' && [' ','-','|','Y','I'].includes(tileValue)) {
 				passable = true;
 
 				//for enemies, we need to check if there's another (non-projectile) enemy
@@ -689,6 +689,14 @@ export default {
 	  			(this.getTileValue(targetTile) == '▪' && store.player.items.includes('boat'))) {
 			  	this.lightPip(targetTile);
 
+			  //if its a closed gate, unlock it if you have a key
+			  } else if (this.getTileValue(targetTile) == 'H' 
+			  	&& !store.player.items.includes('boat')
+			  	&& store.player.items.includes('key')) {
+			  	this.$set(this.level.faces[targetTile.face][targetTile.row], [targetTile.col], 'I');
+			  	store.player.items.splice(store.player.items.indexOf('key'),1);
+			  	this.showDialog('<p>You used your KEY to unlock the GATE!<p>');
+
 			  //you're just blocked
 			  } else {
 		  		this.playSound('bump');
@@ -836,9 +844,21 @@ export default {
 
 			//activate all enemies - any new enemies created during this step (eg. fireballs) will be appended to the array and also activated this step
 			for (let enemy of store.currentLevel.enemies) {
+				
 				//sentries have unique activations
 				if (enemy.behavior === 'sentry') {
 					this.activateSentry(enemy);
+				
+				//if a projectile has circled the entire cube, fizzle it, otherwise it moves
+				//this means the projectile can just get back around to the sentry that launched it and kill it
+				} else if (enemy.behavior === 'projectile') {
+					if (enemy.tilesMoved >= 28) {
+						enemy.status = 'dead';
+						this.playSound('fizzle');
+					} else {
+						this.activateEnemy(enemy);
+					}
+
 				//attacking enemies don't activate
 				} else if (enemy.status !== 'attacking') {
 					this.activateEnemy(enemy);
@@ -892,6 +912,7 @@ export default {
 								'behavior': 'projectile',
 								'location': enemy.location,
 								'direction': enemy.direction,
+								'tilesMoved': 0
 							});
 							this.playSound('fireball');
 						}
@@ -927,7 +948,7 @@ export default {
 				enemy.status = 'dead';
 				this.playSound('fizzle');
 
-			//regular enemies turn around
+			//regular enemies turn around if they can't move
 			} else {
 				enemy.direction = this.getOppositeDirection(enemy.direction);
 			}
@@ -978,6 +999,8 @@ export default {
 						this.playSound('fizzle');
 					}
 				}, this);
+
+				enemy.tilesMoved++;
 	  	}
 		},
 

@@ -11,6 +11,8 @@ X water
 - horizontal bridge
 | vertical bridge
 W town
+H closed gate
+I open gate
 
 PICKUPS
 type: (message,boat,debris,sword,potion)
@@ -29,14 +31,27 @@ const level = {
   title: 'The Void',
   tileset: 'snow',
   entrance: { 'face': 0, 'row': 2, 'col': 3 },
-  pickups: [],
-  enemies: [],
+  pickups: [{
+    type: 'key',
+    location:  { 'face': 0, 'row': 5, 'col': 2 },
+    container: 'chest'
+  },{
+    type: 'key',
+    location:  { 'face': 0, 'row': 6, 'col': 0 },
+    container: 'chest'
+  }],
+  enemies: [{
+    type: 'sea-serpent',
+    behavior: 'sentry',
+    direction: 'right',
+    location:  { 'face': 0, 'row': 2, 'col': 0 },
+  }],
   faces: [
     [
-      [' ',' ',' ',' ',' ',' ',' '],
-      [' ',' ',' ',' ',' ',' ',' '], // ONE
-      [' ',' ',' ',' ',' ',' ',' '], // ↑ right edge of 5
-      [' ',' ',' ','●',' ',' ',' '], // → top edge of 3
+      [' ',' ',' ',' ','A','A',' '],
+      [' ',' ',' ',' ',' ','A',' '], // ONE
+      ['X',' ',' ',' ',' ','H',' '], // ↑ right edge of 5
+      [' ',' ',' ','●',' ','A',' '], // → top edge of 3
       [' ',' ',' ',' ',' ',' ',' '], // ↓ right edge of 2
       [' ',' ',' ',' ',' ',' ',' '], // ← bottom edge of 4
       [' ',' ',' ',' ',' ',' ',' ']

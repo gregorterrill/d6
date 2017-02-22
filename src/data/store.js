@@ -30,6 +30,14 @@ The Outskirts of Bowerstone (Fable)
 The Steppes of Tulga (Mount & Blade)
 The Ruins of Lordaeron (Warcraft)
 The Shores of Solstheim (Morrowind: Bloodmoon)
+
+LAVA LEVELS
+The Volcano of Barrel (Super Mario RPG)
+The Caverns of Norfair (Super Metroid)
+The Cave of Wonder (Aladdin)
+The Catacombs of Tristram (Diablo)
+The Ashlands of Vvardenfell (Morrowind)
+
 */
 const levels = [
   thevoid,
@@ -52,7 +60,7 @@ const windows = {
 };
 
 const pips = 0;
-const currentLevelNum = 6;
+const currentLevelNum = 0;
 
 const currentLevel = {
   title: 'Hello World',
@@ -67,7 +75,7 @@ const player = {
   status: 'active',
   hp: 5,
   xp: 0,
-  location: { 'face': 0, 'row': 2, 'col': 3 },
+  location: { 'face': 0, 'row': 0, 'col': 0 },
   direction: 'right',
   items: ['torch']
 };
