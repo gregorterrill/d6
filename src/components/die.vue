@@ -647,7 +647,8 @@ export default {
 			let originTile = store.player.location,
 					targetTile = this.findAdjacentTile(originTile, direction).tile,
 					moved = false,
-					blocked = false;
+					blocked = false,
+					needEnemyStep = true;
 
 			//reset player status
 			store.player.status = 'active';
@@ -707,18 +708,23 @@ export default {
 		  	}
 
 		  	//if the player moved into an enemy, attack them
-		  	this.resolvePlayerAttack(originTile);
+		  	needEnemyStep = this.resolvePlayerAttack(originTile);
+
+		  	//enemies move and shoot UNLESS something prevented it
+		  	if (needEnemyStep) {
+		  		this.doEnemyStep();
+		  	}
 
 		  	//if the player moved into a pickup, get it
 		  	this.collectPickups();
-
-		  	//enemies move and shoot
-		  	this.doEnemyStep();
 		  }		  
 		},
 
 		//resolve attacks against enemies - we need the origin tile in case we get repelled back
+		//returns whether or not we need an enemy step this turn
 		resolvePlayerAttack(originTile) {
+
+			let needEnemyStep = true;
 
 	  	//reset enemy status and check if player walked into an enemy
 	  	store.currentLevel.enemies.forEach(function (enemy, i) {
@@ -755,9 +761,11 @@ export default {
 		  			}
 
 		  		//if you tried to disembark into an enemy, make it seem like you were blocked
+		  		//and cancel the enemy step this turn
 		  		} else if (store.player.status === 'disembarking') {
 		  			this.playSound('bump');
 		  			this.moveEntityToTile(originTile);
+		  			needEnemyStep = false;
 
 		  		//you're on a boat, only sea things hurt you
 	  			} else {
@@ -771,6 +779,8 @@ export default {
 
 	  		}
 		  }, this);
+
+		  return needEnemyStep;
 		},
 
 		//player collects any pickups they're standing on

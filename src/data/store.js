@@ -1,4 +1,37 @@
-import levels from './levels.js'
+import blankland from './levels/blankland.js'
+import tutoria from './levels/tutoria.js'
+import daventry from './levels/daventry.js'
+import hylia from './levels/hylia.js'
+import balamb from './levels/balamb.js'
+import aveh from './levels/aveh.js'
+/*
+TUTORIAL
+The Lost Land of Tutoria
+
+GRASS LEVELS
+The Hills of Daventry (King's Quest)
+The Mountains of Nibelheim (Final Fantasy 7)
+The Gardens of Balamb (Final Fantasy 8)
+The Lake of Hylia (Legend of Zelda)
+The Forest of Guardia (Chrono Trigger)
+The Fields of Alefgard (Dragon Warrior)
+
+DESERT LEVELS
+The Oasis of Aveh (Xenogears)
+The Dunes of Varant (Gothic 3)
+The Sands of Figaro (Final Fantasy 6)
+The Pits of Lut Gholein (Diablo 2)
+The Desert of Calico (Stardew Valley)
+
+SNOW LEVELS
+The Cliffs of Lothric (Dark Souls)
+The Outskirts of Bowerstone (Fable)
+The Steppes of Tulga (Mount & Blade)
+The Ruins of Lordaeron (Warcraft)
+The Shores of Solstheim (Morrowind: Bloodmoon)
+*/
+const levels = [blankland,tutoria,daventry,hylia,balamb,aveh];
+
 
 const windows = {
   menu: {
