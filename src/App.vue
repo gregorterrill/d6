@@ -24,9 +24,9 @@
       <p :class="hpLevel">HP&nbsp;&nbsp;{{ store.player.hp }}/5</p>
       <p>XP&nbsp;&nbsp;{{ store.player.xp }}</p>
       <p>&nbsp;</p>
-      <!--<p>STATUS</p>
+      <p>STATUS</p>
       <p>{{ store.player.status.charAt(0).toUpperCase() + store.player.status.slice(1) }}</p>
-      <p>&nbsp;</p>-->
+      <p>&nbsp;</p>
       <p>INVENTORY</p>
       <p v-for="item in store.player.items">{{ item.charAt(0).toUpperCase() + item.slice(1) }}</p>
     </div>

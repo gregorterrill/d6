@@ -674,6 +674,7 @@ export default {
 	  			});
 	  			moved = true;
 	  			blocked = false;
+	  			store.player.status = 'disembarking';
 	  		
 	  		//activate land pip from land, or sea pip from boat
 	  		} else if ((this.getTileValue(targetTile) == '●' && !store.player.items.includes('boat')) ||
@@ -735,11 +736,9 @@ export default {
 	  				return;
 	  			}
 
-	  			//dont bother if the player is on a boat - overlaps mean they are under a bridge with an enemy on it
-	  			if (!store.player.items.includes('boat') || 
-	  				(store.player.items.includes('boat') && enemy.type === 'sea-serpent')) {
-
-		  			if (store.player.items.includes('sword')) {
+	  			//you're on land
+	  			if (!store.player.items.includes('boat') && store.player.status != 'disembarking') {
+	  				if (store.player.items.includes('sword')) {
 		  				//kill that sucker
 		  				store.currentLevel.enemies.splice(i,1);
 		  				store.player.xp++;
@@ -754,7 +753,22 @@ export default {
 			  			//move the player back to the tile they were on
 			  			this.moveEntityToTile(originTile);
 		  			}
-		  		}
+
+		  		//if you tried to disembark into an enemy, make it seem like you were blocked
+		  		} else if (store.player.status === 'disembarking') {
+		  			this.playSound('bump');
+		  			this.moveEntityToTile(originTile);
+
+		  		//you're on a boat, only sea things hurt you
+	  			} else {
+
+	  				if (enemy.type === 'sea-serpent') {
+	  					this.damagePlayer(2, enemy.type);
+	  					enemy.status = 'attacking';
+	  					this.moveEntityToTile(originTile);
+	  				}
+	  			}
+
 	  		}
 		  }, this);
 		},
