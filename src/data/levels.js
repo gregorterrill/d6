@@ -55,35 +55,24 @@ const levels = [{
     location: { 'face': 0, 'row': 1, 'col': 3 },
   }],
   enemies: [{
-    type: 'serpent',
-    location: { 'face': 0, 'row': 3, 'col': 3 },
+    type: 'sea-serpent',
+    location: { 'face': 0, 'row': 3, 'col': 6 },
     behavior: 'sentry',
     direction: 'right'
-  },{
-    type: 'serpent',
-    location: { 'face': 0, 'row': 4, 'col': 3 },
-    behavior: 'sentry',
-    direction: 'right'
-  },{
-    type: 'serpent',
-    location: { 'face': 0, 'row': 5, 'col': 3 },
-    behavior: 'sentry',
-    direction: 'right'
-  },{
-    type: 'serpent',
-    location: { 'face': 0, 'row': 6, 'col': 3 },
-    behavior: 'sentry',
+  }, {
+    type: 'purple-slime',
+    location: { 'face': 0, 'row': 3, 'col': 1 },
     direction: 'right'
   }],
   faces: [
     [
       ['X','X','X','X','X','X','X'],
-      ['X','X','X','X','X','X',' '], // ONE
-      ['X','X','X',' ','X','X',' '], // ↑ right edge of 5
-      ['X','X','X','X','X','Y',' '], // → top edge of 3
-      ['Y',' ',' ','X','X','Y',' '], // ↓ right edge of 2
-      [' ','Y','X','X','X','Y',' '], // ← bottom edge of 4
-      [' ','A','X','X','X',' ',' ']
+      ['X','X','X','X','X','X','X'], // ONE
+      ['X','X','X',' ','X','X','X'], // ↑ right edge of 5
+      ['W',' ',' ','X','X','X','X'], // → top edge of 3
+      ['X','X','X','X','X','X','X'], // ↓ right edge of 2
+      ['X','X','X','X','X','X','X'], // ← bottom edge of 4
+      ['X','X','X','X','X','X','X']
     ],
     [
       [' ',' ',' ',' ',' ',' ',' '],
@@ -349,7 +338,7 @@ const levels = [{
     location: { 'face': 0, 'row': 5, 'col': 2 },
   }],
   enemies: [{
-    type: 'serpent',
+    type: 'sea-serpent',
     location: { 'face': 0, 'row': 5, 'col': 5 },
     direction: 'left',
     behavior: 'sentry'
@@ -419,12 +408,12 @@ const levels = [{
     location: { 'face': 2, 'row': 4, 'col': 2 },
   }],
   enemies: [{
-    type: 'serpent',
+    type: 'sea-serpent',
     location: { 'face': 0, 'row': 1, 'col': 1 },
     direction: 'right',
     behavior: 'sentry'
   },{
-    type: 'serpent',
+    type: 'sea-serpent',
     location: { 'face': 0, 'row': 5, 'col': 1 },
     direction: 'right',
     behavior: 'sentry'
@@ -502,7 +491,7 @@ const levels = [{
     [
       ['A',' ',' ',' ',' ',' ',' '],
       ['A','Y',' ',' ','Y',' ',' '],
-      ['A',' ',' ',' ',' ','W',' '],
+      ['A','P',' ',' ',' ','W',' '],
       ['A','A',' ','●',' ','X','Y'],
       ['A','A','A',' ',' ','Y',' '],
       ['A','A',' ',' ','Y',' ',' '],

@@ -17,13 +17,6 @@ export default {
 	props: ['face', 'pips', 'tiles'],
 	components: {
 		tile
-	},
-	computed: {
-		unicode() {
-			let unicodeNum = 9855;
-			unicodeNum += parseInt(this.pips);
-			return '&#' + unicodeNum.toString() + ';';
-		}
 	}
 }
 </script>
@@ -39,11 +32,10 @@ export default {
 	font-size: 6em;
 	color: #000;
 	text-shadow: none;
-	//backface-visibility:hidden;
 	text-align:center;
 }
 
-#front 		{ transform: translateZ(224.5px);}
+#front 		{ transform: translateZ(225px);}
 #back 		{ transform: rotateY(180deg) rotateZ(180deg) translateZ(225px);}
 #right 		{ transform: rotateY(90deg) rotateZ(-90deg) translateZ(225px); }
 #left 		{ transform: rotateY(-90deg) rotateZ(-90deg) translateZ(225px); }

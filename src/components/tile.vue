@@ -313,7 +313,7 @@ export default {
 	background-position:0 -192px;
   animation:animateSprite 0.5s infinite;
 }
-.enemy--serpent {
+.enemy--sea-serpent {
 	background-position:0 -256px;
   animation:animateSprite 0.5s infinite;
 }
@@ -346,8 +346,7 @@ export default {
 // STUFF THAT GOES UNDER BRIDGES!
 .die__tile--bridge-hor,
 .die__tile--bridge-vert {
-	.player--boat,
-	.enemy--fireball { opacity:0.2; }
+	.player--boat { opacity:0.2; }
 }
 
 // ANIMATIONS

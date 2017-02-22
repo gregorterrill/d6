@@ -43,7 +43,7 @@ export default {
 		window.addEventListener('keyup', this.handleKeyPress);
   },
   mounted() {
-  	this.$refs['music'].volume = 0.25; //0.25;
+  	this.$refs['music'].volume = 0; //0.25;
   },
   data() {
   	return {
@@ -391,70 +391,66 @@ export default {
 		},
 
 		// check if a tile blocks movement
-		isTilePassable(targetTile, objectType = 'player') {
-			let passable = false;
+		// typeOfEntity will be either 'player', 
+		// the behavior of an enemy (eg. 'projectile'/'sentry'), 
+		// or just 'enemy' if it has no unique behavior
+		// OR 'lineOfSight' for very specific use case
+		isTilePassable(targetTile, typeOfEntity = 'player') {
+			let passable = false,
+					tileValue = this.getTileValue(targetTile);
 
-			//if you're on a boat, you can pass water and bridges
-			if (store.player.items.includes('boat') && objectType === 'player') {
+			//PLAYER ON BOAT
+			//boats can move through water and bridges
+			if (typeOfEntity === 'player' && store.player.items.includes('boat') && ['X','-','|'].includes(tileValue)) {
+				passable = true;
+			}
 
-				switch(this.getTileValue(targetTile)) {
-					case 'X':
-					case '-':
-					case '|':
-						passable = true;
-						break;
-				}
-
-			// projectiles can move over open water and open land, pits and bridges
-			} else if (objectType === 'projectile') {
+			//PLAYER ON FOOT		
+			if (typeOfEntity === 'player' && !store.player.items.includes('boat')) {
 				
-				switch(this.getTileValue(targetTile)) {
-					case 'X':
-					case ' ':
-					case '-':
-					case '|':
-					case 'P':
-						passable = true;
-						break;
-				}
+				//on foot, you can pass through most terrain
+				if ([' ','-','|','Y','W','P'].includes(tileValue)) {
+					passable = true;
 
-			// player on foot, and land-based enemies
-			} else {
-				switch(this.getTileValue(targetTile)) {
-					case ' ':
-					case '-':
-					case '|':
-					case 'Y':
-					case 'W':
-						passable = true;
-						break;
+				//if the player is trying to move onto a water tile, check if it has a boat on it
+				} else if (tileValue === 'X') {
+					for (let pickup of store.currentLevel.pickups) {
+						if (pickup.type === 'boat' && this.isEntityOnTile(pickup, targetTile)) {
+							passable = true;
+						}
+					}
 				}
 			}
 
-			//the player on foot only
-			if (!store.player.items.includes('boat') && objectType === 'player') {
-				switch(this.getTileValue(targetTile)) {
-
-					case 'P':
-						passable = true;
-						break;
-
-					//if the player is trying to move onto a water tile, check if it has a boat on it
-					case 'X':
-							for (let pickup of store.currentLevel.pickups) {
-								if (pickup.type === 'boat' && this.isObjectOnTile(pickup, targetTile)) {
-									passable = true;
-								}
-							}
-						break;
-				}
+			//PROJECTILES can move over open water and open land and pits
+			if (typeOfEntity === 'projectile' && ['X','P',' '].includes(tileValue)) {
+				passable = true;
 			}
 
-			//for enemies, we need to check if there's another (non-projectile) enemy on the tile
-			//as enemies can't move into other enemies
-			if (objectType === 'enemy') {
+			//LINE OF SIGHT is the same as projectiles, but is also blocked by enemies and pickups
+			if (typeOfEntity === 'lineOfSight' && ['X','P',' '].includes(tileValue)) {
+				passable = true;
+
 				for (let otherEnemy of store.currentLevel.enemies) {
-					if (this.isObjectOnTile(otherEnemy, targetTile) && otherEnemy.behavior != 'projectile') {
+					if (this.isEntityOnTile(otherEnemy, targetTile) && otherEnemy.behavior != 'projectile') {
+						passable = false;
+					}
+				}
+				for (let pickup of store.currentLevel.pickups) {
+					if (this.isEntityOnTile(pickup, targetTile) && pickup.type != 'message') {
+						passable = false;
+					}
+				}
+			}
+
+			//NORMAL ENEMIES can move through land, bridges, and trees
+			if (typeOfEntity === 'enemy' && [' ','-','|','Y'].includes(tileValue)) {
+				passable = true;
+
+				//for enemies, we need to check if there's another (non-projectile) enemy
+				//on the tile as enemies can't move into other enemies
+				for (let otherEnemy of store.currentLevel.enemies) {
+					if (this.isEntityOnTile(otherEnemy, targetTile) && otherEnemy.behavior != 'projectile') {
 						passable = false;
 					}
 				}
@@ -490,28 +486,28 @@ export default {
 			}
 		},
 
-		//check if an object is on a tile
-		isObjectOnTile(object, tile) {
+		//check if an entity is on a tile
+		isEntityOnTile(entity, tile) {
 			let onTile = false;
-			if (tile.face === object.location.face &&
-  				tile.row === object.location.row &&
-  				tile.col === object.location.col) {
+			if (tile.face === entity.location.face &&
+  				tile.row === entity.location.row &&
+  				tile.col === entity.location.col) {
 				onTile = true;
 			}
 			return onTile;
 		},
 
-		//move an object to target tile
-		//object is either 'player' or an object in currentLevel
-		moveObjectToTile(targetTile, object = 'player') {
+		//move an entity to target tile
+		//entity is either 'player' or an entity in currentLevel
+		moveEntityToTile(targetTile, entity = 'player') {
 
 			//if it's the player we need to also rotate the cube
-			if (object === 'player') {
+			if (entity === 'player') {
 				store.player.location = targetTile;
 				this.rotateDie(this.currentFace, targetTile.face);
 				this.currentFace = targetTile.face;
 			} else {
-				object.location = targetTile;
+				entity.location = targetTile;
 			}
 		},
 
@@ -692,7 +688,7 @@ export default {
 
 		  //perform the actual move
 		  if (moved) {
-		  	this.moveObjectToTile(targetTile);
+		  	this.moveEntityToTile(targetTile);
 
 		  	//close any open dialogs
 		  	store.windows.dialog.open = false;
@@ -730,7 +726,7 @@ export default {
 	  		enemy.status = 'active';
 
 	  		//check if player moved into enemy
-	  		if (this.isObjectOnTile(enemy, store.player.location)) {
+	  		if (this.isEntityOnTile(enemy, store.player.location)) {
 
 	  			//if you walk into a fireball, you die
 	  			if (enemy.behavior === 'projectile') {
@@ -741,7 +737,7 @@ export default {
 
 	  			//dont bother if the player is on a boat - overlaps mean they are under a bridge with an enemy on it
 	  			if (!store.player.items.includes('boat') || 
-	  				(store.player.items.includes('boat') && enemy.type === 'serpent')) {
+	  				(store.player.items.includes('boat') && enemy.type === 'sea-serpent')) {
 
 		  			if (store.player.items.includes('sword')) {
 		  				//kill that sucker
@@ -756,7 +752,7 @@ export default {
 			  			//attacking enemies dont move this turn
 			  			enemy.status = 'attacking';
 			  			//move the player back to the tile they were on
-			  			this.moveObjectToTile(originTile);
+			  			this.moveEntityToTile(originTile);
 		  			}
 		  		}
 	  		}
@@ -766,7 +762,7 @@ export default {
 		//player collects any pickups they're standing on
 		collectPickups() {
 			store.currentLevel.pickups.forEach(function (pickup, i) {
-				if (this.isObjectOnTile(pickup, store.player.location)) {
+				if (this.isEntityOnTile(pickup, store.player.location)) {
 
 					//messages open their content in a dialog
 					if (pickup.type == 'message') {
@@ -832,7 +828,7 @@ export default {
 						//check if there are any obstacles in the columns between and dont shoot if so
 						if (store.player.location.col < enemy.location.col) {
 							for (let i = store.player.location.col; i < enemy.location.col; i++) {
-								if (!this.isTilePassable({ 'face': enemy.location.face, 'row': enemy.location.row, 'col': i }, 'projectile')) {
+								if (!this.isTilePassable({ 'face': enemy.location.face, 'row': enemy.location.row, 'col': i }, 'lineOfSight')) {
 									shotBlocked = true;
 								}
 							}
@@ -882,7 +878,7 @@ export default {
 			// STEP 2: check if the tile is passable to see if we can move or if we need to do something else
 			if (this.isTilePassable(targetTile, enemyType)) {
 				//move and update the direction if we changed faces
-				this.moveObjectToTile(targetTile, enemy);
+				this.moveEntityToTile(targetTile, enemy);
 				enemy.direction = adjacentTile.newDirection;
 			
 			// projectiles fizzle if they can't move
@@ -896,7 +892,7 @@ export default {
 			}
 
 			// STEP 3: if we're touching the player, hurt the player and move back
-			if (this.isObjectOnTile(enemy, store.player.location)) {
+			if (this.isEntityOnTile(enemy, store.player.location)) {
 
 				//projectiles immediately kill you
 				if (enemy.behavior === 'projectile') {
@@ -907,7 +903,7 @@ export default {
 				} else if (!store.player.items.includes('boat')) {
 	  			this.damagePlayer(1, enemy.type);
 	  			//move the enemy back to the tile they were on
-			  	this.moveObjectToTile(originTile, enemy);
+			  	this.moveEntityToTile(originTile, enemy);
 			  	enemy.direction = originDirection;
 			  	enemy.status = 'attacking';
 	  		}
@@ -924,7 +920,7 @@ export default {
 
 	  		//kill enemies
 	  		for (let otherEnemy of store.currentLevel.enemies) {
-					if (this.isObjectOnTile(otherEnemy, enemy.location) && otherEnemy.behavior != 'projectile') {
+					if (this.isEntityOnTile(otherEnemy, enemy.location) && otherEnemy.behavior != 'projectile') {
 						otherEnemy.status = 'dead';
 						enemy.status = 'dead';
 						this.playSound('fizzle');
@@ -933,7 +929,7 @@ export default {
 
 				//stop at pickups, if its a boat, sink it
 				store.currentLevel.pickups.forEach(function (pickup, i) {
-					if (this.isObjectOnTile(pickup, enemy.location)) {
+					if (this.isEntityOnTile(pickup, enemy.location)) {
 						if (pickup.type === 'boat') {
 							pickup.type = 'debris';
 						}
