@@ -438,7 +438,10 @@ export default {
 				}
 				for (let pickup of store.currentLevel.pickups) {
 					if (this.isEntityOnTile(pickup, targetTile) && pickup.type != 'message') {
-						passable = false;
+						//fix for if player just got onto a boat
+						if (targetTile.col !== store.player.location.col) {
+							passable = false;
+						}
 					}
 				}
 			}

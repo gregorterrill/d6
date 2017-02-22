@@ -14,23 +14,11 @@ W town
 */
 
 const level = {
-  title: 'Blankland',
+  title: 'The Void',
   tileset: 'snow',
   entrance: { 'face': 0, 'row': 2, 'col': 3 },
-  pickups: [{
-    type: 'boat',
-    location: { 'face': 0, 'row': 1, 'col': 3 },
-  }],
-  enemies: [{
-    type: 'sea-serpent',
-    location: { 'face': 0, 'row': 3, 'col': 6 },
-    behavior: 'sentry',
-    direction: 'right'
-  }, {
-    type: 'purple-slime',
-    location: { 'face': 0, 'row': 3, 'col': 1 },
-    direction: 'right'
-  }],
+  pickups: [],
+  enemies: [],
   faces: [
     [
       [' ',' ',' ',' ',' ',' ',' '],

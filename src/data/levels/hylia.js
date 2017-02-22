@@ -5,6 +5,9 @@ const level = {
   pickups: [{
     type: 'boat',
     location: { 'face': 0, 'row': 5, 'col': 2 },
+  },{
+    type: 'debris',
+    location: { 'face': 0, 'row': 5, 'col': 3 },
   }],
   enemies: [{
     type: 'sea-serpent',

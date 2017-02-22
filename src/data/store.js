@@ -1,4 +1,4 @@
-import blankland from './levels/blankland.js'
+import thevoid from './levels/void.js'
 import tutoria from './levels/tutoria.js'
 import daventry from './levels/daventry.js'
 import hylia from './levels/hylia.js'
@@ -30,7 +30,7 @@ The Steppes of Tulga (Mount & Blade)
 The Ruins of Lordaeron (Warcraft)
 The Shores of Solstheim (Morrowind: Bloodmoon)
 */
-const levels = [blankland,tutoria,daventry,hylia,balamb,aveh];
+const levels = [thevoid,tutoria,daventry,hylia,balamb,aveh];
 
 
 const windows = {
