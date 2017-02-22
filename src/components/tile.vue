@@ -31,35 +31,37 @@ export default {
 					break;
 
 				case 'Y':
-					type += 'tree'
+					type += 'tree';
 					break;
 
 				case 'X':
-					type += 'water'
+					type += 'water';
+					type += ' die__tile--special'; //for transparency
 					break;
 
 				case 'V':
-					type += 'rocks'
+					type += 'rocks';
 					break;
 
 				case 'A':
-					type += 'mountain'
+					type += 'mountain';
 					break;
 
 				case 'W':
-					type += 'town'
+					type += 'town';
 					break;
 
 				case 'P':
-					type += 'pit'
+					type += 'pit';
 					break;
 
 				case '-':
-					type += 'bridge-hor'
+					type += 'bridge-hor';
 					break;
 
 				case '|':
-					type += 'bridge-vert'
+					type += 'bridge-vert';
+					type += ' die__tile--special'; //for rotation
 					break;
 
 				default:
@@ -132,8 +134,7 @@ export default {
 	display:block;
 }
 .die__tile,
-.die__tile--water::before,
-.die__tile--bridge-vert::before {
+.die__tile--special::before {
 	position:relative;
 	float:left;
 	width:64px;
@@ -158,86 +159,74 @@ export default {
 
 
 .die--tileset-desert {
-	.die__tile, .die__tile--water::before, .die__tile--bridge-vert::before { background-image:url('../assets/tiles-desert.png'); }
+	.die__tile, .die__tile--special::before { background-image:url('../assets/tiles-desert.png'); }
 }
 .die--tileset-snow {
-	.die__tile, .die__tile--water::before, .die__tile--bridge-vert::before { background-image:url('../assets/tiles-snow.png'); }
+	.die__tile, .die__tile--special::before { background-image:url('../assets/tiles-snow.png'); }
 }
 
 // TILE TYPES
 .die__tile--open {
 	background-position:0 0;
 }
-
 .die__tile--tree {
 	background-position:-64px 0;
 }
-
 .die__tile--pit {
 	background-position:-192px -64px;
 }
-
-.die__tile--water {
-	background-image:none !important;
-
-	&::before {
-		content: "";
-		position:absolute;
-		top:0;right:0;left:0;bottom:0;
-		opacity:0.85;
-		background-position-x: 0;
-		animation:animateTile 0.5s infinite;
-	}
-}
-
 .die__tile--rocks {
 	opacity:0.85;
 	background-position-x: -192px;
 	animation:animateTile 0.5s infinite;
 }
-
 .die__tile--bridge-hor {
 	background-position:0 -64px;
 }
+.die__tile--mountain {
+	background-position:-128px 0;
+}
+.die__tile--town {
+	background-position:-192px 0;
+}
+.die__tile--pip {
+	background-position:-128px -64px;
+}
+.die__tile--pip-active {
+	background-position-x: -128px;
+	animation:animateTile 0.5s infinite;
+}
+.die__tile--wpip {
+	opacity:0.85;
+	background-position:-64px -64px;
+}
+.die__tile--wpip-active {
+	opacity:0.85;
+	background-position-x: -64px;
+	animation:animateTile 0.5s infinite;
+}
 
-.die__tile--bridge-vert {
+//SPECIAL TILES
+//these tiles put the tile on a ::before element to apply an effect
+//that shouldnt also be applied to entities on the tile
+.die__tile--special {
 	background-image:none !important;
 
 	&::before {
 		content: "";
 		position:absolute;
 		top:0;right:0;left:0;bottom:0;
-		background-position:0 -64px;
-		transform:rotate(90deg);
+		background-position-x: 0;
 	}
 }
-
-.die__tile--mountain {
-	background-position:-128px 0;
-}
-
-.die__tile--town {
-	background-position:-192px 0;
-}
-
-.die__tile--pip {
-	background-position:-128px -64px;
-}
-
-.die__tile--pip-active {
-	background-position-x: -128px;
+.die__tile--water::before {
+	opacity:0.85;
+	background-position-x: 0;
 	animation:animateTile 0.5s infinite;
 }
-
-.die__tile--wpip {
-	opacity:0.85;
-	background-position:-64px -64px;
-}
-
-.die__tile--wpip-active {
-	opacity:0.85;
-	background-position-x: -64px;
-	animation:animateTile 0.5s infinite;
+.die__tile--bridge-vert::before {
+	background-position:0 -64px;
+	transform:rotate(90deg);
 }
 
 // GENERAL GAME ENTITIES

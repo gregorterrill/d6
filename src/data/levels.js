@@ -53,9 +53,6 @@ const levels = [{
   pickups: [{
     type: 'boat',
     location: { 'face': 0, 'row': 1, 'col': 3 },
-  },{
-    type: 'boat',
-    location: { 'face': 0, 'row': 2, 'col': 6 },
   }],
   enemies: [{
     type: 'serpent',
@@ -81,12 +78,12 @@ const levels = [{
   faces: [
     [
       ['X','X','X','X','X','X','X'],
-      ['X','X','X','X','X','X','X'], // ONE
-      ['X','X','X',' ','X','X','X'], // ↑ right edge of 5
-      ['X','X','X','X','X','X',' '], // → top edge of 3
-      ['X','X','X','X','X','X',' '], // ↓ right edge of 2
-      ['X','X','X','X','X','X',' '], // ← bottom edge of 4
-      ['X','X','X','X','X','X',' ']
+      ['X','X','X','X','X','X',' '], // ONE
+      ['X','X','X',' ','X','X',' '], // ↑ right edge of 5
+      ['X','X','X','X','X','Y',' '], // → top edge of 3
+      ['Y',' ',' ','X','X','Y',' '], // ↓ right edge of 2
+      [' ','Y','X','X','X','Y',' '], // ← bottom edge of 4
+      [' ','A','X','X','X',' ',' ']
     ],
     [
       [' ',' ',' ',' ',' ',' ',' '],
@@ -268,7 +265,7 @@ const levels = [{
     direction: 'down'
   },{
     type: 'purple-slime',
-    location: { 'face': 0, 'row': 5 , 'col': 1 },
+    location: { 'face': 0, 'row': 5 , 'col': 3 },
     direction: 'right'
   },{
     type: 'blue-slime',

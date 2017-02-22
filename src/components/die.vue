@@ -732,6 +732,13 @@ export default {
 	  		//check if player moved into enemy
 	  		if (this.isObjectOnTile(enemy, store.player.location)) {
 
+	  			//if you walk into a fireball, you die
+	  			if (enemy.behavior === 'projectile') {
+	  				this.damagePlayer(5, enemy.type);
+	  				enemy.status = 'dead';
+	  				return;
+	  			}
+
 	  			//dont bother if the player is on a boat - overlaps mean they are under a bridge with an enemy on it
 	  			if (!store.player.items.includes('boat') || 
 	  				(store.player.items.includes('boat') && enemy.type === 'serpent')) {
@@ -810,6 +817,8 @@ export default {
 		//activate a sentry enemy, which is stationary and shoots a seen player
 		activateSentry(enemy) {
 
+			let shotBlocked = false;
+
 			//check if the player is in the same face
 			if (store.player.location.face == enemy.location.face) {
 
@@ -820,19 +829,35 @@ export default {
 					//if the player is in this row, shoot at them
 					if (store.player.location.row == enemy.location.row) {
 
-						//TODO: check if there are any obstacles in the columns between and dont shoot if so
+						//check if there are any obstacles in the columns between and dont shoot if so
+						if (store.player.location.col < enemy.location.col) {
+							for (let i = store.player.location.col; i < enemy.location.col; i++) {
+								if (!this.isTilePassable({ 'face': enemy.location.face, 'row': enemy.location.row, 'col': i }, 'projectile')) {
+									shotBlocked = true;
+								}
+							}
+						} else {
+							for (let i = enemy.location.col + 1; i <= store.player.location.col; i++) {
+								if (!this.isTilePassable({ 'face': enemy.location.face, 'row': enemy.location.row, 'col': i }, 'projectile')) {
+									shotBlocked = true;
+								}
+							}
+						}
 					
-						enemy.status = 'attacking';
-						
-						//spawn a fireball at the sentry's location (it will move one tile in the correct direction
-						//because this loop will still run it at the end)
-						store.currentLevel.enemies.push({
-							'type': 'fireball',
-							'behavior': 'projectile',
-							'location': enemy.location,
-							'direction': enemy.direction,
-						});
-						this.playSound('fireball');
+						//fire
+						if (!shotBlocked) {
+							enemy.status = 'attacking';
+							
+							//spawn a fireball at the sentry's location (it will move one tile in the correct direction
+							//because this loop will still run it at the end)
+							store.currentLevel.enemies.push({
+								'type': 'fireball',
+								'behavior': 'projectile',
+								'location': enemy.location,
+								'direction': enemy.direction,
+							});
+							this.playSound('fireball');
+						}
 					}
 
 				//if the player is in the other direction, turn to face them
@@ -876,6 +901,7 @@ export default {
 				//projectiles immediately kill you
 				if (enemy.behavior === 'projectile') {
 					this.damagePlayer(5, enemy.type);
+					enemy.status = 'dead';
 
 				//dont do damage if the player is on a boat - overlaps mean they are under a bridge with an enemy on it
 				} else if (!store.player.items.includes('boat')) {
