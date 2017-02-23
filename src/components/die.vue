@@ -176,6 +176,8 @@ export default {
 					//TODO: dont allow other keypresses until this closes
 					break;
 
+				//MOVEMENT
+
 		    case 87: //w
 		    case 38: //up
 		    	if (store.player.location.face != this.currentFace) {
@@ -214,6 +216,8 @@ export default {
 		    	}
 		      break;
 
+		    // DIE ROTATIONS
+
 		    case 49: //number key 1
 		    case 50: //number key 2
 		    case 51: //number key 3
@@ -226,6 +230,18 @@ export default {
 
 		    case 48: //zero rotates back to current player face
 		    	this.resetDieRotation();
+		    	break;
+
+		    // LEVEL RESET
+		    case 82: //r
+		    	if (store.player.xp > 0) {
+		    		store.player.xp = Math.floor(store.player.xp / 2);
+		    		this.showDialog('<p>Level reset! You lost half your XP!');
+		    	}
+		    	this.showDialog('<p>Level reset!');
+					store.player.direction = 'right';
+					store.player.status = 'active';
+					this.goToLevel(store.currentLevelNum);
 		    	break;
 		  };
 		},
