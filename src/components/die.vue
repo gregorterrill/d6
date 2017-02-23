@@ -53,7 +53,7 @@ export default {
   	return {
   		currentFace: 0,
 	  	dieRotation: { x: 0, y: 0, z:0 },
-	  	sounds: ['step','bump','flame','sail','hit','die','pickup','fireball','fizzle','win'],
+	  	sounds: ['step','bump','flame','sail','hit','die','pickup','fireball','fizzle','win','unlock'],
 	  }
   },
   computed: {
@@ -426,17 +426,17 @@ export default {
 				}
 			}
 
-			//PROJECTILES can move over open water and open land, open gates and pits
-			if (typeOfEntity === 'projectile' && ['X','P',' ','I'].includes(tileValue)) {
+			//PROJECTILES can move over open water and open land, rocks, open gates and pits
+			if (typeOfEntity === 'projectile' && ['X','P',' ','I','V'].includes(tileValue)) {
 				passable = true;
 			}
 
 			//LINE OF SIGHT is the same as projectiles, but is also blocked by enemies and pickups
-			if (typeOfEntity === 'lineOfSight' && ['X','P',' ','I'].includes(tileValue)) {
+			if (typeOfEntity === 'lineOfSight' && ['X','P',' ','I','V'].includes(tileValue)) {
 				passable = true;
 
 				for (let otherEnemy of store.currentLevel.enemies) {
-					if (this.isEntityOnTile(otherEnemy, targetTile) && otherEnemy.behavior !== 'projectile') {
+					if (this.isEntityOnTile(otherEnemy, targetTile) && this.isAlive(otherEnemy)) {
 						passable = false;
 					}
 				}
@@ -457,7 +457,7 @@ export default {
 				//for enemies, we need to check if there's another (non-projectile) enemy
 				//on the tile as enemies can't move into other enemies
 				for (let otherEnemy of store.currentLevel.enemies) {
-					if (this.isEntityOnTile(otherEnemy, targetTile) && otherEnemy.behavior != 'projectile') {
+					if (this.isEntityOnTile(otherEnemy, targetTile) && this.isAlive(otherEnemy)) {
 						passable = false;
 					}
 				}
@@ -695,7 +695,7 @@ export default {
 			  	&& store.player.items.includes('key')) {
 			  	this.$set(this.level.faces[targetTile.face][targetTile.row], [targetTile.col], 'I');
 			  	store.player.items.splice(store.player.items.indexOf('key'),1);
-			  	this.showDialog('<p>You used your KEY to unlock the GATE!<p>');
+			  	this.showDialog('<p>You used your KEY to unlock the GATE!<p>', 'unlock');
 
 			  //you're just blocked
 			  } else {
@@ -744,16 +744,22 @@ export default {
 	  	//reset enemy status and check if player walked into an enemy
 	  	store.currentLevel.enemies.forEach(function (enemy, i) {
 
+	  		//if the enemy is already dead or dying, skip the interaction
+	  		if (enemy.status === 'dying' || enemy.status === 'dead') {
+	  			enemy.status = 'dead';
+	  			return;
+	  		}
+
 	  		//reset enemy status
 	  		enemy.status = 'active';
 
 	  		//check if player moved into enemy
 	  		if (this.isEntityOnTile(enemy, store.player.location)) {
 
-	  			//if you walk into a fireball, you die
+	  			//if you walk into a fireball, you die and it fizzles
 	  			if (enemy.behavior === 'projectile') {
 	  				this.damagePlayer(5, enemy.type);
-	  				enemy.status = 'dead';
+	  				enemy.status = 'dying';
 	  				return;
 	  			}
 
@@ -761,7 +767,7 @@ export default {
 	  			if (!store.player.items.includes('boat') && store.player.status != 'disembarking') {
 	  				if (store.player.items.includes('sword')) {
 		  				//kill that sucker
-		  				store.currentLevel.enemies.splice(i,1);
+		  				enemy.status = 'dying';
 		  				store.player.xp++;
 		  				store.player.status = 'attacking';
 		  				this.showDialog('<p>Defeated ' + enemy.type.replace('-',' ').toUpperCase() + ' and gained 1 XP!</p>', 'hit');
@@ -804,7 +810,11 @@ export default {
 				if (this.isEntityOnTile(pickup, store.player.location)) {
 
 					//messages open their content in a dialog
-					if (pickup.type == 'message') {
+					if (pickup.type === 'message') {
+						//inns are a special type of message that also fully heal the player
+						if (pickup.behavior === 'inn') {
+							this.healPlayer(5, pickup.type);
+						}
 						this.showDialog(pickup.content, false, true);
 
 					//sword that are on pedestals get replaced by empty pedestals
@@ -844,6 +854,11 @@ export default {
 
 			//activate all enemies - any new enemies created during this step (eg. fireballs) will be appended to the array and also activated this step
 			for (let enemy of store.currentLevel.enemies) {
+
+				//dying or dead enemies don't do anything, and they'll be cleared out
+				if (enemy.status === 'dying' || enemy.status === 'dead') {
+					continue;
+				}
 				
 				//sentries have unique activations
 				if (enemy.behavior === 'sentry') {
@@ -853,7 +868,7 @@ export default {
 				//this means the projectile can just get back around to the sentry that launched it and kill it
 				} else if (enemy.behavior === 'projectile') {
 					if (enemy.tilesMoved >= 28) {
-						enemy.status = 'dead';
+						enemy.status = 'dying';
 						this.playSound('fizzle');
 					} else {
 						this.activateEnemy(enemy);
@@ -925,6 +940,15 @@ export default {
 			}
 		},
 
+		//dead and dying things are not alive, neither are projectiles!
+		isAlive(enemy) {
+			let alive = true;
+			if (enemy.status === 'dying' || enemy.status === 'dead' || enemy.behavior === 'projectile') {
+				alive = false;
+			}
+			return alive;
+		},
+
 		//activate an individual moving enemy
 		activateEnemy(enemy) {
 
@@ -945,7 +969,7 @@ export default {
 			
 			// projectiles fizzle if they can't move
 			} else if (enemy.behavior === 'projectile') {
-				enemy.status = 'dead';
+				enemy.status = 'dying';
 				this.playSound('fizzle');
 
 			//regular enemies turn around if they can't move
@@ -959,7 +983,7 @@ export default {
 				//projectiles immediately kill you
 				if (enemy.behavior === 'projectile') {
 					this.damagePlayer(5, enemy.type);
-					enemy.status = 'dead';
+					enemy.status = 'dying';
 
 				//dont do damage if the player is on a boat - overlaps mean they are under a bridge with an enemy on it
 				} else if (!store.player.items.includes('boat')) {
@@ -971,20 +995,20 @@ export default {
 	  		}
 	  	}
 
-	  	// STEP 4: projectiles only - check if we're on an enemy, pip, or boat
+	  	// STEP 4: check for projectile collisions
 	  	if (enemy.behavior === 'projectile') {
 	  		//light pips
 	  		if (this.getTileValue(targetTile) === '●' || this.getTileValue(targetTile) === '▪') {
 	  			this.lightPip(targetTile);
-	  			enemy.status = 'dead';
+	  			enemy.status = 'dying';
 	  			//dont need to play fizzle sound as pip lighting noise will play
 	  		}
 
 	  		//kill enemies
 	  		for (let otherEnemy of store.currentLevel.enemies) {
-					if (this.isEntityOnTile(otherEnemy, enemy.location) && otherEnemy.behavior != 'projectile') {
-						otherEnemy.status = 'dead';
-						enemy.status = 'dead';
+					if (this.isEntityOnTile(otherEnemy, enemy.location) && this.isAlive(otherEnemy)) {
+						otherEnemy.status = 'dying';
+						enemy.status = 'dying';
 						this.playSound('fizzle');
 					}
 				}
@@ -995,12 +1019,22 @@ export default {
 						if (pickup.type === 'boat') {
 							pickup.type = 'debris';
 						}
-						enemy.status = 'dead';
+						enemy.status = 'dying';
 						this.playSound('fizzle');
 					}
 				}, this);
 
 				enemy.tilesMoved++;
+	  	
+	  	} else {
+	  		//check if normal enemies walked into projectiles
+				for (let otherEnemy of store.currentLevel.enemies) {
+					if (this.isEntityOnTile(otherEnemy, enemy.location) && otherEnemy.behavior === 'projectile' && otherEnemy.status !== 'dying') {
+						otherEnemy.status = 'dying';
+						enemy.status = 'dying';
+						this.playSound('fizzle');
+					}
+				}
 	  	}
 		},
 

@@ -1,7 +1,7 @@
 const level = {
   title: 'The Hills of Daventry',
   tileset: 'grass',
-  entrance: { 'face': 0, 'row': 2, 'col': 3 },
+  entrance: { 'face': 1, 'row': 3, 'col': 5 },
   pickups: [{
     type: 'sword',
     location: { 'face': 5, 'row': 5, 'col': 2 },
@@ -51,7 +51,7 @@ const level = {
       [' ','Y',' ','●','Y','X',' '],
       ['A','Y','Y','Y','Y','X','Y'],
       ['A','Y','Y','Y',' ','-',' '],
-      ['A','Y','A','A','A','X','A']
+      ['A','Y','A',' ','A','X','A']
     ],
     [
       [' ','Y','A','X','X','A','A'],

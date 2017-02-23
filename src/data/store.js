@@ -5,40 +5,7 @@ import hylia from './levels/hylia.js'
 import balamb from './levels/balamb.js'
 import aveh from './levels/aveh.js'
 import lutgholein from './levels/lut-gholein.js'
-/*
-TUTORIAL
-The Lost Land of Tutoria
 
-GRASS LEVELS
-The Hills of Daventry (King's Quest)
-The Mountains of Nibelheim (Final Fantasy 7)
-The Gardens of Balamb (Final Fantasy 8)
-The Lake of Hylia (Legend of Zelda)
-The Forest of Guardia (Chrono Trigger)
-The Fields of Alefgard (Dragon Warrior)
-
-DESERT LEVELS
-The Oasis of Aveh (Xenogears)
-The Dunes of Varant (Gothic 3)
-The Sands of Figaro (Final Fantasy 6)
-The Pits of Lut Gholein (Diablo 2)
-The Desert of Calico (Stardew Valley)
-
-SNOW LEVELS
-The Cliffs of Lothric (Dark Souls)
-The Outskirts of Bowerstone (Fable)
-The Steppes of Tulga (Mount & Blade)
-The Ruins of Lordaeron (Warcraft)
-The Shores of Solstheim (Morrowind: Bloodmoon)
-
-LAVA LEVELS
-The Volcano of Barrel (Super Mario RPG)
-The Caverns of Norfair (Super Metroid)
-The Cave of Wonder (Aladdin)
-The Catacombs of Tristram (Diablo)
-The Ashlands of Vvardenfell (Morrowind)
-
-*/
 const levels = [
   thevoid,
   tutoria,
@@ -48,6 +15,17 @@ const levels = [
   aveh,
   lutgholein
 ];
+
+const currentLevelNum = 6;
+
+const currentLevel = {
+  title: 'Hello World',
+  tileset: 'grass',
+  entrance: {},
+  pickups: [],
+  enemies: [],
+  faces: []
+};
 
 const windows = {
   menu: {
@@ -60,16 +38,6 @@ const windows = {
 };
 
 const pips = 0;
-const currentLevelNum = 0;
-
-const currentLevel = {
-  title: 'Hello World',
-  tileset: 'grass',
-  entrance: {},
-  pickups: [],
-  enemies: [],
-  faces: []
-};
 
 const player = {
   status: 'active',

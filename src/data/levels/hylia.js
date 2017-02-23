@@ -1,14 +1,27 @@
 const level = {
   title: 'The Lake of Hylia',
   tileset: 'grass',
-  entrance: { 'face': 0, 'row': 2, 'col': 3 },
+  entrance: { 'face': 4, 'row': 2, 'col': 3 },
   pickups: [{
+    type: 'message',
+    location: { 'face': 0, 'row': 2, 'col': 4 },
+    content: '<p>FISHERMAN: The SEA SERPENTS that live in the LAKE are usually fairly well-mannered. But I wouldn\'t get too close if I were you.</p>'
+  },{
     type: 'boat',
-    location: { 'face': 0, 'row': 5, 'col': 2 },
+    location: { 'face': 0, 'row': 3, 'col': 5 },
   }],
   enemies: [{
+    type: 'purple-slime',
+    location: { 'face': 2, 'row': 2, 'col': 4 },
+    direction: 'right'
+  },{
     type: 'sea-serpent',
     location: { 'face': 0, 'row': 5, 'col': 5 },
+    direction: 'left',
+    behavior: 'sentry'
+  },{
+    type: 'sea-serpent',
+    location: { 'face': 1, 'row': 1, 'col': 3 },
     direction: 'left',
     behavior: 'sentry'
   }],
@@ -16,19 +29,19 @@ const level = {
     [
       ['V','V','X','|','X','X','X'],
       ['X','X','X','|','X','X','X'],
-      ['X','X',' ',' ','Y','X','X'],
-      ['X','X',' ','●','Y','X','X'],
-      ['V','V',' ','Y','Y','X','X'],
-      ['X','X','X','X','X','X','X'],
+      ['X','X','Y',' ','W','X','X'],
+      ['X','X','A','●',' ','X','X'],
+      ['V','X','V','Y','Y','X','X'],
+      ['V','V','X','X','X','X','X'],
       ['X','X','X','X','X','V','X']
     ],
     [
-      ['A','A','X','X','A','A','X'],
-      ['A','Y','X','X','Y','●','A'],
-      ['X','X','X','X',' ','A','A'],
+      ['X','X','X','X','A','A','V'],
+      ['V','X','X','X','Y','●','A'],
+      ['V','X','X','X',' ','A','A'],
       ['X','X','V','X','X','X','X'],
-      ['V','V','V','V','X','X','X'],
-      ['X','▪','V','X','X','X','X'],
+      ['V','V','V','V','X','X','V'],
+      ['X','▪','V','X','X','X','V'],
       ['X','V','X','X','V','X','X']
     ],
     [
@@ -41,28 +54,28 @@ const level = {
       [' ','A','A','X','X','X','X']
     ],
     [
-      ['A','A','A','A','Y','A','Y'],
-      ['A','▪','X','X','Y','●','A'],
+      ['X','V','V','V','Y','A','Y'],
+      ['V','▪','X','X','Y','●','A'],
       ['X','V','V','X','X','A','A'],
       ['X','X','V','X','X','V','X'],
       ['X','V','V','X','A',' ','X'],
       ['V','▪','V','X','Y','●','X'],
-      ['X','X','V','X','V','V','V']
+      ['V','V','V','X','V','V','V']
     ],
     [
       ['X','X','X','A',' ',' ','X'],
       ['X','●',' ','A',' ','●','X'],
       ['X','Y','A','Y',' ','X','X'],
       ['V','A','Y','●',' ','-','-'],
-      ['X','Y',' ','Y','X','X','X'],
-      ['X','●',' ','X','X','▪','V'],
-      ['A','A','A','X','X','X','V']
+      ['X','V',' ','Y','X','X','X'],
+      ['X','▪','V','X','X','▪','V'],
+      ['V','V','V','X','X','X','V']
     ],
     [
-      [' ','A','Y','X','X','X','A'],
-      ['Y','●','Y','X','X','▪',' '],
-      ['Y',' ','Y','X','V','A','A'],
-      ['Y','●','Y','X',' ','●','Y'],
+      ['V','X','V','X','X','X','A'],
+      ['V','▪','V','X','X','▪',' '],
+      ['X','V','X','X','V','A','A'],
+      ['X','●','Y','X',' ','●','Y'],
       ['Y','Y','Y','X','V','Y','A'],
       ['Y','●','X','X','V','▪','A'],
       [' ','X','X','V','V','X','X']

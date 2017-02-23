@@ -276,7 +276,7 @@ export default {
 }
 .pickup--boat {
 	background-position:0 -448px;
-	animation:animateSprite 0.5s infinite;
+	animation:animateSpriteOne 0.5s infinite;
 }
 .pickup--debris {
 	background-position:0 -448px;
@@ -290,7 +290,7 @@ export default {
 // PLAYER ENTITIES
 .player {
 	background-position:0 0;
-  animation:animateSprite 0.5s infinite;
+  animation:animateSpriteOne 0.5s infinite;
   z-index:2;
 }
 .player--left {
@@ -298,77 +298,80 @@ export default {
 }
 .player--sword {
 	background-position:0 -64px;
-  animation:animateSprite 0.5s infinite;
+  animation:animateSpriteOne 0.5s infinite;
+}
+.player--attacking {
+	background-position:0 -64px;
+	animation:animateSpriteTwo 0.25s linear infinite alternate;
 }
 .player--hurt,
 .player--dead {
-	animation:playerHurt 0.5s linear infinite alternate;
-}
-.player--attacking {
-	animation:playerAttack 0.25s linear infinite alternate;
+	background-position:0 0;
+	animation:animateSpriteTwo 0.5s linear infinite alternate, flash 0.5s linear infinite alternate;
 }
 
 //PLAYER IN BOAT
 .player--boat {
 	background-position:0 -384px;
-  animation:animateSprite 0.5s infinite;
+  animation:animateSpriteOne 0.5s infinite;
 }
 .player--boat.player--hurt {
-	animation:playerShipHurt 0.5s linear infinite alternate;
+	animation:animateSpriteOne 0.5s linear infinite alternate,
+						flash 0.5s linear infinite alternate;
 }
 .player--boat.player--dead {
-	animation:playerShipwreck 0.5s linear infinite alternate;
+	animation:animateSpriteTwo 0.5s linear infinite alternate,
+						flash 0.5s linear infinite alternate;
 }
-
-// ENEMY ENTITY
-.enemy--blue-slime {
-	opacity:0.7;
-	background-position:0 -128px;
-  animation:animateSprite 0.5s infinite;
-}
-.enemy--purple-slime {
-	opacity:0.7;
-	background-position:0 -192px;
-  animation:animateSprite 0.5s infinite;
-}
-.enemy--sea-serpent {
-	background-position:0 -256px;
-  animation:animateSprite 0.5s infinite;
-}
-.enemy--fireball, 
-.enemy--fireball.enemy--attacking {
-	background-position:0 -256px;
-  animation:animateFireball 0.5s infinite;
-}
-.enemy--left,
-.enemy--down {
-	transform:scaleX(-1);
-}
-
-.enemy--fireball.enemy--down {
-	transform:rotate(90deg);
-}
-.enemy--fireball.enemy--up {
-	transform:rotate(-90deg);
-}
-
-.enemy--attacking {
-	animation:animateSpriteTwo 0.5s infinite;
-}
-
-.die--tileset-snow .enemy--blue-slime,
-.die--tileset-snow .enemy--purple-slime {
-	opacity:0.85;
-}
-
-// STUFF THAT GOES UNDER BRIDGES!
 .die__tile--bridge-hor,
 .die__tile--bridge-vert {
 	.player--boat { opacity:0.2; }
 }
 
+// ENEMY ENTITY
+.enemy--left,
+.enemy--down {
+	transform:scaleX(-1);
+}
+
+//SLIMES
+.enemy--blue-slime,
+.enemy--purple-slime {
+	opacity:0.7;
+	background-position:0 -128px;
+  animation:animateSpriteOne 0.5s infinite;
+  &.enemy--attacking { animation:animateSpriteTwo 0.5s infinite; }
+  &.enemy--dying { animation:animateSpriteOne 0.5s infinite, flash 0.5s linear infinite alternate; }
+}
+.enemy--purple-slime {
+	background-position:0 -192px;
+}
+.die--tileset-snow .enemy--blue-slime,
+.die--tileset-snow .enemy--purple-slime {
+	opacity:0.85;
+}
+
+//SERPENTS
+.enemy--sea-serpent {
+	background-position:0 -256px;
+  animation:animateSpriteOne 0.5s infinite;
+  &.enemy--attacking { animation:animateSpriteTwo 0.5s infinite; }
+  &.enemy--dying { animation:animateSpriteOne 0.5s infinite, flash 0.5s linear infinite alternate; }
+}
+
+//FIREBALLS
+.enemy--fireball {
+	background-position:0 -256px;
+	animation:animateSpriteThree 0.5s infinite;
+	&.enemy--attacking { animation:animateSpriteThree 0.5s infinite; }
+  &.enemy--dying { animation:animateSpriteFour 0.5s infinite, flash 0.5s linear infinite alternate; }
+  &.enemy--down { transform:rotate(90deg); }
+	&.enemy--up { transform:rotate(-90deg); }
+}
+
 // ANIMATIONS
-@keyframes animateSprite {
+// these ones are based on the columns in the spritesheet
+@keyframes animateSpriteOne {
 	0% {background-position-x:0;}
 	50% {background-position-x:0;}
   50.001% {background-position-x:-64px;}
@@ -380,47 +383,31 @@ export default {
   50.001% {background-position-x:-192px;}
   100% {background-position-x:-192px;}
 }
+@keyframes animateSpriteThree {
+	0% {background-position-x:-256px;}
+	50% {background-position-x:-256px;}
+  50.001% {background-position-x:-320px;}
+  100% {background-position-x:-320px;}
+}
+@keyframes animateSpriteFour {
+	0% {background-position-x:-384px;}
+	50% {background-position-x:-384px;}
+  50.001% {background-position-x:-448px;}
+  100% {background-position-x:-448px;}
+}
+@keyframes flash {
+	0% { opacity: 1; }
+	25 { opacity: 0.25; }
+	50% { opacity: 0.75 ;}
+  75% { opacity: 0.25; }
+  100% { opacity: 1; }
+}
+
+//tile animations are vertical instead
 @keyframes animateTile {
 	0% {background-position-y: -128px;}
 	50% {background-position-y: -128px;}
   50.001% {background-position-y: -192px;}
   100% {background-position-y: -192px;}
 }
-@keyframes animateFireball {
-	0% {background-position-x:-256px;}
-	50% {background-position-x:-256px;}
-  50.001% {background-position-x:-320px;}
-  100% {background-position-x:-320px;}
-}
-@keyframes playerHurt {
-	0% {opacity:1; background-position:-128px 0px;}
-	25 { opacity: 0.3; }
-	50% { opacity:0.7; background-position:-128px 0px;}
-  50.001% {background-position:-192px 0px;}
-  75% { opacity: 0.3; }
-  100% {opacity:1; background-position:-192px 0px;}
-}
-@keyframes playerShipHurt {
-	0% {opacity:1; background-position:0 -384px;}
-	25 { opacity: 0.3; }
-	50% { opacity:0.7; background-position:0 -384px;}
-  50.001% {background-position:-64px -384px;}
-  75% { opacity: 0.3; }
-  100% {opacity:1; background-position:-64px -384px;}
-}
-@keyframes playerShipwreck {
-	0% {opacity:1; background-position:-128px -384px;}
-	25 { opacity: 0.3; }
-	50% { opacity:0.7; background-position:-128px -384px;}
-  50.001% {background-position:-192px -384px;}
-  75% { opacity: 0.3; }
-  100% {opacity:1; background-position:-192px -384px;}
-}
-@keyframes playerAttack {
-	0% {background-position:-128px -64px;}
-	50% {background-position:-128px -64px;}
-  50.001% {background-position:-192px -64px;}
-  100% {background-position:-192px -64px;}
-}
-
 </style>
