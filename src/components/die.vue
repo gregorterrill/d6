@@ -740,6 +740,8 @@ export default {
 					blocked = false,
 					needEnemyStep = true;
 
+			console.log('DEBUG: Move player');
+
 			//reset player status
 			store.player.status = 'active';
 
@@ -969,8 +971,12 @@ export default {
 		// move enemies
 		doEnemyStep() {
 
+
+
 			//activate all enemies - any new enemies created during this step (eg. fireballs) will be appended to the array and also activated this step
 			for (let enemy of store.currentLevel.enemies) {
+
+				console.log('DEBUG: ' + enemy.type + ' is doing a step!');
 
 				//dying or dead enemies don't do anything, and they'll be cleared out
 				if (enemy.status === 'dying' || enemy.status === 'dead') {
@@ -1076,7 +1082,9 @@ export default {
 				adjacentTile = this.findAdjacentTile(originTile, this.getCounterClockwiseDirection(enemy.direction));
 				targetTile = adjacentTile.tile;
 
-				while (!moved) {
+				let directionsChecked = 0;
+
+				while (!moved && directionsChecked < 4) {
 					if (this.isTilePassable(targetTile, enemyBehavior)) {
 						//move and update the direction if we changed faces
 						this.moveEntityToTile(targetTile, enemy);
@@ -1087,6 +1095,7 @@ export default {
 						enemy.direction = this.getClockwiseDirection(enemy.direction);
 						adjacentTile = this.findAdjacentTile(originTile, this.getCounterClockwiseDirection(enemy.direction));
 						targetTile = adjacentTile.tile;
+						directionsChecked++;
 					}
 				}
 			//pacers and projectiles just try to go in the direction they're going

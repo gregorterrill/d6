@@ -20,7 +20,7 @@ const levels = [
   lutgholein
 ];
 
-const currentLevelNum = 3;
+const currentLevelNum = 6;
 
 const currentLevel = {
   title: 'Hello World',
