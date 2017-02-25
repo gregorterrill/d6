@@ -11,8 +11,8 @@ import guardia from './levels/guardia.js'
 const levels = [
   thevoid,
   tutoria,
-  alefgard,
   daventry,
+  alefgard,
   guardia,
   hylia,
   balamb,
@@ -20,7 +20,7 @@ const levels = [
   lutgholein
 ];
 
-const currentLevelNum = 0;
+const currentLevelNum = 3;
 
 const currentLevel = {
   title: 'Hello World',

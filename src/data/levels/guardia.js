@@ -11,6 +11,10 @@ const level = {
     type: 'key',
     location: { 'face': 3, 'row': 6, 'col': 3 },
     container: 'chest'
+  },{
+    type: 'message',
+    location: { 'face': 3, 'row': 3, 'col': 4 },
+    content: '<p>WOODCUTTER: The SKELETON in the FOREST is doomed to wander for all eternity. It\'s best to avoid him.</p>'
   }],
   enemies: [{
     type: 'skeleton',
@@ -57,7 +61,7 @@ const level = {
       ['F','Y','P','Y','P','Y','Y'],
       ['F','●','F','F','F','●','Y'], // FOUR
       ['F','F','Y','Y','Y','F','F'], // ↑ left edge of 6
-      ['Y','Y','Y',' ',' ','F',' '], // → bottom edge of 5
+      ['Y','Y','Y',' ','W','F',' '], // → bottom edge of 5
       ['F','F','Y',' ','Y','F','F'], // ↓ left edge of 1
       ['F','●','F','F','F','●','Y'], // ← top edge of 2
       ['F','Y','F',' ','Y','Y',' ']

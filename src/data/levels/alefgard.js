@@ -1,41 +1,32 @@
-/*
-LEGEND
-● unlit pip
-○ lit pip
-▪ unlit pip in water
-□ lit pip in water
-A mountain
-Y trees
-P pit
-X water
-V rocks in water
-- horizontal bridge
-| vertical bridge
-W town
-H closed gate
-I open gate
-
-PICKUPS
-type: (message,boat,debris,sword,potion,key)
-location: { 'face': 0, 'row': 0, 'col': 0 }
-container: (null,hidden,chest,stone)
-content: (html content, message type only)
-
-ENEMIES
-type: (purple-slime,blue-slime,sea-serpent)
-location: { 'face': 0, 'row': 0, 'col': 0 }
-direction: (left,right,up,down)
-behavior: (null,sentry,projectile)
-*/
-
 const level = {
-  title: 'The Fields of Alefgard (WIP)',
+  title: 'The Fields of Alefgard',
   tileset: 'grass',
   entrance: { 'face': 1, 'row': 3, 'col': 3 },
   pickups: [{
-    type: 'sword',
-    location: { 'face': 1, 'row': 1, 'col': 3 },
-    container: 'stone',
+    type: 'key',
+    location: { 'face': 3, 'row': 4, 'col': 4 },
+    container: 'chest',
+  },{
+    type: 'message',
+    location: { 'face': 1, 'row': 4, 'col': 3 },
+    content: '<p>SOLDIER: That fool GATEKEEPER lost the KEY to the GATE on a berry-picking trip in the FOREST. Now we can\'t get to the other side of the RIVER!</p>',
+    conditions: [{
+      type: 'hasItem',
+      value: 'key',
+      content: '<p>SOLDIER: Hey, you found the KEY! Can you unlock the GATE for us? I\'d do it myself but I can\'t leave my post!</p>',
+    },{
+      type: 'tileValue',
+      location: { 'face': 1, 'row': 3, 'col': 1 },
+      value: 'I',
+      content: '<p>SOLDIER: Thanks for unlocking the GATE! We owe you one!</p>',
+    }]
+  },{
+    type: 'message',
+    location: { 'face': 4, 'row': 5, 'col': 2 },
+    content: '<p>SAILOR: DON\'T TOUCH MY BOAT!</p>'
+  },{
+    type: 'boat',
+    location: { 'face': 4, 'row': 4, 'col': 2 }
   }],
   enemies: [{
     type: 'purple-slime',
@@ -53,61 +44,81 @@ const level = {
     type: 'blue-slime',
     location: { 'face': 0, 'row': 1, 'col': 5 },
     direction: 'down'
+  },{
+    type: 'purple-slime',
+    location: { 'face': 3, 'row': 4, 'col': 3 },
+    direction: 'up'
+  },{
+    type: 'purple-slime',
+    location: { 'face': 2, 'row': 2, 'col': 2 },
+    direction: 'down'
+  },{
+    type: 'blue-slime',
+    location: { 'face': 2, 'row': 3, 'col': 6 },
+    direction: 'right'
+  },{
+    type: 'blue-slime',
+    location: { 'face': 5, 'row': 4, 'col': 4 },
+    direction: 'right'
+  },{
+    type: 'blue-slime',
+    location: { 'face': 5, 'row': 6, 'col': 6 },
+    direction: 'left'
   }],
   faces: [
     [
-      [' ',' ',' ',' ',' ','X','X'],
+      [' ',' ','Y',' ',' ','X','X'],
       ['A',' ',' ',' ','Y',' ','X'], // ONE
-      [' ',' ','Y',' ',' ',' ','X'], // ↑ right edge of 5
-      [' ',' ',' ','●',' ',' ','X'], // → top edge of 3
-      [' ',' ',' ',' ',' ',' ',' '], // ↓ right edge of 2
+      [' ','Y','Y',' ',' ',' ','X'], // ↑ right edge of 5
+      ['F',' ',' ','●',' ',' ','X'], // → top edge of 3
+      ['F','Y',' ',' ',' ',' ',' '], // ↓ right edge of 2
       ['A','Y',' ',' ',' ',' ','A'], // ← bottom edge of 4
-      ['A','A',' ',' ',' ','Y','Y']
+      ['A','A','Y',' ',' ','Y','Y']
     ],
     [
-      [' ',' ',' ',' ',' ',' ','A'],
+      ['Y','F','Y',' ',' ',' ','A'],
       [' ','Y',' ',' ','Y','●','Y'], // TWO
       [' ',' ',' ','Y',' ','Y','Y'], // ↑ left edge of 4
       ['A','H','A',' ',' ','Y','Y'], // → bottom edge of 1
-      [' ',' ','A',' ',' ',' ',' '], // ↓ left edge of 3
-      [' ','●','A','A','Y',' ',' '], // ← top edge of 6
-      [' ','A','A','A',' ',' ',' ']
+      [' ','Y','A','W',' ',' ',' '], // ↓ left edge of 3
+      ['Y','●','A','A','Y',' ',' '], // ← top edge of 6
+      ['A','A','A','A',' ',' ',' ']
     ],
     [
-      [' ',' ',' ','X',' ',' ',' '],
-      [' ',' ',' ','X',' ','●',' '], // THREE
-      [' ',' ',' ','X','X',' ',' '], // ↑ right edge of 1
-      [' ',' ',' ','●','X',' ',' '], // → top edge of 5
-      ['A',' ',' ',' ','X',' ',' '], // ↓ right edge of 6
-      ['A','●',' ',' ','X',' ',' '], // ← bottom edge of 2
-      ['A','A',' ','X','X',' ',' ']
+      [' ','A','A','X','F','Y',' '],
+      [' ',' ','Y','X','F','●','Y'], // THREE
+      ['Y',' ',' ','X','X','F','F'], // ↑ right edge of 1
+      ['A','A',' ','▪','X','F','Y'], // → top edge of 5
+      ['A','Y','Y','Y','X','X',' '], // ↓ right edge of 6
+      ['A','●',' ','Y','X','Y','F'], // ← bottom edge of 2
+      ['A','A','X','X','X','Y','Y']
     ],
     [
-      [' ',' ',' ',' ','X',' ',' '],
-      [' ','●',' ',' ','X','●',' '], // FOUR
-      [' ',' ',' ',' ','X',' ',' '], // ↑ left edge of 6
-      [' ',' ',' ',' ','X','X',' '], // → bottom edge of 5
-      [' ',' ',' ',' ',' ','X','X'], // ↓ left edge of 1
-      ['Y','●',' ',' ',' ','●',' '], // ← top edge of 2
-      ['A',' ',' ',' ',' ',' ',' ']
+      [' ','F','F',' ','X',' ','Y'],
+      ['F','●','F','F','X','●',' '], // FOUR
+      ['F','Y','Y','Y','X','Y',' '], // ↑ left edge of 6
+      ['Y','F','F','Y','X','X','Y'], // → bottom edge of 5
+      [' ','F','Y','Y',' ','X','X'], // ↓ left edge of 1
+      ['Y','●','Y',' ','F','●',' '], // ← top edge of 2
+      ['A','F','F','Y','Y','F','Y']
     ],
     [
-      [' ',' ',' ',' ',' ',' ',' '],
-      [' ','●',' ',' ',' ','●','X'], // FIVE
-      [' ',' ',' ',' ',' ','X','X'], // ↑ right edge of 3
-      [' ',' ',' ','●','X','X',' '], // → top edge of 1
-      [' ',' ',' ',' ','X',' ',' '], // ↓ right edge of 4
-      [' ','●',' ',' ','X','●',' '], // ← bottom edge of 6
+      ['Y','F','F','Y','F','F','F'],
+      ['Y','●','F','Y','Y','●','X'], // FIVE
+      [' ','Y','F',' ','Y','X','X'], // ↑ right edge of 3
+      ['Y','F','F','▪','X','X',' '], // → top edge of 1
+      ['Y','F','X','X','X','Y','F'], // ↓ right edge of 4
+      ['Y','●','W','X','X','●','Y'], // ← bottom edge of 6
       [' ',' ',' ',' ','X',' ',' ']
     ],
     [
-      [' ',' ',' ','A',' ',' ',' '],
-      [' ','●',' ','A',' ','●','A'], // SIX
-      [' ',' ',' ','X','|','X','X'], // ↑ left edge of 2
-      [' ','●',' ','X',' ','●','X'], // → bottom edge of 3
-      ['X','X','X','X',' ',' ',' '], // ↓ left edge of 5
-      [' ','●',' ',' ',' ','●',' '], // ← top edge of 4
-      [' ',' ',' ',' ',' ',' ',' ']
+      [' ','Y',' ','A','Y',' ','Y'],
+      ['Y','●','Y','A',' ','●','A'], // SIX
+      ['F','F','Y','X','|','X','X'], // ↑ left edge of 2
+      ['F','▪','X','X','|','▪','X'], // → bottom edge of 3
+      ['X','X','X','X',' ',' ','Y'], // ↓ left edge of 5
+      [' ','●','F','F','Y','●',' '], // ← top edge of 4
+      [' ','Y','Y','Y',' ',' ',' ']
     ]
   ]
 }

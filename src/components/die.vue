@@ -180,6 +180,14 @@ export default {
 					this.goToLevel(store.currentLevelNum + 5);
 					break;
 
+				//DEBUG: WALLHACK
+				case 72: //h
+					store.player.hacking = true;
+					this.showDialog('<p>WALLHACK activated!');
+					break;
+
+				//MENU
+
 				case 27: //esc
 					store.windows.menu.open = true;
 					window.removeEventListener('keyup', this.handleKeyPress);
@@ -472,6 +480,11 @@ export default {
 		isTilePassable(targetTile, typeOfEntity = 'player') {
 			let passable = false,
 					tileValue = this.getTileValue(targetTile);
+
+			//DEBUG: WALLHACK
+			if (typeOfEntity === 'player' && store.player.hacking) {
+				passable = true;
+			}
 
 			//PLAYER ON BOAT
 			//boats can move through water and bridges
@@ -874,6 +887,22 @@ export default {
 		  return needEnemyStep;
 		},
 
+		//check if a condition is met
+		//this can either be the player having an item or a tile being set to a value
+		checkIfConditionMet(condition) {
+
+			let conditionMet = false;
+
+			if (condition.type === 'hasItem' && store.player.items.includes(condition.value)) {
+				conditionMet = true;
+
+			} else if (condition.type === 'tileValue' && this.getTileValue(condition.location) === condition.value) {
+				conditionMet = true;
+			}
+
+			return conditionMet;
+		},
+
 		//player collects any pickups they're standing on
 		collectPickups() {
 			store.currentLevel.pickups.forEach(function (pickup, i) {
@@ -885,7 +914,25 @@ export default {
 						if (pickup.behavior === 'inn') {
 							this.healPlayer(5, pickup.type);
 						}
-						this.showDialog(pickup.content, false, true);
+
+						//some messages show different versions based on whether conditions are met
+						if (pickup.conditions) {
+
+							let message = pickup.content;
+
+							pickup.conditions.forEach(function(condition, i) {
+								if (this.checkIfConditionMet(condition)) {
+									message = condition.content;
+								} else {
+									console.log('checked ' + condition.type + ' but it was false');
+								}
+							}, this);
+
+							this.showDialog(message, false, true);
+
+						} else {
+							this.showDialog(pickup.content, false, true);
+						}
 
 					//sword that are on pedestals get replaced by empty pedestals
 					//generic pickups open their chests
