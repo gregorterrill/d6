@@ -8,6 +8,7 @@
       <p>Use the arrows keys or WASD to move</p>
       <p>Press 1-6 to view the corresponding face</p>
       <p>Press 0 to reset the view</p>
+      <p>Press R to restart the current level (costs half your XP)<p>
       <p>Press ESC to toggle the menu</p>
       <p>&nbsp;</p>
       <p>ABOUT</p>

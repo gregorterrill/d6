@@ -58,7 +58,7 @@ ENEMIES
 type: (purple-slime,blue-slime,sea-serpent)
 location: { 'face': 0, 'row': 0, 'col': 0 }
 direction: (left,right,up,down)
-behavior: (null,sentry,projectile)
+behavior: (null,pacer,hugger,sentry,projectile)
 */
 
 const level = {

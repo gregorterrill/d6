@@ -104,7 +104,7 @@ export default {
 						enemy.location.row === this.row &&
 						enemy.location.col === this.col ) {
 
-					entity = 'enemy--' + enemy.type;
+					entity = 'enemy enemy--' + enemy.type;
 
 					if (enemy.status) {
 						entity += ' enemy--' + enemy.status;
@@ -122,7 +122,7 @@ export default {
 						pickup.location.row === this.row &&
 						pickup.location.col === this.col ) {
 
-					entity = 'pickup--' + pickup.type;
+					entity = 'pickup pickup--' + pickup.type;
 
 					if (pickup.container) {
 						entity += ' pickup--' + pickup.container;
@@ -266,6 +266,9 @@ export default {
 }
 
 // PICKUP ENTITIES
+.pickup {
+	z-index:3;
+}
 .pickup--chest {
 	background-position:-128px -320px;
 	&.pickup--taken {	background-position:-192px -320px; }
@@ -291,7 +294,7 @@ export default {
 .player {
 	background-position:0 0;
   animation:animateSpriteOne 0.5s infinite;
-  z-index:2;
+  z-index:5;
 }
 .player--left {
 	transform:scaleX(-1);
@@ -302,7 +305,7 @@ export default {
 }
 .player--attacking {
 	background-position:0 -64px;
-	animation:animateSpriteTwo 0.25s linear infinite alternate;
+	animation:animateSpriteTwo 0.25s linear 0s 3 alternate, animateSpriteOne 0.5s linear 1s infinite;
 }
 .player--hurt,
 .player--dead {
@@ -329,6 +332,9 @@ export default {
 }
 
 // ENEMY ENTITY
+.enemy {
+	z-index:4;
+}
 .enemy--left,
 .enemy--down {
 	transform:scaleX(-1);
@@ -337,18 +343,22 @@ export default {
 //SLIMES
 .enemy--blue-slime,
 .enemy--purple-slime {
-	opacity:0.7;
+	//opacity:0.85;
 	background-position:0 -128px;
   animation:animateSpriteOne 0.5s infinite;
   &.enemy--attacking { animation:animateSpriteTwo 0.5s infinite; }
-  &.enemy--dying { animation:animateSpriteOne 0.5s infinite, flash 0.5s linear infinite alternate; }
+  &.enemy--dying { animation:animateSpriteOne 0.5s infinite, flash 0.5s linear infinite alternate, disappear 0.5s linear 1s infinite; }
 }
 .enemy--purple-slime {
 	background-position:0 -192px;
 }
-.die--tileset-snow .enemy--blue-slime,
-.die--tileset-snow .enemy--purple-slime {
-	opacity:0.85;
+
+//SKELETONS
+.enemy--skeleton {
+	background-position:0 0;
+	animation:animateSpriteThree 0.5s infinite;
+	&.enemy--attacking { animation:animateSpriteFour 0.5s infinite; }
+  &.enemy--dying { animation:animateSpriteThree 0.5s infinite, flash 0.5s linear infinite alternate, disappear 0.5s linear 1s infinite; }
 }
 
 //SERPENTS
@@ -356,7 +366,7 @@ export default {
 	background-position:0 -256px;
   animation:animateSpriteOne 0.5s infinite;
   &.enemy--attacking { animation:animateSpriteTwo 0.5s infinite; }
-  &.enemy--dying { animation:animateSpriteOne 0.5s infinite, flash 0.5s linear infinite alternate; }
+  &.enemy--dying { animation:animateSpriteOne 0.5s infinite, flash 0.5s linear infinite alternate, disappear 0.5s linear 1s infinite; }
 }
 
 //FIREBALLS
@@ -364,7 +374,7 @@ export default {
 	background-position:0 -256px;
 	animation:animateSpriteThree 0.5s infinite;
 	&.enemy--attacking { animation:animateSpriteThree 0.5s infinite; }
-  &.enemy--dying { animation:animateSpriteFour 0.5s infinite, flash 0.5s linear infinite alternate; }
+  &.enemy--dying { animation:animateSpriteFour 0.5s infinite, flash 0.5s linear infinite alternate, disappear 0.5s linear 0.5s infinite; }
   &.enemy--down { transform:rotate(90deg); }
 	&.enemy--up { transform:rotate(-90deg); }
 }
@@ -401,6 +411,10 @@ export default {
 	50% { opacity: 0.75 ;}
   75% { opacity: 0.25; }
   100% { opacity: 1; }
+}
+@keyframes disappear {
+	0% { opacity: 0; }
+  100% { opacity: 0; }
 }
 
 //tile animations are vertical instead

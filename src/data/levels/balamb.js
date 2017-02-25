@@ -9,17 +9,19 @@ const level = {
   enemies: [{
     type: 'sea-serpent',
     location: { 'face': 0, 'row': 1, 'col': 1 },
-    direction: 'right',
-    behavior: 'sentry'
+    direction: 'right'
   },{
     type: 'sea-serpent',
     location: { 'face': 0, 'row': 5, 'col': 1 },
-    direction: 'right',
-    behavior: 'sentry'
+    direction: 'right'
   },{
     type: 'blue-slime',
     location: { 'face': 0, 'row': 1, 'col': 6 },
     direction: 'right',
+  },{
+    type: 'skeleton',
+    location: { 'face': 1, 'row': 1, 'col': 2 },
+    direction: 'down'
   }],
   faces: [
     [

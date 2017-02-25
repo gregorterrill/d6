@@ -5,10 +5,13 @@ import hylia from './levels/hylia.js'
 import balamb from './levels/balamb.js'
 import aveh from './levels/aveh.js'
 import lutgholein from './levels/lut-gholein.js'
+import alefgard from './levels/alefgard.js'
 
 const levels = [
+  
   thevoid,
   tutoria,
+  alefgard,
   daventry,
   hylia,
   balamb,
@@ -16,7 +19,7 @@ const levels = [
   lutgholein
 ];
 
-const currentLevelNum = 6;
+const currentLevelNum = 0;
 
 const currentLevel = {
   title: 'Hello World',

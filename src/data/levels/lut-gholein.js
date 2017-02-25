@@ -38,13 +38,11 @@ const level = {
   enemies: [{
     type: 'sea-serpent',
     location: { 'face': 4, 'row': 3, 'col': 4 },
-    direction: 'right',
-    behavior: 'sentry'
+    direction: 'right'
   },{
     type: 'sea-serpent',
     location: { 'face': 1, 'row': 3, 'col': 1 },
-    direction: 'left',
-    behavior: 'sentry'
+    direction: 'left'
   },{
     type: 'purple-slime',
     location: { 'face': 3, 'row': 2, 'col': 1 },

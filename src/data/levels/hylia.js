@@ -17,13 +17,11 @@ const level = {
   },{
     type: 'sea-serpent',
     location: { 'face': 0, 'row': 5, 'col': 5 },
-    direction: 'left',
-    behavior: 'sentry'
+    direction: 'left'
   },{
     type: 'sea-serpent',
     location: { 'face': 1, 'row': 1, 'col': 3 },
-    direction: 'left',
-    behavior: 'sentry'
+    direction: 'left'
   }],
   faces: [
     [

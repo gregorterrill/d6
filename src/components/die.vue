@@ -234,14 +234,17 @@ export default {
 
 		    // LEVEL RESET
 		    case 82: //r
-		    	if (store.player.xp > 0) {
+
+		    	let message = '<p>You restarted the level';
+		    	let xpLost = store.player.xp;
+					if (store.player.xp > 0) {
 		    		store.player.xp = Math.floor(store.player.xp / 2);
-		    		this.showDialog('<p>Level reset! You lost half your XP!');
+		    		xpLost -= store.player.xp;
+		    		message += ', losing ' + xpLost + ' XP';
 		    	}
-		    	this.showDialog('<p>Level reset!');
-					store.player.direction = 'right';
-					store.player.status = 'active';
+		    	message += '!</p>';
 					this.goToLevel(store.currentLevelNum);
+					this.showDialog(message);
 		    	break;
 		  };
 		},
@@ -405,6 +408,48 @@ export default {
 			return oppositeDirection;
 		},
 
+		getClockwiseDirection(direction){
+			let clockwiseDirection = 'left';
+
+			switch (direction) {
+				case 'right':
+					clockwiseDirection = 'down';
+					break;
+				case 'left':
+					clockwiseDirection = 'up';
+					break;
+				case 'up':
+					clockwiseDirection = 'right';
+					break;
+				case 'down':
+					clockwiseDirection = 'left';
+					break;
+			}
+
+			return clockwiseDirection;
+		},
+
+		getCounterClockwiseDirection(direction){
+			let clockwiseDirection = 'left';
+
+			switch (direction) {
+				case 'right':
+					clockwiseDirection = 'up';
+					break;
+				case 'left':
+					clockwiseDirection = 'down';
+					break;
+				case 'up':
+					clockwiseDirection = 'left';
+					break;
+				case 'down':
+					clockwiseDirection = 'right';
+					break;
+			}
+
+			return clockwiseDirection;
+		},
+
 		// get the contents of a tile, which will just be one character, eg. "X" for water
 		getTileValue(targetTile) {
 			return this.level.faces[targetTile.face][targetTile.row][targetTile.col];
@@ -412,8 +457,7 @@ export default {
 
 		// check if a tile blocks movement
 		// typeOfEntity will be either 'player', 
-		// the behavior of an enemy (eg. 'projectile'/'sentry'), 
-		// or just 'enemy' if it has no unique behavior
+		// the behavior of an enemy (eg. 'projectile'/'sentry'),
 		// OR 'lineOfSight' for very specific use case
 		isTilePassable(targetTile, typeOfEntity = 'player') {
 			let passable = false,
@@ -467,7 +511,7 @@ export default {
 			}
 
 			//NORMAL ENEMIES can move through land, bridges, gates, and trees
-			if (typeOfEntity === 'enemy' && [' ','-','|','Y','I'].includes(tileValue)) {
+			if ((typeOfEntity === 'pacer' || typeOfEntity === 'guard') && [' ','-','|','Y','I'].includes(tileValue)) {
 				passable = true;
 
 				//for enemies, we need to check if there's another (non-projectile) enemy
@@ -773,7 +817,7 @@ export default {
 	  		if (this.isEntityOnTile(enemy, store.player.location)) {
 
 	  			//if you walk into a fireball, you die and it fizzles
-	  			if (enemy.behavior === 'projectile') {
+	  			if (this.getEnemyBehavior(enemy) === 'projectile') {
 	  				this.damagePlayer(5, enemy.type);
 	  				enemy.status = 'dying';
 	  				return;
@@ -784,13 +828,13 @@ export default {
 	  				if (store.player.items.includes('sword')) {
 		  				//kill that sucker
 		  				enemy.status = 'dying';
-		  				store.player.xp++;
+		  				store.player.xp += this.getEnemyTier(enemy);
 		  				store.player.status = 'attacking';
-		  				this.showDialog('<p>Defeated ' + enemy.type.replace('-',' ').toUpperCase() + ' and gained 1 XP!</p>', 'hit');
+		  				this.showDialog('<p>Defeated ' + enemy.type.replace('-',' ').toUpperCase() + ' and gained ' + this.getEnemyTier(enemy) + ' XP!</p>', 'hit');
 
 		  			} else {
 		  				//hurt player
-			  			this.damagePlayer(1, enemy.type);
+		  				this.damagePlayer(this.getEnemyTier(enemy), enemy.type);
 			  			//attacking enemies dont move this turn
 			  			enemy.status = 'attacking';
 			  			//move the player back to the tile they were on
@@ -875,14 +919,16 @@ export default {
 				if (enemy.status === 'dying' || enemy.status === 'dead') {
 					continue;
 				}
+
+				let enemyBehavior = this.getEnemyBehavior(enemy);
 				
 				//sentries have unique activations
-				if (enemy.behavior === 'sentry') {
+				if (enemyBehavior === 'sentry') {
 					this.activateSentry(enemy);
 				
 				//if a projectile has circled the entire cube, fizzle it, otherwise it moves
 				//this means the projectile can just get back around to the sentry that launched it and kill it
-				} else if (enemy.behavior === 'projectile') {
+				} else if (enemyBehavior === 'projectile') {
 					if (enemy.tilesMoved >= 28) {
 						enemy.status = 'dying';
 						this.playSound('fizzle');
@@ -940,7 +986,6 @@ export default {
 							//because this loop will still run it at the end)
 							store.currentLevel.enemies.push({
 								'type': 'fireball',
-								'behavior': 'projectile',
 								'location': enemy.location,
 								'direction': enemy.direction,
 								'tilesMoved': 0
@@ -956,54 +1001,72 @@ export default {
 			}
 		},
 
-		//dead and dying things are not alive, neither are projectiles!
-		isAlive(enemy) {
-			let alive = true;
-			if (enemy.status === 'dying' || enemy.status === 'dead' || enemy.behavior === 'projectile') {
-				alive = false;
-			}
-			return alive;
-		},
-
 		//activate an individual moving enemy
 		activateEnemy(enemy) {
 
 			let targetTile = null,
 					originTile = enemy.location,
 					originDirection = enemy.direction,
-					adjacentTile = this.findAdjacentTile(originTile, enemy.direction),
-					enemyType = (enemy.behavior) ? enemy.behavior : 'enemy';
+					adjacentTile = null,
+					enemyBehavior = this.getEnemyBehavior(enemy),
+					moved = false;
+
+			
 
 			// STEP 1: get target tile to move to
-			targetTile = adjacentTile.tile;
-	
-			// STEP 2: check if the tile is passable to see if we can move or if we need to do something else
-			if (this.isTilePassable(targetTile, enemyType)) {
-				//move and update the direction if we changed faces
-				this.moveEntityToTile(targetTile, enemy);
-				enemy.direction = adjacentTile.newDirection;
-			
-			// projectiles fizzle if they can't move
-			} else if (enemy.behavior === 'projectile') {
-				enemy.status = 'dying';
-				this.playSound('fizzle');
+			if (enemyBehavior === 'guard') {
+				//guards hug walls, and continue searching until they find a way to move
+				adjacentTile = this.findAdjacentTile(originTile, this.getCounterClockwiseDirection(enemy.direction));
+				targetTile = adjacentTile.tile;
 
-			//regular enemies turn around if they can't move
+				while (!moved) {
+					if (this.isTilePassable(targetTile, enemyBehavior)) {
+						//move and update the direction if we changed faces
+						this.moveEntityToTile(targetTile, enemy);
+						enemy.direction = adjacentTile.newDirection;
+						moved = true;
+					} else {
+						//set up to try again
+						enemy.direction = this.getClockwiseDirection(enemy.direction);
+						adjacentTile = this.findAdjacentTile(originTile, this.getCounterClockwiseDirection(enemy.direction));
+						targetTile = adjacentTile.tile;
+					}
+				}
+			//pacers and projectiles just try to go in the direction they're going
 			} else {
-				enemy.direction = this.getOppositeDirection(enemy.direction);
+				adjacentTile = this.findAdjacentTile(originTile, enemy.direction);
+				targetTile = adjacentTile.tile;
+
+				if (this.isTilePassable(targetTile, enemyBehavior)) {
+					//move and update the direction if we changed faces
+					this.moveEntityToTile(targetTile, enemy);
+					enemy.direction = adjacentTile.newDirection;
+					moved = true;
+				
+				// projectiles fizzle if they can't move
+				} else if (enemyBehavior === 'projectile') {
+					enemy.status = 'dying';
+					this.playSound('fizzle');
+
+				//regular enemies turn around if they can't move
+				} else {
+					enemy.direction = this.getOppositeDirection(enemy.direction);
+				}
 			}
 
-			// STEP 3: if we're touching the player, hurt the player and move back
+			// STEP 2: if we're touching the player, hurt the player and move back
 			if (this.isEntityOnTile(enemy, store.player.location)) {
 
 				//projectiles immediately kill you
-				if (enemy.behavior === 'projectile') {
+				if (enemyBehavior === 'projectile') {
 					this.damagePlayer(5, enemy.type);
 					enemy.status = 'dying';
 
-				//dont do damage if the player is on a boat - overlaps mean they are under a bridge with an enemy on it
+				//do damage UNLESS the player is on a boat - overlaps mean they are under a bridge with an enemy on it
 				} else if (!store.player.items.includes('boat')) {
-	  			this.damagePlayer(1, enemy.type);
+					//hurt player
+  				this.damagePlayer(this.getEnemyTier(enemy), enemy.type);
+
 	  			//move the enemy back to the tile they were on
 			  	this.moveEntityToTile(originTile, enemy);
 			  	enemy.direction = originDirection;
@@ -1011,8 +1074,8 @@ export default {
 	  		}
 	  	}
 
-	  	// STEP 4: check for projectile collisions
-	  	if (enemy.behavior === 'projectile') {
+	  	// STEP 3: check for projectile collisions
+	  	if (enemyBehavior === 'projectile') {
 	  		//light pips
 	  		if (this.getTileValue(targetTile) === '●' || this.getTileValue(targetTile) === '▪') {
 	  			this.lightPip(targetTile);
@@ -1045,13 +1108,67 @@ export default {
 	  	} else {
 	  		//check if normal enemies walked into projectiles
 				for (let otherEnemy of store.currentLevel.enemies) {
-					if (this.isEntityOnTile(otherEnemy, enemy.location) && otherEnemy.behavior === 'projectile' && otherEnemy.status !== 'dying') {
+					if (this.isEntityOnTile(otherEnemy, enemy.location) && this.getEnemyBehavior(otherEnemy) === 'projectile' && otherEnemy.status !== 'dying') {
 						otherEnemy.status = 'dying';
 						enemy.status = 'dying';
 						this.playSound('fizzle');
 					}
 				}
 	  	}
+		},
+
+		//get damage and xp reward for an enemy
+		getEnemyTier(enemy) {
+			let tier = 1;
+
+			if (['purple-slime','blue-slime'].includes(enemy.type)) {
+				tier = 1;
+			} else if (['sea-serpent','skeleton'].includes(enemy.type)) {
+				tier = 2;
+			}
+
+			//allow manual overrides
+			if (enemy.tier) {
+				tier = enemy.tier;
+			}
+
+			return tier;
+		},
+
+		//get enemy behavior based on type
+		getEnemyBehavior(enemy) {
+			let behavior = false;
+
+			//pacers turn around when they hit an obstacle
+			if (['purple-slime','blue-slime'].includes(enemy.type)) {
+				behavior = 'pacer';
+			//sentries dont move, and shoot players in line of sight
+			} else if (['sea-serpent'].includes(enemy.type)) {
+				behavior = 'sentry';
+			//guards hug a wall and turn 90deg when they hit an obstacle
+			} else if (['skeleton'].includes(enemy.type)) {
+				behavior = 'guard';
+			//projectiles kill enemies and players in their path
+			} else if (['fireball','arrow'].includes(enemy.type)) {
+				behavior = 'projectile';
+			}
+
+			//allow manual overrides
+			if (enemy.behavior) {
+				behavior = enemy.behavior;
+			}
+
+			return behavior;
+
+		},
+
+		//dead and dying things are not alive, neither are projectiles!
+		isAlive(enemy) {
+			let alive = true;
+			if (enemy.status === 'dying' || enemy.status === 'dead' || this.getEnemyBehavior(enemy) === 'projectile') {
+				alive = false;
+			}
+			return alive;
 		},
 
 		healPlayer(amount = 1, cause = 'potion') {
@@ -1094,8 +1211,12 @@ export default {
 			if (store.player.hp === 0) {
 				store.player.status = 'dead';
 
+				//lose half your xp, rounded down
 				let xpLost = store.player.xp;
-				store.player.xp = 0;
+				if (store.player.xp > 0) {
+	    		store.player.xp = Math.floor(store.player.xp / 2);
+	    		xpLost -= store.player.xp;
+	    	}
 
 				message = message.slice(0,-5); //strip off "!</p>";
 				message += ', and you were DEFEATED! You lost ' + xpLost + ' XP!</p><p>&nbsp;<p>Press SPACE to RETRY.</p>';
@@ -1111,10 +1232,6 @@ export default {
 		//reset the player, reload the level, and re-enable normal keypresses
 		killPlayer(e) {
 			if (e.keyCode === 32) {
-				store.player.xp = 0;
-				store.player.direction = 'right';
-				store.player.status = 'active';
-				store.windows.dialog.open = false;
 				this.goToLevel(store.currentLevelNum);
 
 				window.removeEventListener('keyup', this.killPlayer);
@@ -1153,7 +1270,6 @@ export default {
 		//change levels and re-enable normal keypresses
 		completeLevel(e) {
 			if (e.keyCode === 32) {
-				store.windows.dialog.open = false;
 				this.goToLevel(store.currentLevelNum + 1);
 
 		  	window.removeEventListener('keyup', this.completeLevel);
@@ -1175,7 +1291,12 @@ export default {
 			store.player.location = store.currentLevel.entrance;
 			store.player.hp = 5;
 			store.player.items = ['torch'];
+			store.player.direction = 'right';
+			store.player.status = 'active';
 			store.pips = 0;
+
+			//close dialogs (so if you need to persist a dialog between level changes, call it after)
+			store.windows.dialog.open = false;
 			
 			//reset the rotation
 			this.resetDieRotation();
