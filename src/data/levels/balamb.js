@@ -1,5 +1,5 @@
 const level = {
-  title: 'The Gardens of Balamb',
+  title: 'The Gardens of Balamb (WIP)',
   tileset: 'grass',
   entrance: { 'face': 0, 'row': 2, 'col': 3 },
   pickups: [{

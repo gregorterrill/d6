@@ -29,7 +29,7 @@ behavior: (null,sentry,projectile)
 */
 
 const level = {
-  title: 'The Fields of Alefgard',
+  title: 'The Fields of Alefgard (WIP)',
   tileset: 'grass',
   entrance: { 'face': 1, 'row': 3, 'col': 3 },
   pickups: [{

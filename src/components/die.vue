@@ -153,6 +153,15 @@ export default {
 			}
 		},
 
+		//close menu on ESC press
+		closeMenu(e) {
+			if (e.keyCode === 27) {
+				store.windows.menu.open = false;
+				window.removeEventListener('keyup', this.closeMenu);
+				window.addEventListener('keyup', this.handleKeyPress);
+			}
+		},
+
 		// press some keys!
 		handleKeyPress(e) {
 			switch(e.keyCode) {
@@ -172,8 +181,9 @@ export default {
 					break;
 
 				case 27: //esc
-					store.windows.menu.open = !store.windows.menu.open;
-					//TODO: dont allow other keypresses until this closes
+					store.windows.menu.open = true;
+					window.removeEventListener('keyup', this.handleKeyPress);
+					window.addEventListener('keyup', this.closeMenu);
 					break;
 
 				//MOVEMENT

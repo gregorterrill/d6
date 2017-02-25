@@ -1,5 +1,5 @@
 const level = {
-  title: 'The Oasis of Aveh',
+  title: 'The Oasis of Aveh (WIP)',
   tileset: 'desert',
   entrance: { 'face': 0, 'row': 2, 'col': 3 },
   pickups: [{

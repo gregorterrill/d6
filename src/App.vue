@@ -2,7 +2,7 @@
   <div id="app">
 
     <div v-if="store.windows.menu.open" class="message message--full">
-      <p>MENU</p>
+      <p>~MENU~</p>
       <p>&nbsp;</p>
       <p>CONTROLS</p>
       <p>Use the arrows keys or WASD to move</p>
@@ -18,36 +18,23 @@
     <div v-if="store.windows.dialog.open" class="message message--dialog" v-html="store.windows.dialog.content"></div>
 
     <div class="message message--top-left">
-      <p>WORLD {{ store.currentLevelNum }}</p>
+      <p>~WORLD {{ store.currentLevelNum }}~</p>
       <p>{{ store.currentLevel.title }}<p>
     </div>
 
     <div class="message message--top-right">
-      <p>PIPS&nbsp;{{ store.pips }}/21</p>
-      <p>&nbsp;</p>
+      <p>~MENU~ESC~</p>
+      <br>
+      <p>PIPS</p>
+      <p>&nbsp;{{ store.pips }}/21</p>
+      <br>
       <p>STATUS</p>
-      <p :class="hpLevel">HP&nbsp;&nbsp;{{ store.player.hp }}/5</p>
-      <p>XP&nbsp;&nbsp;{{ store.player.xp }}</p>
-      <!--
-      <p>&nbsp;</p>
-      <p>STATUS</p>
-      <p>{{ store.player.status.charAt(0).toUpperCase() + store.player.status.slice(1) }}</p>
-      -->
-      <p>&nbsp;</p>
+      <p :class="hpLevel">&nbsp;HP&nbsp;{{ store.player.hp }}/5</p>
+      <p>&nbsp;XP&nbsp;{{ store.player.xp }}</p>
+      <br>
       <p>INVENTORY</p>
-      <p v-for="item in store.player.items">{{ item.charAt(0).toUpperCase() + item.slice(1).replace('-',' ') }}</p>
+      <p v-for="item in store.player.items">&nbsp;{{ item.charAt(0).toUpperCase() + item.slice(1).replace('-',' ') }}</p>
     </div>
-
-    <!--
-    <div class="message message--bottom-left">
-      <p>DieRPG, a game by <a href="http://gregorterrill.com" target="_blank">Gregor</a></p>
-    </div>
-
-
-     <div class="message message--bottom-right">
-      
-    </div>
-     -->
     
     <div class="die-container">
       <die :level="store.currentLevel"></die>
