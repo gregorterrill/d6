@@ -39,6 +39,7 @@ LEGEND
 □ lit pip in water
 A mountain
 Y trees
+F forest
 P pit
 X water
 V rocks in water

@@ -34,6 +34,10 @@ export default {
 					type += 'tree';
 					break;
 
+				case 'F':
+					type += 'forest';
+					break;
+
 				case 'X':
 					type += 'water';
 					type += ' die__tile--special'; //for transparency
@@ -185,6 +189,9 @@ export default {
 .die__tile--tree {
 	background-position:-64px 0;
 }
+.die__tile--forest {
+	background-position:-128px 0;
+}
 .die__tile--pit {
 	background-position:-192px -64px;
 }
@@ -197,16 +204,16 @@ export default {
 	background-position:0 -64px;
 }
 .die__tile--mountain {
-	background-position:-128px 0;
+	background-position:-256px 0;
 }
 .die__tile--town {
 	background-position:-192px 0;
 }
 .die__tile--gate-closed {
-	background-position:-256px 0;
+	background-position:-256px -128px;
 }
 .die__tile--gate-open {
-	background-position:-256px -64px;
+	background-position:-256px -192px;
 }
 .die__tile--pip {
 	background-position:-128px -64px;

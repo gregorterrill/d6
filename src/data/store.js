@@ -6,13 +6,14 @@ import balamb from './levels/balamb.js'
 import aveh from './levels/aveh.js'
 import lutgholein from './levels/lut-gholein.js'
 import alefgard from './levels/alefgard.js'
+import guardia from './levels/guardia.js'
 
 const levels = [
-  
   thevoid,
   tutoria,
   alefgard,
   daventry,
+  guardia,
   hylia,
   balamb,
   aveh,

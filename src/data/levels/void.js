@@ -15,11 +15,11 @@ const level = {
   faces: [
     [
       ['A','A','A','A','A','A','A'],
-      ['A',' ',' ',' ',' ',' ','A'], // ONE
-      ['A',' ',' ',' ',' ',' ','A'], // ↑ right edge of 5
+      ['A','F','F','Y',' ',' ','A'], // ONE
+      ['A','Y',' ',' ',' ',' ','A'], // ↑ right edge of 5
       ['A','A','A',' ','A','A','A'], // → top edge of 3
       ['A','A','A',' ','A','A','A'], // ↓ right edge of 2
-      ['A',' ',' ',' ',' ',' ','A'], // ← bottom edge of 4
+      ['A','F','Y',' ',' ',' ','A'], // ← bottom edge of 4
       ['A','A','A','A','A','A','A']
     ],
     [
