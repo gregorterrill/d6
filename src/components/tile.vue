@@ -174,12 +174,15 @@ export default {
   &:nth-of-type(1n+43) { border-bottom:none;}
 }
 
-
+// TILESETS
 .die--tileset-desert {
 	.die__tile, .die__tile--special::before { background-image:url('../assets/tiles-desert.png'); }
 }
 .die--tileset-snow {
 	.die__tile, .die__tile--special::before { background-image:url('../assets/tiles-snow.png'); }
+}
+.die--tileset-lava {
+	.die__tile, .die__tile--special::before { background-image:url('../assets/tiles-lava.png'); }
 }
 
 // TILE TYPES
@@ -253,6 +256,13 @@ export default {
 .die__tile--bridge-vert::before {
 	background-position:0 -64px;
 	transform:rotate(90deg);
+}
+
+.die--tileset-lava {
+	.die__tile--water::before,
+	.die__tile--wpip,
+	.die__tile--wpip-active,
+	.die__tile--rocks { opacity:1; }
 }
 
 // GENERAL GAME ENTITIES

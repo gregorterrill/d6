@@ -24,7 +24,7 @@ const level = {
   },{
     type: 'message',
     location: { 'face': 3, 'row': 5, 'col': 3 },
-    content: '<p>BLACKSMITH: I bet you could make short work of those SLIMES if you had a SWORD. Take mine! Just remember: you need be on the ATTACK. An ENEMY barrelling into you will always knock you down, armed or not.</p>'
+    content: '<p>BLACKSMITH: I bet you could make short work of those SLIMES if you had a SWORD. Take mine! Just remember: you need be on the ATTACK. An ENEMY barrelling into you will always knock you down, armed or not.</p><br><p>You got a SWORD!</p>'
   },{
     type: 'sword',
     location: { 'face': 3, 'row': 5, 'col': 3 },

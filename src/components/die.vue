@@ -182,8 +182,12 @@ export default {
 
 				//DEBUG: WALLHACK
 				case 72: //h
-					store.player.hacking = true;
-					this.showDialog('<p>WALLHACK activated!');
+					if (!store.player.hacking) {
+						store.player.hacking = true;
+					} else {
+						store.player.hacking = false;
+					}
+					this.showDialog('<p>WALLHACK toggled!');
 					break;
 
 				//MENU
@@ -740,8 +744,6 @@ export default {
 					blocked = false,
 					needEnemyStep = true;
 
-			console.log('DEBUG: Move player');
-
 			//reset player status
 			store.player.status = 'active';
 
@@ -908,6 +910,7 @@ export default {
 		//player collects any pickups they're standing on
 		collectPickups() {
 			store.currentLevel.pickups.forEach(function (pickup, i) {
+
 				if (this.isEntityOnTile(pickup, store.player.location)) {
 
 					//messages open their content in a dialog
@@ -920,28 +923,47 @@ export default {
 						//some messages show different versions based on whether conditions are met
 						if (pickup.conditions) {
 
-							let message = pickup.content;
+							let conditionalMessage = pickup.content;
 
 							pickup.conditions.forEach(function(condition, i) {
 								if (this.checkIfConditionMet(condition)) {
-									message = condition.content;
-								} else {
-									console.log('checked ' + condition.type + ' but it was false');
+									conditionalMessage = condition.content;
 								}
 							}, this);
 
-							this.showDialog(message, false, true);
+							this.showDialog(conditionalMessage, false, true);
 
 						} else {
+							//if you dont meet any of the conditions, show the default version of the message
 							this.showDialog(pickup.content, false, true);
 						}
+						//messages are done here
+						return;
+					}
 
-					//sword that are on pedestals get replaced by empty pedestals
+					//items arent attainable if theyre taken, or if they have a conditional you dont meet
+					let itemAttainable = (pickup.status === 'taken') ? false : true;
+
+					//check any conditions
+					if (pickup.conditions) {
+						pickup.conditions.forEach(function(condition, i) {
+							if (!this.checkIfConditionMet(condition)) {
+								itemAttainable = false;
+							}
+						}, this);
+					}
+
+					//if you can't get it, skip it
+					if (!itemAttainable) {
+						return;
+					}
+
+					//swords that are on pedestals get replaced by empty pedestals
 					//generic pickups open their chests
-					} else if (pickup.type !== 'boat' && pickup.status != 'hidden') {
+					if (pickup.type !== 'boat' && pickup.status !== 'hidden') {
 
 						//consumables are used right away
-						if (pickup.type === 'potion' && pickup.status !== 'taken') {
+						if (pickup.type === 'potion') {
 							if (store.player.hp < 5) {
 								pickup.status = 'taken';
 								this.healPlayer(2, pickup.type); //dialog will be shown by healPlayer
@@ -949,34 +971,32 @@ export default {
 								this.showDialog('<p>You found a ' + pickup.type.replace('-',' ').toUpperCase() + ' but decided to leave it for now. You might need it later if you hurt yourself!</p>', 'pickup');
 							}
 						//take the thing
-						} else if (pickup.status != 'taken') { 
+						} else { 
 							store.player.items.push(pickup.type);
 							pickup.status = 'taken';
 							this.showDialog('<p>You found a ' + pickup.type.replace('-',' ').toUpperCase() + '!</p>', 'pickup');
 						}
 
-					//all other pickups are added to inventory and removed from level
+					//all other pickups (including boats) are added to inventory and removed from level
 					} else {
 						store.player.items.push(pickup.type); 
 						store.currentLevel.pickups.splice(i,1);
 
+						//don't show a message for getting on a boat
 						if (pickup.type !== 'boat') { 
 							this.showDialog('<p>You found a ' + pickup.type.replace('-',' ').toUpperCase() + '!</p>', 'pickup');
 						}
 					}	
 				}
+
 			}, this);
 		},
 
 		// move enemies
 		doEnemyStep() {
 
-
-
 			//activate all enemies - any new enemies created during this step (eg. fireballs) will be appended to the array and also activated this step
 			for (let enemy of store.currentLevel.enemies) {
-
-				console.log('DEBUG: ' + enemy.type + ' is doing a step!');
 
 				//dying or dead enemies don't do anything, and they'll be cleared out
 				if (enemy.status === 'dying' || enemy.status === 'dead') {
@@ -1073,8 +1093,6 @@ export default {
 					adjacentTile = null,
 					enemyBehavior = this.getEnemyBehavior(enemy),
 					moved = false;
-
-			
 
 			// STEP 1: get target tile to move to
 			if (enemyBehavior === 'guard') {
@@ -1324,7 +1342,7 @@ export default {
 				];
 
 				store.player.xp += 10;
-				this.showDialog('<p>You brought LIGHT back to ' + store.currentLevel.title.toUpperCase() + '! ' + successPhrases[Math.floor(Math.random() * successPhrases.length)] + ' You gain 10 XP!</p><p>&nbsp;</p><p>Press SPACE to travel to a NEW WORLD.</p>', 'win', true);
+				this.showDialog('<p>You brought LIGHT back to ' + store.currentLevel.title.toUpperCase() + '! ' + successPhrases[Math.floor(Math.random() * successPhrases.length)] + ' You gain 10 XP!</p><br><p>Press SPACE to travel to a NEW WORLD.</p>', 'win', true);
 
 				//require a player input, then continue murdering player
 				window.removeEventListener('keyup', this.handleKeyPress);

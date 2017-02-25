@@ -12,7 +12,7 @@ const level = {
   },{
     type: 'message',
     location: { 'face': 0, 'row': 2, 'col': 4 },
-    content: '<p>VILLAGER: Have you come from TUTORIA? Save us too, while you\'re at it! The whole COUNTRYSIDE is overrun with SLIMES!</p>'
+    content: '<p>VILLAGER: There\'s an old legend in these parts about a powerful SWORD in a STONE! With the whole COUNTRYSIDE overrun with SLIMES, I bet that would come in handy!</p>'
   },{
     type: 'message',
     location: { 'face': 4, 'row': 2, 'col': 2 },

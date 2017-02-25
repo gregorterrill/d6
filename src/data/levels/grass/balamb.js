@@ -23,8 +23,16 @@ const level = {
     location: { 'face': 5, 'row': 0, 'col': 0 },
     direction: 'right'
   },{
+    type: 'sea-serpent',
+    location: { 'face': 1, 'row': 0, 'col': 0 },
+    direction: 'right'
+  },{
     type: 'blue-slime',
     location: { 'face': 0, 'row': 1, 'col': 6 },
+    direction: 'right',
+  },{
+    type: 'blue-slime',
+    location: { 'face': 5, 'row': 0, 'col': 5 },
     direction: 'right',
   },{
     type: 'skeleton',
@@ -62,9 +70,9 @@ const level = {
       ['X','V','V','X','Y','F','F'],
       ['-',' ','V','X','Y','●',' '], // THREE
       ['X','Y','X','X','X','Y',' '], // ↑ right edge of 1
-      ['X','Y','X','▪','X','Y',' '], // → top edge of 5
-      ['X',' ','X','X','X','Y',' '], // ↓ right edge of 6
-      ['X','●','A','Y','Y','Y',' '], // ← bottom edge of 2
+      ['Y','Y','X','▪','X','Y',' '], // → top edge of 5
+      ['Y',' ','X','X','X','Y',' '], // ↓ right edge of 6
+      ['Y','●','A','Y','Y','Y',' '], // ← bottom edge of 2
       ['X','F','F',' ',' ',' ',' ']
     ],
     [
@@ -81,14 +89,14 @@ const level = {
       [' ','●',' ','Y','F','●','F'], // FIVE
       [' ',' ','X','X','X','X','F'], // ↑ right edge of 3
       [' ',' ','X','●',' ','X','X'], // → top edge of 1
-      [' ','Y','X','X','X','Y',' '], // ↓ right edge of 4
-      [' ','●',' ','W','X','●','F'], // ← bottom edge of 6
+      [' ','Y','X',' ',' ','Y',' '], // ↓ right edge of 4
+      [' ','●','X','W',' ','●','F'], // ← bottom edge of 6
       ['X','X','X','X','X','X','F']
     ],
     [
-      ['X','X','X','X',' ',' ',' '],
-      [' ','●',' ','X',' ','●',' '], // SIX
-      [' ',' ',' ','X',' ',' ',' '], // ↑ left edge of 2
+      ['X','X','X','X','P',' ','F'],
+      [' ','●',' ','X','F','●','F'], // SIX
+      [' ',' ',' ','X','F','F','F'], // ↑ left edge of 2
       ['F','●',' ','X',' ','●',' '], // → bottom edge of 3
       [' ',' ',' ','X',' ',' ',' '], // ↓ left edge of 5
       [' ','●',' ','X',' ','●',' '], // ← top edge of 4

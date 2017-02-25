@@ -1,12 +1,28 @@
 import thevoid from './levels/void.js'
-import tutoria from './levels/tutoria.js'
-import daventry from './levels/daventry.js'
-import hylia from './levels/hylia.js'
-import balamb from './levels/balamb.js'
-import aveh from './levels/aveh.js'
-import lutgholein from './levels/lut-gholein.js'
-import alefgard from './levels/alefgard.js'
-import guardia from './levels/guardia.js'
+//GRASS LEVELS
+import tutoria from './levels/grass/tutoria.js'
+import daventry from './levels/grass/daventry.js'
+import hylia from './levels/grass/hylia.js'
+import balamb from './levels/grass/balamb.js'
+import alefgard from './levels/grass/alefgard.js'
+import guardia from './levels/grass/guardia.js'
+import nibelheim from './levels/grass/nibelheim.js'
+//SNOW LEVELS
+import tulga from './levels/snow/tulga.js'
+import solstheim from './levels/snow/solstheim.js'
+import lothric from './levels/snow/lothric.js'
+import lordaeron from './levels/snow/lordaeron.js'
+import bowerstone from './levels/snow/bowerstone.js'
+//DESERT LEVELS
+import aveh from './levels/desert/aveh.js'
+import varant from './levels/desert/varant.js'
+import calico from './levels/desert/calico.js'
+import figaro from './levels/desert/figaro.js'
+import lutgholein from './levels/desert/lut-gholein.js'
+//LAVA LEVELS
+import vvardenfell from './levels/lava/vvardenfell.js'
+import norfair from './levels/lava/norfair.js'
+import tristram from './levels/lava/tristram.js'
 
 const levels = [
   thevoid,
@@ -16,8 +32,20 @@ const levels = [
   guardia,
   hylia,
   balamb,
+  nibelheim,
+  tulga,
+  bowerstone,
+  lordaeron,
+  solstheim,
+  lothric,
+  calico,
   aveh,
-  lutgholein
+  figaro,
+  varant,
+  lutgholein,
+  vvardenfell,
+  norfair,
+  tristram
 ];
 
 const currentLevelNum = 6;

@@ -23,7 +23,7 @@ const level = {
   },{
     type: 'message',
     location: { 'face': 4, 'row': 5, 'col': 2 },
-    content: '<p>SAILOR: DON\'T TOUCH MY BOAT!</p>'
+    content: '<p>SEA CAPTAIN: You can borrow my BOAT, but you\'ve got to tell me how you get your hair like that. Are you using SLIME GOO?</p>'
   },{
     type: 'boat',
     location: { 'face': 4, 'row': 4, 'col': 2 }
