@@ -513,13 +513,13 @@ export default {
 				}
 			}
 
-			//PROJECTILES can move over open water and open land, rocks, open gates and pits
-			if (typeOfEntity === 'projectile' && ['X','P',' ','I','V'].includes(tileValue)) {
+			//PROJECTILES can move over open water and open land, rocks, open gates, bridges and pits
+			if (typeOfEntity === 'projectile' && ['X','P',' ','I','V','|','-'].includes(tileValue)) {
 				passable = true;
 			}
 
 			//LINE OF SIGHT is the same as projectiles, but is also blocked by enemies and pickups
-			if (typeOfEntity === 'lineOfSight' && ['X','P',' ','I','V'].includes(tileValue)) {
+			if (typeOfEntity === 'lineOfSight' && ['X','P',' ','I','V','|','-'].includes(tileValue)) {
 				passable = true;
 
 				for (let otherEnemy of store.currentLevel.enemies) {
@@ -1064,11 +1064,17 @@ export default {
 						//fire
 						if (!shotBlocked) {
 							enemy.status = 'attacking';
-							
-							//spawn a fireball at the sentry's location (it will move one tile in the correct direction
+
+							let projectileType = 'arrow';
+
+							if (enemy.type === 'sea-serpent') {
+								projectileType = 'fireball';
+							}
+
+							//spawn a projectile at the sentry's location (it will move one tile in the correct direction
 							//because this loop will still run it at the end)
 							store.currentLevel.enemies.push({
-								'type': 'fireball',
+								'type': projectileType,
 								'location': enemy.location,
 								'direction': enemy.direction,
 								'tilesMoved': 0
@@ -1160,8 +1166,9 @@ export default {
 
 	  	// STEP 3: check for projectile collisions
 	  	if (enemyBehavior === 'projectile') {
-	  		//light pips
-	  		if (this.getTileValue(targetTile) === '●' || this.getTileValue(targetTile) === '▪') {
+	  		
+	  		//fireballs light pips
+	  		if (enemy.type === 'fireball' && (this.getTileValue(targetTile) === '●' || this.getTileValue(targetTile) === '▪')) {
 	  			this.lightPip(targetTile);
 	  			enemy.status = 'dying';
 	  			//dont need to play fizzle sound as pip lighting noise will play
@@ -1205,7 +1212,7 @@ export default {
 		getEnemyTier(enemy) {
 			let tier = 1;
 
-			if (['purple-slime','blue-slime'].includes(enemy.type)) {
+			if (['purple-slime','blue-slime','skeleton-archer'].includes(enemy.type)) {
 				tier = 1;
 			} else if (['sea-serpent','skeleton'].includes(enemy.type)) {
 				tier = 2;
@@ -1227,7 +1234,7 @@ export default {
 			if (['purple-slime','blue-slime'].includes(enemy.type)) {
 				behavior = 'pacer';
 			//sentries dont move, and shoot players in line of sight
-			} else if (['sea-serpent'].includes(enemy.type)) {
+			} else if (['sea-serpent','skeleton-archer'].includes(enemy.type)) {
 				behavior = 'sentry';
 			//guards hug a wall and turn 90deg when they hit an obstacle
 			} else if (['skeleton'].includes(enemy.type)) {
@@ -1378,6 +1385,10 @@ export default {
 			store.player.direction = 'right';
 			store.player.status = 'active';
 			store.pips = 0;
+
+			//save progress to localstorage
+			localStorage.setItem('currentLevel', store.currentLevelNum);
+			localStorage.setItem('playerXP', store.player.xp);
 
 			//close dialogs (so if you need to persist a dialog between level changes, call it after)
 			store.windows.dialog.open = false;

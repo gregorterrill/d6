@@ -24,6 +24,8 @@ import vvardenfell from './levels/lava/vvardenfell.js'
 import norfair from './levels/lava/norfair.js'
 import tristram from './levels/lava/tristram.js'
 
+const currentLevelNum = 6;
+
 const levels = [
   thevoid,
   tutoria,
@@ -47,8 +49,6 @@ const levels = [
   norfair,
   tristram
 ];
-
-const currentLevelNum = 6;
 
 const currentLevel = {
   title: 'Hello World',

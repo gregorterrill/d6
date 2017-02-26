@@ -378,6 +378,13 @@ export default {
   &.enemy--dying { animation:animateSpriteThree 0.5s infinite, flash 0.5s linear infinite alternate, disappear 0.5s linear 1s infinite; }
 }
 
+.enemy--skeleton-archer {
+	background-position:0 -128px;
+	animation:animateSpriteThree 0.5s infinite;
+	&.enemy--attacking { animation:animateSpriteFour 0.5s infinite; }
+  &.enemy--dying { animation:animateSpriteThree 0.5s infinite, flash 0.5s linear infinite alternate, disappear 0.5s linear 1s infinite; }
+}
+
 //SERPENTS
 .enemy--sea-serpent {
 	background-position:0 -256px;
@@ -386,14 +393,19 @@ export default {
   &.enemy--dying { animation:animateSpriteOne 0.5s infinite, flash 0.5s linear infinite alternate, disappear 0.5s linear 1s infinite; }
 }
 
-//FIREBALLS
-.enemy--fireball {
+//PROJECTILES
+.enemy--fireball,
+.enemy--arrow {
 	background-position:0 -256px;
 	animation:animateSpriteThree 0.5s infinite;
 	&.enemy--attacking { animation:animateSpriteThree 0.5s infinite; }
   &.enemy--dying { animation:animateSpriteFour 0.5s infinite, flash 0.5s linear infinite alternate, disappear 0.5s linear 0.5s infinite; }
   &.enemy--down { transform:rotate(90deg); }
 	&.enemy--up { transform:rotate(-90deg); }
+}
+
+.enemy--arrow {
+	background-position:0 -192px;
 }
 
 // ANIMATIONS

@@ -46,6 +46,10 @@ const level = {
     type: 'skeleton',
     location: { 'face': 3, 'row': 3, 'col': 4 },
     direction: 'up'
+  },{
+    type: 'skeleton-archer',
+    location: { 'face': 3, 'row': 4, 'col': 4 },
+    direction: 'left'
   }],
   faces: [
     [
@@ -80,7 +84,7 @@ const level = {
       ['X','●',' ','F',' ','●','X'], // FOUR
       ['X','X','|','X','|','X','X'], // ↑ left edge of 6
       ['Y',' ',' ','X',' ',' ','F'], // → bottom edge of 5
-      ['F','Y',' ','-',' ','Y','F'], // ↓ left edge of 1
+      ['F',' ',' ','-',' ','Y','F'], // ↓ left edge of 1
       ['F','●',' ','X',' ','●','F'], // ← top edge of 2
       ['F','F','Y','X','Y','F','F']
     ],
