@@ -1,22 +1,7 @@
 <template>
   <div id="app">
 
-    <div v-if="store.windows.menu.open" class="message message--full">
-      <p>~MENU~</p>
-      <br>
-      <p>CONTROLS</p>
-      <p>Use the arrows keys or WASD to move and activate pips</p>
-      <p>Press 1-6 to view the corresponding face of the die</p>
-      <p>Press 0 to recenter the view on your current face</p>
-      <p>Press R to restart the current level (costs half your XP)<p>
-      <p>Press ESC to toggle the menu</p>
-      <br>
-      <p>HOW TO PLAY</p>
-      <p>Light the pips on each die face to progress to the next world. Your progress will be saved to your browser's local storage, so you can quit and start where you left off when you come back (just don't clear your browser cache - your progress will be lost!).</p>
-      <br>
-      <p>ABOUT</p>
-      <p>d6 was created by <a href="http://gregorterrill.com" target="_blank">Gregor Terrill</a>. You can read more about it on <a href="http://gregorterrill.com" target="_blank">this blog post</a>.</p>
-    </div>
+    <gamemenu v-if="store.windows.menu.open"></gamemenu>
 
     <div v-if="store.windows.dialog.open" class="message message--dialog" v-html="store.windows.dialog.content"></div>
 
@@ -47,12 +32,14 @@
 </template>
 
 <script>
+import gamemenu from './components/gamemenu.vue'
 import die from './components/die.vue'
 import store from './data/store.js'
 
 export default {
   name: 'app',
   components: {
+    gamemenu,
     die
   },
   data() {
@@ -73,10 +60,10 @@ export default {
     
     //get progress info from localstorage, if available
     if (localStorage.getItem('currentLevel') !== null) {
-      store.currentLevelNum = localStorage.getItem('currentLevel');
+      store.currentLevelNum = parseInt(localStorage.getItem('currentLevel'));
     }
     if (localStorage.getItem('playerXP') !== null) {
-      store.player.xp = localStorage.getItem('playerXP');
+      store.player.xp = parseInt(localStorage.getItem('playerXP'));
     }
 
     //copy the level data into currentLevel which we'll use - we don't want to ever actually
@@ -182,12 +169,6 @@ a {
   bottom:1rem;
   left:1rem;
   width:50vw;
-}
-
-.message--full {
-  z-index:101;
-  position:fixed;
-  top:1rem;right:1rem;bottom:1rem;left:1rem;
 }
 
 p.hp-critical {

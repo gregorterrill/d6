@@ -1009,10 +1009,10 @@ export default {
 				if (enemyBehavior === 'sentry') {
 					this.activateSentry(enemy);
 				
-				//if a projectile has circled the entire cube, fizzle it, otherwise it moves
-				//this means the projectile can just get back around to the sentry that launched it and kill it
+				//if a projectile has moved a certain number of faces (1 or 2), fizzle it, otherwise it moves
 				} else if (enemyBehavior === 'projectile') {
-					if (enemy.tilesMoved >= 28) {
+					if ((enemy.tilesMoved >= 14 && enemy.type === 'fireball') || 
+							(enemy.tilesMoved >= 7 && enemy.type === 'arrow')) {
 						enemy.status = 'dying';
 						this.playSound('fizzle');
 					} else {
