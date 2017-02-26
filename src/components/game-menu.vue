@@ -22,9 +22,11 @@
 
 				<div v-show="currentPanel === 0" class="menu__panel-content">
 			    <h2 class="menu__title">HOW TO PLAY</h2>
-			    <p>Light the pips on each die face to progress to the next world.</p>
+			    <p>Each world is a six-sided die(d6). Light the pips on each face of the die to progress to the next world.</p>
 					<br>
-			    <p>Enemies move after you move. If you move into a tile occupied by an enemy, you'll attack it. If you move into a tile and then an enemy moves into that same tile, it will attack you.</p>
+			    <p>Enemies move after you move. If you move into a tile occupied by an enemy, you'll attack it. If you move into a tile and then an enemy immediately moves into that same tile, it will attack you.</p>
+			    <br>
+			    <p>When your Hit Points(HP) reach zero, you die. If you die, you will restart the current level and lose half your Experience Points(XP).</p>
 			    <br>
 			    <p>Your progress is saved automatically so you can quit and start where you left off later.</p>
 		    </div>
@@ -54,7 +56,11 @@
 
 				<div v-show="currentPanel === 3" class="menu__panel-content">
 			    <h2 class="menu__title">ABOUT</h2>
-			    <p>d6 was created as an experiment in Vue by <a href="http://gregorterrill.com" target="_blank">Gregor Terrill</a>. You can read more about it on <a href="http://gregorterrill.com" target="_blank">this blog post</a>.</p>
+			    <p>d6 was created in 2017 as an experiment in Vue by <a href="http://gregorterrill.com" target="_blank">Gregor Terrill</a>, who did all the programming, artwork, and sound effects.</p>
+	  			<br>
+	  			<p>The background music is <a target="_blank" href="https://soundcloud.com/eric-skiff/come-and-find-me">Come and Find Me</a> by <a target="_blank" href="http://ericskiff.com/music/">Eric Skiff</a> and is used under the Creative Commons license.</p>
+	  			<br>
+	  			<p>You can read more about the game in <a href="http://gregorterrill.com" target="_blank">this blog post</a>.</p>
 	  		</div>
 
 	  	</div>
@@ -154,7 +160,7 @@ export default {
 .menu__menu {
   z-index:101;
   position:fixed;
-  top:25vh;right:1rem;bottom:25vh;left:1rem;
+  top:20vh;right:1rem;bottom:20vh;left:1rem;
 }
 .menu__panel {
 	position:absolute;

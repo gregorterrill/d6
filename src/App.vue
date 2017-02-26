@@ -1,10 +1,9 @@
 <template>
   <div id="app">
 
-    <gamemenu v-if="store.windows.menu.open"></gamemenu>
-
-    <div v-if="store.windows.dialog.open" class="message message--dialog" v-html="store.windows.dialog.content"></div>
-
+    <gameMenu v-if="store.windows.menu.open"></gameMenu>
+    <dialogWindow v-if="store.windows.dialog.open" :messages="store.windows.dialog.messages"></dialogWindow>
+   
     <div class="message message--top-left">
       <p>~WORLD {{ store.currentLevelNum }}~</p>
       <p>{{ store.currentLevel.title }}<p>
@@ -32,15 +31,17 @@
 </template>
 
 <script>
-import gamemenu from './components/gamemenu.vue'
+import gameMenu from './components/game-menu.vue'
+import dialogWindow from './components/dialog-window.vue'
 import die from './components/die.vue'
 import store from './data/store.js'
 
 export default {
   name: 'app',
   components: {
-    gamemenu,
-    die
+    gameMenu,
+    die,
+    dialogWindow
   },
   data() {
     return {
@@ -162,13 +163,6 @@ a {
   top:1rem;
   right:1rem;
   min-width: 13rem;
-}
-
-.message--dialog {
-  z-index:100;
-  bottom:1rem;
-  left:1rem;
-  width:50vw;
 }
 
 p.hp-critical {

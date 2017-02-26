@@ -14,7 +14,7 @@ const level = {
   },{
     type: 'message',
     location: { 'face': 3, 'row': 3, 'col': 4 },
-    content: '<p>WOODCUTTER: The SKELETON in the FOREST is doomed to wander for all eternity. It\'s best to avoid him.</p>'
+    content: 'WOODCUTTER: The SKELETON in the FOREST is doomed to wander for all eternity. It\'s best to avoid him.'
   }],
   enemies: [{
     type: 'skeleton',

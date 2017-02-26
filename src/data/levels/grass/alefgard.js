@@ -9,21 +9,21 @@ const level = {
   },{
     type: 'message',
     location: { 'face': 1, 'row': 4, 'col': 3 },
-    content: '<p>SOLDIER: That fool GATEKEEPER lost the KEY to the GATE on a berry-picking trip in the FOREST. Now we can\'t get to the other side of the RIVER!</p>',
+    content: 'SOLDIER: That fool GATEKEEPER lost the KEY to the GATE on a berry-picking trip in the FOREST. Now we can\'t get to the other side of the RIVER!',
     conditions: [{
       type: 'hasItem',
       value: 'key',
-      content: '<p>SOLDIER: Hey, you found the KEY! Can you unlock the GATE for us? I\'d do it myself but I can\'t leave my post!</p>',
+      content: 'SOLDIER: Hey, you found the KEY! Can you unlock the GATE for us? I\'d do it myself but I can\'t leave my post!',
     },{
       type: 'tileValue',
       location: { 'face': 1, 'row': 3, 'col': 1 },
       value: 'I',
-      content: '<p>SOLDIER: Thanks for unlocking the GATE! We owe you one!</p>',
+      content: 'SOLDIER: Thanks for unlocking the GATE! We owe you one!',
     }]
   },{
     type: 'message',
     location: { 'face': 4, 'row': 5, 'col': 2 },
-    content: '<p>SEA CAPTAIN: You can borrow my BOAT, but you\'ve got to tell me how you get your hair like that. Are you using SLIME GOO?</p>'
+    content: 'SEA CAPTAIN: You can borrow my BOAT, but you\'ve got to tell me how you get your hair like that. Are you using SLIME GOO?'
   },{
     type: 'boat',
     location: { 'face': 4, 'row': 4, 'col': 2 }

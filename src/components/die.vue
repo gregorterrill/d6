@@ -44,7 +44,7 @@ export default {
   },
   mounted() {
   	//set the music volume
-  	this.$refs['music'].volume = 0.25;
+  	this.$refs['music'].volume = 0; //0.25;
   	//rotate the cube to the player face
   	store.player.location = store.currentLevel.entrance;
   	this.resetDieRotation();
@@ -53,7 +53,7 @@ export default {
   	return {
   		currentFace: 0,
 	  	dieRotation: { x: 0, y: 0, z:0 },
-	  	sounds: ['step','bump','flame','sail','hit','die','pickup','fireball','fizzle','win','unlock'],
+	  	sounds: ['step','bump','flame','sail','hit','die','pickup','fireball','fizzle','arrow','win','unlock'],
 	  }
   },
   computed: {
@@ -187,7 +187,7 @@ export default {
 					} else {
 						store.player.hacking = false;
 					}
-					this.showDialog('<p>WALLHACK toggled!');
+					this.showDialog('WALLHACK toggled!');
 					break;
 
 				//MENU
@@ -257,14 +257,14 @@ export default {
 		    // LEVEL RESET
 		    case 82: //r
 
-		    	let message = '<p>You restarted the level';
+		    	let message = 'You restarted the level';
 		    	let xpLost = store.player.xp;
 					if (store.player.xp > 0) {
 		    		store.player.xp = Math.floor(store.player.xp / 2);
 		    		xpLost -= store.player.xp;
 		    		message += ', losing ' + xpLost + ' XP';
 		    	}
-		    	message += '!</p>';
+		    	message += '!';
 					this.goToLevel(store.currentLevelNum);
 					this.showDialog(message);
 		    	break;
@@ -567,12 +567,16 @@ export default {
 	  	this.checkForLevelComplete();
 		},
 
-		//display a dialog and optionally, play a sound. 
-		showDialog(messageContent, sound = false, overrideOtherMessages = false) {
+		//display a dialog and optionally, play a sound
+		//if you remove other messages, it only shows this one
+		showDialog(messageContent, sound = false, removeOtherMessages = false) {
 
-			if (!store.windows.dialog.open || (store.windows.dialog.open && overrideOtherMessages)) {
-				store.windows.dialog.open = true;
-				store.windows.dialog.content = messageContent;
+			store.windows.dialog.open = true;
+
+			if (overrideOtherMessages) {
+				store.windows.dialog.messages = [messageContent];
+			} else {
+				store.windows.dialog.messages.push(messageContent);
 			}
 
 			if (sound) {
@@ -782,7 +786,7 @@ export default {
 			  	&& store.player.items.includes('key')) {
 			  	this.$set(this.level.faces[targetTile.face][targetTile.row], [targetTile.col], 'I');
 			  	store.player.items.splice(store.player.items.indexOf('key'),1);
-			  	this.showDialog('<p>You used your KEY to unlock the GATE!<p>', 'unlock');
+			  	this.showDialog('You used your KEY to unlock the GATE!', 'unlock');
 
 			  //you're just blocked
 			  } else {
@@ -796,6 +800,7 @@ export default {
 
 		  	//close any open dialogs
 		  	store.windows.dialog.open = false;
+		  	store.windows.dialog.messages = [];
 
 		  	//play sound based on mode of travel
 		  	if (store.player.items.includes('boat')) {
@@ -857,7 +862,7 @@ export default {
 		  				enemy.status = 'dying';
 		  				store.player.xp += this.getEnemyTier(enemy);
 		  				store.player.status = 'attacking';
-		  				this.showDialog('<p>Defeated ' + enemy.type.replace('-',' ').toUpperCase() + ' and gained ' + this.getEnemyTier(enemy) + ' XP!</p>', 'hit');
+		  				this.showDialog('Defeated ' + enemy.type.replace('-',' ').toUpperCase() + ' and gained ' + this.getEnemyTier(enemy) + ' XP!', 'hit');
 
 		  			} else {
 		  				//hurt player
@@ -931,12 +936,18 @@ export default {
 								}
 							}, this);
 
-							this.showDialog(conditionalMessage, false, true);
+							this.showDialog(conditionalMessage, false);
 
 						} else {
 							//if you dont meet any of the conditions, show the default version of the message
-							this.showDialog(pickup.content, false, true);
+							this.showDialog(pickup.content, false);
 						}
+
+						//inns also need to show the healed message after their main text
+						if (pickup.behavior === 'inn') {
+							this.showDialog('You RESTED to recover full HP!', false);
+						}
+
 						//messages are done here
 						return;
 					}
@@ -968,13 +979,13 @@ export default {
 								pickup.status = 'taken';
 								this.healPlayer(2, pickup.type); //dialog will be shown by healPlayer
 							} else {
-								this.showDialog('<p>You found a ' + pickup.type.replace('-',' ').toUpperCase() + ' but decided to leave it for now. You might need it later if you hurt yourself!</p>', 'pickup');
+								this.showDialog('You found a ' + pickup.type.replace('-',' ').toUpperCase() + ' but decided to leave it for now. You might need it later if you hurt yourself!', 'pickup');
 							}
 						//take the thing
 						} else { 
 							store.player.items.push(pickup.type);
 							pickup.status = 'taken';
-							this.showDialog('<p>You found a ' + pickup.type.replace('-',' ').toUpperCase() + '!</p>', 'pickup');
+							this.showDialog('You found a ' + pickup.type.replace('-',' ').toUpperCase() + '!', 'pickup');
 						}
 
 					//all other pickups (including boats) are added to inventory and removed from level
@@ -984,7 +995,7 @@ export default {
 
 						//don't show a message for getting on a boat
 						if (pickup.type !== 'boat') { 
-							this.showDialog('<p>You found a ' + pickup.type.replace('-',' ').toUpperCase() + '!</p>', 'pickup');
+							this.showDialog('You found a ' + pickup.type.replace('-',' ').toUpperCase() + '!', 'pickup');
 						}
 					}	
 				}
@@ -1079,7 +1090,7 @@ export default {
 								'direction': enemy.direction,
 								'tilesMoved': 0
 							});
-							this.playSound('fireball');
+							this.playSound(projectileType);
 						}
 					}
 
@@ -1263,7 +1274,7 @@ export default {
 		},
 
 		healPlayer(amount = 1, cause = 'potion') {
-			let message = '<p>';
+			let message = '';
 
 			store.player.hp += amount;
 
@@ -1275,7 +1286,7 @@ export default {
 				message += 'You found a ' + cause.replace('-',' ').toUpperCase() + ' and took a swig. ';
 			}
 
-			message += 'You were healed ' + amount + ' HP!</p>';
+			message += 'You were healed ' + amount + ' HP!';
 			this.showDialog(message, 'pickup');
 		},
 
@@ -1292,9 +1303,9 @@ export default {
 			store.player.status = 'hurt';
 
 			if (cause === 'pit') {
-				message = '<p>You fell into a PIT taking ' + amount + ' DMG!</p>';
+				message = 'You fell into a PIT taking ' + amount + ' DMG!';
 			} else {
-				message = '<p>' + cause.replace('-',' ').toUpperCase() + ' hit you for ' + amount + ' DMG!</p>';
+				message = cause.replace('-',' ').toUpperCase() + ' hit you for ' + amount + ' DMG!';
 			}
 			this.showDialog(message, 'hit');
 
@@ -1309,10 +1320,11 @@ export default {
 	    		xpLost -= store.player.xp;
 	    	}
 
-				message = message.slice(0,-5); //strip off "!</p>";
-				message += ', and you were DEFEATED! You lost ' + xpLost + ' XP!</p><p>&nbsp;<p>Press SPACE to RETRY.</p>';
+				message = message.slice(0,-1); //strip off "!";
+				message += ', and you were DEFEATED! You lost ' + xpLost + ' XP!';
 
 				this.showDialog(message, 'die', true);
+				this.showDialog('Press SPACE to RETRY.');
 
 				//require a player input, then continue murdering player
 				window.removeEventListener('keyup', this.handleKeyPress);
@@ -1349,7 +1361,8 @@ export default {
 				];
 
 				store.player.xp += 10;
-				this.showDialog('<p>You brought LIGHT back to ' + store.currentLevel.title.toUpperCase() + '! ' + successPhrases[Math.floor(Math.random() * successPhrases.length)] + ' You gain 10 XP!</p><br><p>Press SPACE to travel to a NEW WORLD.</p>', 'win', true);
+				this.showDialog('You brought LIGHT back to ' + store.currentLevel.title.toUpperCase() + '! ' + successPhrases[Math.floor(Math.random() * successPhrases.length)] + ' You gain 10 XP!', 'win', true);
+				this.showDialog('Press SPACE to travel to a NEW WORLD.');
 
 				//require a player input, then continue murdering player
 				window.removeEventListener('keyup', this.handleKeyPress);
@@ -1392,6 +1405,7 @@ export default {
 
 			//close dialogs (so if you need to persist a dialog between level changes, call it after)
 			store.windows.dialog.open = false;
+			store.windows.dialog.messages = [];
 			
 			//reset the rotation
 			this.resetDieRotation();

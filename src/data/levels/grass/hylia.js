@@ -5,7 +5,7 @@ const level = {
   pickups: [{
     type: 'message',
     location: { 'face': 0, 'row': 2, 'col': 4 },
-    content: '<p>FISHERMAN: The SEA SERPENTS that live in the LAKE are usually fairly well-mannered. But I wouldn\'t get too close if I were you.</p>'
+    content: 'FISHERMAN: The SEA SERPENTS that live in the LAKE are usually fairly well-mannered. But I wouldn\'t get too close if I were you.'
   },{
     type: 'boat',
     location: { 'face': 0, 'row': 3, 'col': 5 },

@@ -1,66 +1,3 @@
-/*
-TUTORIAL
-*The Lost Land of Tutoria
-
-GRASS LEVELS
-*The Hills of Daventry (King's Quest)
-*The Lake of Hylia (Legend of Zelda)
--The Gardens of Balamb (Final Fantasy 8)
-The Mountains of Nibelheim (Final Fantasy 7)
--The Forest of Guardia (Chrono Trigger)
--The Fields of Alefgard (Dragon Warrior)
-
-DESERT LEVELS
-*The Pits of Lut Gholein (Diablo 2)
--The Oasis of Aveh (Xenogears)
-The Dunes of Varant (Gothic 3)
-The Sands of Figaro (Final Fantasy 6)
-The Desert of Calico (Stardew Valley)
-
-SNOW LEVELS
-The Cliffs of Lothric (Dark Souls)
-The Outskirts of Bowerstone (Fable)
-The Steppes of Tulga (Mount & Blade)
-The Ruins of Lordaeron (Warcraft)
-The Shores of Solstheim (Morrowind: Bloodmoon)
-
-LAVA LEVELS
-The Volcano of Barrel (Super Mario RPG)
-The Caverns of Norfair (Super Metroid)
-The Cave of Wonder (Aladdin)
-The Catacombs of Tristram (Diablo)
-The Ashlands of Vvardenfell (Morrowind)
-
-
-LEGEND
-● unlit pip
-○ lit pip
-▪ unlit pip in water
-□ lit pip in water
-A mountain
-Y trees
-F forest
-P pit
-X water
-V rocks in water
-- horizontal bridge
-| vertical bridge
-W town
-H closed gate
-I open gate
-
-PICKUPS
-type: (message,boat,debris,sword,potion,key)
-location: { 'face': 0, 'row': 0, 'col': 0 }
-container: (null,hidden,chest,stone)
-content: (html content, message type only)
-
-ENEMIES
-type: (purple-slime,blue-slime,sea-serpent)
-location: { 'face': 0, 'row': 0, 'col': 0 }
-direction: (left,right,up,down)
-behavior: (null,pacer,hugger,sentry,projectile)
-*/
 
 const level = {
   title: 'The Mountains of Nibelheim (WIP)',
@@ -69,11 +6,11 @@ const level = {
   pickups: [{
     type: 'message',
     location: { 'face': 2, 'row': 1, 'col': 1 },
-    content: '<p>MAYOR: Something\'s gone wrong up in the MOUNTAINS. If you\'re willing to investigate, I can give you the KEY to the MOUNTAIN PASS, but I\'m not sending you up there unarmed.</p>',
+    content: 'MAYOR: Something\'s gone wrong up in the MOUNTAINS. If you\'re willing to investigate, I can give you the KEY to the MOUNTAIN PASS, but I\'m not sending you up there unarmed.',
     conditions: [{
       type: 'hasItem',
       value: 'sword',
-      content: '<p>MAYOR: Alright, looks like you\'re ready. Be careful up there!</p><br><p>You got a KEY!</p>',
+      content: 'MAYOR: Alright, looks like you\'re ready. Be careful up there!',
     }]
   },{
     type: 'key',
@@ -166,13 +103,13 @@ const level = {
       ['F','Y','Y','Y','F','A','A']
     ],
     [
-      ['A',' ','A',' ','A',' ',' '],
-      ['A','●','A',' ',' ','●',' '], // FOUR
+      ['A',' ','A',' ','A','A','A'],
+      ['A','●','A',' ','A','●','A'], // FOUR
       ['A','A','Y',' ',' ',' ',' '], // ↑ left edge of 6
-      ['A','A',' ',' ',' ',' ',' '], // → bottom edge of 5
-      ['A',' ',' ',' ',' ',' ',' '], // ↓ left edge of 1
-      ['A','●',' ',' ',' ','●',' '], // ← top edge of 2
-      ['A',' ',' ',' ',' ',' ',' ']
+      ['A','A',' ',' ',' ','A','A'], // → bottom edge of 5
+      ['A',' ',' ',' ',' ',' ','A'], // ↓ left edge of 1
+      ['A','●',' ',' ',' ','●','A'], // ← top edge of 2
+      ['A',' ',' ',' ',' ',' ','A']
     ],
     [
       ['A','A','A','A','A','A','A'],

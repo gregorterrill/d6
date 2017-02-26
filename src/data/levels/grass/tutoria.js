@@ -5,26 +5,26 @@ const level = {
   pickups: [{
     type: 'message',
     location: { 'face': 0, 'row': 1, 'col': 3 },
-    content: '<p>VILLAGE ELDER: The DARKNESS has brought EVIL to our world. You must light all the PIPS with your MAGIC TORCH to save us!</p>'
+    content: 'VILLAGE ELDER: The DARKNESS has brought EVIL to our world. You must light all the PIPS with your MAGIC TORCH to save us!'
   },{
     type: 'message',
     location: { 'face': 1, 'row': 1, 'col': 3 },
-    content: '<p>TOWN GUARD: Don\'t be fooled by their adorable appearance! SLIMES are dangerous and will ATTACK you if you get in their way!</p>'
+    content: 'TOWN GUARD: Don\'t be fooled by their adorable appearance! SLIMES are dangerous and will ATTACK you if you get in their way!'
   },{
     type: 'message',
     location: { 'face': 2, 'row': 3, 'col': 1 },
-    content: '<p>BARKEEP: You ever notice that BLUE and PURPLE SLIMES never seem to move the same way? Kinda unsettlin\'.</p>'
+    content: 'BARKEEP: You ever notice that BLUE and PURPLE SLIMES never seem to move the same way? Kinda unsettlin\'.'
   },{
     type: 'message',
     location: { 'face': 4, 'row': 3, 'col': 4 },
-    content: '<p>HARBORMASTER: You can\'t just go around stealing BOATS. You probably don\'t even know how to land safely on OPEN SHORE. Why, I bet you\'ve never even lit a SEA PIP with the ocean breeze blowing in your hair!</p>'
+    content: 'HARBORMASTER: You can\'t just go around stealing BOATS. You probably don\'t even know how to land safely on OPEN SHORE. Why, I bet you\'ve never even lit a SEA PIP with the ocean breeze blowing in your hair!'
   },{
     type: 'boat',
     location: { 'face': 4, 'row': 4, 'col': 4 },
   },{
     type: 'message',
     location: { 'face': 3, 'row': 5, 'col': 3 },
-    content: '<p>BLACKSMITH: I bet you could make short work of those SLIMES if you had a SWORD. Take mine! Just remember: you need be on the ATTACK. An ENEMY barrelling into you will always knock you down, armed or not.</p><br><p>You got a SWORD!</p>'
+    content: 'BLACKSMITH: I bet you could make short work of those SLIMES if you had a SWORD. Take mine! Just remember: you need be on the ATTACK. An ENEMY barrelling into you will always knock you down, armed or not.'
   },{
     type: 'sword',
     location: { 'face': 3, 'row': 5, 'col': 3 },
@@ -32,7 +32,7 @@ const level = {
   },{
     type: 'message',
     location: { 'face': 5, 'row': 3, 'col': 3 },
-    content: '<p>LOCAL MYSTIC: The LIGHT is returning to our land at long last! You must be the HERO the PROPHECY foretold!</p>'
+    content: 'LOCAL MYSTIC: The LIGHT is returning to our land at long last! You must be the HERO the PROPHECY foretold!'
   }],
   enemies: [{
     type: 'purple-slime',

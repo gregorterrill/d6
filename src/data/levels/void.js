@@ -2,7 +2,11 @@ const level = {
   title: 'The Void',
   tileset: 'snow',
   entrance: { 'face': 0, 'row': 2, 'col': 3 },
-  pickups: [],
+  pickups: [{
+    type: 'sword',
+    location: { 'face': 0, 'row': 5, 'col': 5 },
+    container: 'stone',
+  }],
   enemies: [{
     type: 'skeleton-archer',
     location: { 'face': 0, 'row': 2 , 'col': 5 },

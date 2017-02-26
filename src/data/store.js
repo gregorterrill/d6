@@ -1,4 +1,5 @@
 import thevoid from './levels/void.js'
+
 //GRASS LEVELS
 import tutoria from './levels/grass/tutoria.js'
 import daventry from './levels/grass/daventry.js'
@@ -7,18 +8,21 @@ import balamb from './levels/grass/balamb.js'
 import alefgard from './levels/grass/alefgard.js'
 import guardia from './levels/grass/guardia.js'
 import nibelheim from './levels/grass/nibelheim.js'
+
 //SNOW LEVELS
 import tulga from './levels/snow/tulga.js'
 import solstheim from './levels/snow/solstheim.js'
 import lothric from './levels/snow/lothric.js'
 import lordaeron from './levels/snow/lordaeron.js'
 import bowerstone from './levels/snow/bowerstone.js'
+
 //DESERT LEVELS
 import aveh from './levels/desert/aveh.js'
 import varant from './levels/desert/varant.js'
 import calico from './levels/desert/calico.js'
 import figaro from './levels/desert/figaro.js'
 import lutgholein from './levels/desert/lut-gholein.js'
+
 //LAVA LEVELS
 import vvardenfell from './levels/lava/vvardenfell.js'
 import norfair from './levels/lava/norfair.js'
@@ -65,7 +69,7 @@ const windows = {
   },
   dialog: {
     open: false,
-    content: '<p>Hello world.</p>'
+    messages: []
   }
 };
 

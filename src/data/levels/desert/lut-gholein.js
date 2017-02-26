@@ -5,7 +5,7 @@ const level = {
   pickups: [{
     type: 'message',
     behavior: 'inn',
-    content: '<p>INNKEEPER: It\'s dangerous outside of town. Stay close, and come back to rest when you\'re hurt.</p><br><p>You recovered all your HP!</p>',
+    content: 'INNKEEPER: It\'s dangerous outside of town. Stay close, and come back to rest when you\'re hurt.',
     location: { 'face': 4, 'row': 1, 'col': 2 },
   },{
     type: 'key',
