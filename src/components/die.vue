@@ -53,7 +53,7 @@ export default {
   	return {
   		currentFace: 0,
 	  	dieRotation: { x: 0, y: 0, z:0 },
-	  	sounds: ['step','bump','flame','sail','hit','die','pickup','fireball','fizzle','arrow','win','unlock'],
+	  	sounds: ['step','bump','flame','sail','hit','die','pickup','fireball','fizzle','arrow','win','unlock','slide'],
 	  }
   },
   computed: {
@@ -214,7 +214,6 @@ export default {
 		    	if (store.player.location.face != this.currentFace) {
   					this.resetDieRotation();
 					} else {
-						store.player.direction = 'left';
 		    		this.movePlayer('left');
 		    	}
 		      break;
@@ -233,7 +232,6 @@ export default {
 		    	if (store.player.location.face != this.currentFace) {
   					this.resetDieRotation();
 					} else {
-						store.player.direction = 'right';
 		    		this.movePlayer('right');
 		    	}
 		      break;
@@ -500,7 +498,7 @@ export default {
 			if (typeOfEntity === 'player' && !store.player.items.includes('boat')) {
 				
 				//on foot, you can pass through most terrain
-				if ([' ','-','|','Y','W','P','I'].includes(tileValue)) {
+				if ([' ','-','|','Y','W','P','I','C'].includes(tileValue)) {
 					passable = true;
 
 				//if the player is trying to move onto a water tile, check if it has a boat on it
@@ -514,12 +512,12 @@ export default {
 			}
 
 			//PROJECTILES can move over open water and open land, rocks, open gates, bridges and pits
-			if (typeOfEntity === 'projectile' && ['X','P',' ','I','V','|','-'].includes(tileValue)) {
+			if (typeOfEntity === 'projectile' && ['X','P',' ','I','V','|','-','C'].includes(tileValue)) {
 				passable = true;
 			}
 
 			//LINE OF SIGHT is the same as projectiles, but is also blocked by enemies and pickups
-			if (typeOfEntity === 'lineOfSight' && ['X','P',' ','I','V','|','-'].includes(tileValue)) {
+			if (typeOfEntity === 'lineOfSight' && ['X','P',' ','I','V','|','-','C'].includes(tileValue)) {
 				passable = true;
 
 				for (let otherEnemy of store.currentLevel.enemies) {
@@ -538,7 +536,7 @@ export default {
 			}
 
 			//NORMAL ENEMIES can move through land, bridges, gates, and trees
-			if ((typeOfEntity === 'pacer' || typeOfEntity === 'guard') && [' ','-','|','Y','I'].includes(tileValue)) {
+			if (['pacer','guard','strafer'].includes(typeOfEntity) && [' ','-','|','Y','I'].includes(tileValue)) {
 				passable = true;
 
 				//for enemies, we need to check if there's another (non-projectile) enemy
@@ -573,7 +571,7 @@ export default {
 
 			store.windows.dialog.open = true;
 
-			if (overrideOtherMessages) {
+			if (removeOtherMessages) {
 				store.windows.dialog.messages = [messageContent];
 			} else {
 				store.windows.dialog.messages.push(messageContent);
@@ -743,13 +741,34 @@ export default {
 		movePlayer(direction) {
 
 			let originTile = store.player.location,
-					targetTile = this.findAdjacentTile(originTile, direction).tile,
+					targetTile = this.findAdjacentTile(originTile, direction),
 					moved = false,
 					blocked = false,
-					needEnemyStep = true;
+					slid = false,
+					needEnemyStep = true,
+					originalDirection = store.player.direction;
 
-			//reset player status
+			//reset player status and update direction
 			store.player.status = 'active';
+			store.player.direction = targetTile.newDirection;
+			targetTile = targetTile.tile;
+
+			//are we on ice? - if so, we're going to hijack the movement
+			if (this.getTileValue(store.player.location) === 'C') {
+				let slideTile = this.findAdjacentTile(originTile, originalDirection);
+				//can we keep sliding in this direction? if so, do it, otherwise, allow normal movement
+				if (this.isTilePassable(slideTile.tile)) {
+					store.player.direction = slideTile.newDirection;
+					targetTile = slideTile.tile;
+					store.player.status = 'sliding';
+					slid = true;
+
+					console.log('slidetile direction is: ' + slideTile.newDirection);
+					console.log('original direction is: ' + originalDirection);
+
+					//TODO: if you slide onto a new face, your direction isnt updated properly
+				}
+			}
 
 			// check if the target tile is passable or not
 			if (this.isTilePassable(targetTile)) {
@@ -805,6 +824,8 @@ export default {
 		  	//play sound based on mode of travel
 		  	if (store.player.items.includes('boat')) {
 		  		this.playSound('sail');
+		  	} else if (slid) {
+		  		this.playSound('slide');
 		  	} else {
 		  		this.playSound('step');
 		  	}
@@ -897,7 +918,7 @@ export default {
 		},
 
 		//check if a condition is met
-		//this can either be the player having an item or a tile being set to a value
+		//this can either be the player having an item, a tile being set to a value, or an enemy group being defeated
 		checkIfConditionMet(condition) {
 
 			let conditionMet = false;
@@ -907,6 +928,16 @@ export default {
 
 			} else if (condition.type === 'tileValue' && this.getTileValue(condition.location) === condition.value) {
 				conditionMet = true;
+			
+			} else if (condition.type === 'enemyGroupDefeated') {
+
+				let enemiesInGroup = store.currentLevel.enemies.some(function(enemy, i) {
+					 return enemy.group === condition.value;
+				});
+
+				if (!enemiesInGroup) {
+					conditionMet = true;
+				} 
 			}
 
 			return conditionMet;
@@ -1217,6 +1248,18 @@ export default {
 					}
 				}
 	  	}
+
+	  	//STEP 3.5: strafers shoot fireballs down every turn if on the same face
+			if (enemyBehavior === 'strafer' && store.player.location.face == enemy.location.face) {
+				enemy.status = 'attacking';
+				store.currentLevel.enemies.push({
+					'type': 'fireball',
+					'location': enemy.location,
+					'direction': 'down',
+					'tilesMoved': 0
+				});
+				this.playSound('fireball');
+			}
 		},
 
 		//get damage and xp reward for an enemy
@@ -1227,6 +1270,8 @@ export default {
 				tier = 1;
 			} else if (['sea-serpent','skeleton'].includes(enemy.type)) {
 				tier = 2;
+			} else if (['skeleton-mage'].includes(enemy.type)) {
+				tier = 3;
 			}
 
 			//allow manual overrides
@@ -1253,6 +1298,9 @@ export default {
 			//projectiles kill enemies and players in their path
 			} else if (['fireball','arrow'].includes(enemy.type)) {
 				behavior = 'projectile';
+			//strafers move side to side, always looking down and shooting every step
+			} else if (['skeleton-mage'].includes(enemy.type)) {
+				behavior = 'strafer';
 			}
 
 			//allow manual overrides

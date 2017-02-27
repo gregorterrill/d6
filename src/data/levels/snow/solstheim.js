@@ -1,6 +1,6 @@
 
 const level = {
-  title: 'The Shores of Solstheim (WIP)',
+  title: 'The Frosts of Solstheim (WIP)',
   tileset: 'snow',
   entrance: { 'face': 0, 'row': 2, 'col': 3 },
   pickups: [],

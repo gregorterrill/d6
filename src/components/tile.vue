@@ -63,6 +63,11 @@ export default {
 					type += 'gate-open';
 					break;
 
+				case 'C':
+					type += 'ice';
+					type += ' die__tile--special'; //for transparency
+					break;
+
 				case 'P':
 					type += 'pit';
 					break;
@@ -91,15 +96,11 @@ export default {
 				entity = 'player';
 				
 				entity += ' player--' + store.player.status;
+				entity += ' player--' + store.player.direction;
 
 				for (let item of store.player.items) {
 					entity += ' player--' + item;
 				}
-
-				if (store.player.direction === 'left') {
-					entity += ' player--left';
-				}
-
 				entities.push(entity);
 			}
 
@@ -253,6 +254,10 @@ export default {
 	background-position-x: 0;
 	animation:animateTile 0.5s infinite;
 }
+.die__tile--ice::before {
+	background-position:-256px -64px;
+	opacity:0.95;
+}
 .die__tile--bridge-vert::before {
 	background-position:0 -64px;
 	transform:rotate(90deg);
@@ -313,7 +318,8 @@ export default {
   animation:animateSpriteOne 0.5s infinite;
   z-index:5;
 }
-.player--left {
+.player--left,
+.player--up {
 	transform:scaleX(-1);
 }
 .player--sword {
@@ -323,6 +329,10 @@ export default {
 .player--attacking {
 	background-position:0 -64px;
 	animation:animateSpriteTwo 0.25s linear 0s 3 alternate, animateSpriteOne 0.5s linear 1s infinite;
+}
+.player--sliding {
+	background-position:0 0;
+	animation:animateSpriteTwo 0.5s linear infinite alternate;
 }
 .player--hurt,
 .player--dead {
@@ -353,7 +363,7 @@ export default {
 	z-index:4;
 }
 .enemy--left,
-.enemy--down {
+.enemy--up {
 	transform:scaleX(-1);
 }
 
@@ -380,6 +390,13 @@ export default {
 
 .enemy--skeleton-archer {
 	background-position:0 -128px;
+	animation:animateSpriteThree 0.5s infinite;
+	&.enemy--attacking { animation:animateSpriteFour 0.5s infinite; }
+  &.enemy--dying { animation:animateSpriteThree 0.5s infinite, flash 0.5s linear infinite alternate, disappear 0.5s linear 1s infinite; }
+}
+
+.enemy--skeleton-mage {
+	background-position:0 -64px;
 	animation:animateSpriteThree 0.5s infinite;
 	&.enemy--attacking { animation:animateSpriteFour 0.5s infinite; }
   &.enemy--dying { animation:animateSpriteThree 0.5s infinite, flash 0.5s linear infinite alternate, disappear 0.5s linear 1s infinite; }

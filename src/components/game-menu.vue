@@ -10,10 +10,10 @@
 				<h1 class="menu__title">~MENU~</h1>
 
 				<ul class="menu__options">
-					<li class="menu__option"><a @click.prevent="currentPanel = 0" :class="'menu__link' + ((currentPanel === 0) ? ' active': '')" href="#">HOW TO PLAY</a></li>
-					<li class="menu__option"><a @click.prevent="currentPanel = 1" :class="'menu__link' + ((currentPanel === 1) ? ' active': '')" href="#">CONTROLS</a></li>
-					<li class="menu__option"><a @click.prevent="currentPanel = 2" :class="'menu__link' + ((currentPanel === 2) ? ' active': '')" href="#">SAVE DATA</a></li>
-					<li class="menu__option"><a @click.prevent="currentPanel = 3" :class="'menu__link' + ((currentPanel === 3) ? ' active': '')" href="#">ABOUT</a></li>
+					<li class="menu__option"><a @click.prevent="setPanel(0)" :class="'menu__link' + ((currentPanel === 0) ? ' active': '')" href="#">HOW TO PLAY</a></li>
+					<li class="menu__option"><a @click.prevent="setPanel(1)" :class="'menu__link' + ((currentPanel === 1) ? ' active': '')" href="#">CONTROLS</a></li>
+					<li class="menu__option"><a @click.prevent="setPanel(2)" :class="'menu__link' + ((currentPanel === 2) ? ' active': '')" href="#">SAVE DATA</a></li>
+					<li class="menu__option"><a @click.prevent="setPanel(3)" :class="'menu__link' + ((currentPanel === 3) ? ' active': '')" href="#">ABOUT</a></li>
 				</ul>
 
 			</div>
@@ -21,7 +21,7 @@
 			<div class="menu__panel menu__panel--right message">
 
 				<div v-show="currentPanel === 0" class="menu__panel-content">
-			    <h2 class="menu__title">HOW TO PLAY</h2>
+			    <h2 class="menu__title">~HOW TO PLAY~</h2>
 			    <p>Each world is a six-sided die(d6). Light the pips on each face of the die to progress to the next world.</p>
 					<br>
 			    <p>Enemies move after you move. If you move into a tile occupied by an enemy, you'll attack it. If you move into a tile and then an enemy immediately moves into that same tile, it will attack you.</p>
@@ -32,7 +32,7 @@
 		    </div>
 		    
 				<div v-show="currentPanel === 1" class="menu__panel-content">
-			    <h2 class="menu__title">CONTROLS</h2>
+			    <h2 class="menu__title">~CONTROLS~</h2>
 			    <p>Use the arrows keys or WASD to move and activate pips</p>
 			    <p>Press 1-6 to view the corresponding face of the die</p>
 			    <p>Press 0 to recenter the view on your current face</p>
@@ -41,7 +41,7 @@
 		    </div>
 
 		    <div v-show="currentPanel === 2" class="menu__panel-content">
-			    <h2 class="menu__title">SAVE DATA</h2>
+			    <h2 class="menu__title">~SAVE DATA~</h2>
 			    <p>This is the current data saved in your browser:</p>
 			    <br>
 			    <p>WORLD:&nbsp;{{ savedLevel }}</p>
@@ -55,7 +55,7 @@
 	  		</div>
 
 				<div v-show="currentPanel === 3" class="menu__panel-content">
-			    <h2 class="menu__title">ABOUT</h2>
+			    <h2 class="menu__title">~ABOUT~</h2>
 			    <p>d6 was created in 2017 as an experiment in Vue by <a href="http://gregorterrill.com" target="_blank">Gregor Terrill</a>, who did all the programming, artwork, and sound effects.</p>
 	  			<br>
 	  			<p>The background music is <a target="_blank" href="https://soundcloud.com/eric-skiff/come-and-find-me">Come and Find Me</a> by <a target="_blank" href="http://ericskiff.com/music/">Eric Skiff</a> and is used under the Creative Commons license.</p>
@@ -104,6 +104,11 @@ export default {
 			}
 		},
 
+		setPanel(panelNum) {
+			this.playBlip();
+			this.currentPanel = panelNum;
+		},
+
   	handleKeyPress(e) {
 			switch(e.keyCode) {
 
@@ -134,6 +139,7 @@ export default {
 			localStorage.removeItem('playerXP');
 			this.savedLevel = this.getSaveData('currentLevel');
   		this.savedXP = this.getSaveData('playerXP');
+  		this.playBlip();
 		}
   },
   mounted() {
