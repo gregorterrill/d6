@@ -53,7 +53,7 @@ export default {
   	return {
   		currentFace: 0,
 	  	dieRotation: { x: 0, y: 0, z:0 },
-	  	sounds: ['step','bump','flame','sail','hit','die','pickup','fireball','fizzle','arrow','win','unlock','slide'],
+	  	sounds: ['step','bump','flame','sail','hit','die','pickup','fireball','fizzle','arrow','win','unlock','slide','quicksand'],
 	  }
   },
   computed: {
@@ -498,7 +498,7 @@ export default {
 			if (typeOfEntity === 'player' && !store.player.items.includes('boat')) {
 				
 				//on foot, you can pass through most terrain
-				if ([' ','-','|','Y','W','P','I','C'].includes(tileValue)) {
+				if ([' ','-','|','Y','W','P','I','C','Q'].includes(tileValue)) {
 					passable = true;
 
 				//if the player is trying to move onto a water tile, check if it has a boat on it
@@ -605,6 +605,43 @@ export default {
 			} else {
 				entity.location = targetTile;
 			}
+		},
+
+		//find the tile on the opposite face, if you drilled directly through the cube
+		findThroughTile(originTile) {
+			let targetTile = null;
+
+			//top left of 1 = bottom left of 6
+			//top left of 2 = bottom left of 5
+			//top left of 3 = bottom left of 4
+
+			// ONE
+			if (originTile.face === 0) {
+				targetTile = { 'face': 5, 'row': 6 - originTile.row, 'col': originTile.col };
+			
+			//TWO
+			} else if (originTile.face === 1) {
+				targetTile = { 'face': 4, 'row': 6 - originTile.row, 'col': originTile.col };
+			
+			//THREE
+			} else if (originTile.face === 2) {
+				targetTile = { 'face': 3, 'row': 6 - originTile.row, 'col': originTile.col };
+			
+			//FOUR
+			} else if (originTile.face === 3) {
+				targetTile = { 'face': 2, 'row': 6 - originTile.row, 'col': originTile.col };
+			
+			//FIVE
+			} else if (originTile.face === 4) {
+				targetTile = { 'face': 1, 'row': 6 - originTile.row, 'col': originTile.col };
+			
+			//SIX
+			} else if (originTile.face === 5) {
+				targetTile = { 'face': 0, 'row': 6 - originTile.row, 'col': originTile.col };
+			}
+
+			return targetTile;
+
 		},
 
 		//get the tile adjacent to any other tile
@@ -762,11 +799,6 @@ export default {
 					targetTile = slideTile.tile;
 					store.player.status = 'sliding';
 					slid = true;
-
-					console.log('slidetile direction is: ' + slideTile.newDirection);
-					console.log('original direction is: ' + originalDirection);
-
-					//TODO: if you slide onto a new face, your direction isnt updated properly
 				}
 			}
 
@@ -783,8 +815,8 @@ export default {
 	  		//disembark from boat (you must be coming from open water to open land - 
 	  		//that means no disembarking to forests or from under a bridge)
 	  		if (store.player.items.includes('boat') 
-	  				&& this.getTileValue(targetTile) == ' '
-	  				&& this.getTileValue(originTile) == 'X') {
+	  				&& this.getTileValue(targetTile) === ' '
+	  				&& this.getTileValue(originTile) === 'X') {
 	  			store.player.items.splice(store.player.items.indexOf('boat'),1);
 	  			store.currentLevel.pickups.push({
 	  				'type': 'boat',
@@ -795,12 +827,17 @@ export default {
 	  			store.player.status = 'disembarking';
 	  		
 	  		//activate land pip from land, or sea pip from boat
-	  		} else if ((this.getTileValue(targetTile) == '●' && !store.player.items.includes('boat')) ||
-	  			(this.getTileValue(targetTile) == '▪' && store.player.items.includes('boat'))) {
+	  		} else if ((this.getTileValue(targetTile) === '●' && !store.player.items.includes('boat')) ||
+	  			(this.getTileValue(targetTile) === '▪' && store.player.items.includes('boat'))) {
 			  	this.lightPip(targetTile);
 
+			  //if it's a decoy pip, hurt the player and ignite
+			  } else if (this.getTileValue(targetTile) === 'D') { 
+			  	this.damagePlayer(2, 'decoy');
+			  	this.$set(this.level.faces[targetTile.face][targetTile.row], [targetTile.col], 'P');
+
 			  //if its a closed gate, unlock it if you have a key
-			  } else if (this.getTileValue(targetTile) == 'H' 
+			  } else if (this.getTileValue(targetTile) === 'H' 
 			  	&& !store.player.items.includes('boat')
 			  	&& store.player.items.includes('key')) {
 			  	this.$set(this.level.faces[targetTile.face][targetTile.row], [targetTile.col], 'I');
@@ -824,8 +861,9 @@ export default {
 		  	//play sound based on mode of travel
 		  	if (store.player.items.includes('boat')) {
 		  		this.playSound('sail');
-		  	} else if (slid) {
+		  	} else if (slid || this.getTileValue(store.player.location) === 'C') {
 		  		this.playSound('slide');
+		  		store.player.status = 'sliding';
 		  	} else {
 		  		this.playSound('step');
 		  	}
@@ -833,6 +871,12 @@ export default {
 		  	//damage player if they walked into a pit
 		  	if (this.getTileValue(store.player.location) === 'P') {
 		  		this.damagePlayer(2, 'pit');
+		  	}
+
+		  	//if the player walked into quicksand, they drill through to the opposite face
+		  	if (this.getTileValue(store.player.location) === 'Q') {
+		  		this.moveEntityToTile(this.findThroughTile(store.player.location));
+		  		this.playSound('quicksand');
 		  	}
 
 		  	//if the player moved into an enemy, attack them
@@ -845,7 +889,7 @@ export default {
 
 		  	//if the player moved into a pickup, get it
 		  	this.collectPickups();
-		  }		  
+		  }
 		},
 
 		//resolve attacks against enemies - we need the origin tile in case we get repelled back
@@ -1352,6 +1396,8 @@ export default {
 
 			if (cause === 'pit') {
 				message = 'You fell into a PIT taking ' + amount + ' DMG!';
+			} else if (cause === 'decoy') {
+				message = 'The FALSE PIP crumbles away at your touch, sending DARK ENERGY coursing through your body. You take ' + amount + ' DMG!';
 			} else {
 				message = cause.replace('-',' ').toUpperCase() + ' hit you for ' + amount + ' DMG!';
 			}

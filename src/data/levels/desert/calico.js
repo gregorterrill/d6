@@ -2,8 +2,12 @@
 const level = {
   title: 'The Desert of Calico (WIP)',
   tileset: 'desert',
-  entrance: { 'face': 0, 'row': 2, 'col': 3 },
-  pickups: [],
+  entrance: { 'face': 1, 'row': 3, 'col': 3 },
+  pickups: [{
+    type: 'message',
+    location: { 'face': 1, 'row': 4, 'col': 1 },
+    content: 'GAMBLER: I try not to wander out in the DESERT when I\'m drinking. One time, I fell into some QUICKSAND and I swear, it sucked me straight through the CENTER OF THE WORLD and spat me out the other side.'
+  }],
   enemies: [],
   faces: [
     [
@@ -16,13 +20,13 @@ const level = {
       [' ',' ',' ',' ',' ',' ',' ']
     ],
     [
-      [' ',' ',' ',' ',' ',' ',' '],
-      [' ',' ',' ',' ',' ','●',' '], // TWO
-      [' ',' ',' ',' ',' ',' ',' '], // ↑ left edge of 4
-      [' ',' ',' ',' ',' ',' ',' '], // → bottom edge of 1
-      [' ',' ',' ',' ',' ',' ',' '], // ↓ left edge of 3
-      [' ','●',' ',' ',' ',' ',' '], // ← top edge of 6
-      [' ',' ',' ',' ',' ',' ',' ']
+      ['X','X','A','A','A','A','A'],
+      ['X','X','Y','Q','A','●','A'], // TWO
+      ['A','X','Y',' ','F','Y','A'], // ↑ left edge of 4
+      ['A','A',' ','Y',' ',' ','A'], // → bottom edge of 1
+      ['A','W',' ',' ','Y',' ','A'], // ↓ left edge of 3
+      ['A','●','Y',' ',' ','A','A'], // ← top edge of 6
+      ['A','A','A','A','A','A','A']
     ],
     [
       [' ',' ',' ',' ',' ',' ',' '],
@@ -34,8 +38,8 @@ const level = {
       [' ',' ',' ',' ',' ',' ',' ']
     ],
     [
-      [' ',' ',' ',' ',' ',' ',' '],
-      [' ','●',' ',' ',' ','●',' '], // FOUR
+      ['X',' ',' ',' ',' ',' ',' '],
+      ['X','●',' ',' ',' ','●',' '], // FOUR
       [' ',' ',' ',' ',' ',' ',' '], // ↑ left edge of 6
       [' ',' ',' ',' ',' ',' ',' '], // → bottom edge of 5
       [' ',' ',' ',' ',' ',' ',' '], // ↓ left edge of 1
@@ -48,11 +52,11 @@ const level = {
       [' ',' ',' ',' ',' ',' ',' '], // ↑ right edge of 3
       [' ',' ',' ','●',' ',' ',' '], // → top edge of 1
       [' ',' ',' ',' ',' ',' ',' '], // ↓ right edge of 4
-      [' ','●',' ',' ',' ','●',' '], // ← bottom edge of 6
+      [' ','●',' ','Q',' ','●',' '], // ← bottom edge of 6
       [' ',' ',' ',' ',' ',' ',' ']
     ],
     [
-      [' ',' ',' ',' ',' ',' ',' '],
+      ['X','A','A',' ',' ',' ',' '],
       [' ','●',' ',' ',' ','●',' '], // SIX
       [' ',' ',' ',' ',' ',' ',' '], // ↑ left edge of 2
       [' ','●',' ',' ',' ','●',' '], // → bottom edge of 3

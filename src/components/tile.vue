@@ -30,6 +30,10 @@ export default {
 					type += 'wpip-active';
 					break;
 
+				case 'D':
+					type += 'decoy';
+					break;
+
 				case 'Y':
 					type += 'tree';
 					break;
@@ -70,6 +74,10 @@ export default {
 
 				case 'P':
 					type += 'pit';
+					break;
+
+				case 'Q':
+					type += 'quicksand';
 					break;
 
 				case '-':
@@ -199,6 +207,9 @@ export default {
 .die__tile--pit {
 	background-position:-192px -64px;
 }
+.die__tile--quicksand {
+	background-position:-256px -64px;
+}
 .die__tile--rocks {
 	opacity:0.85;
 	background-position-x: -192px;
@@ -218,6 +229,9 @@ export default {
 }
 .die__tile--gate-open {
 	background-position:-256px -192px;
+}
+.die__tile--decoy {
+	background-position:-128px -64px;
 }
 .die__tile--pip {
 	background-position:-128px -64px;

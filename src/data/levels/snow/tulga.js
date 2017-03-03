@@ -2,9 +2,33 @@
 const level = {
   title: 'The Steppes of Tulga (WIP)',
   tileset: 'snow',
-  entrance: { 'face': 0, 'row': 2, 'col': 3 },
+  entrance: { 'face': 5, 'row': 2, 'col': 3 },
   pickups: [],
-  enemies: [],
+  enemies: [{
+    type: 'skeleton',
+    location: { 'face': 5, 'row': 5 , 'col': 0 },
+    direction: 'down'
+  },{
+    type: 'skeleton',
+    location: { 'face': 5, 'row': 3 , 'col': 0 },
+    direction: 'down'
+  },{
+    type: 'skeleton',
+    location: { 'face': 5, 'row': 1 , 'col': 0 },
+    direction: 'down'
+  },{
+    type: 'skeleton',
+    location: { 'face': 5, 'row': 5 , 'col': 6 },
+    direction: 'up'
+  },{
+    type: 'skeleton',
+    location: { 'face': 5, 'row': 3 , 'col': 6 },
+    direction: 'up'
+  },{
+    type: 'skeleton',
+    location: { 'face': 5, 'row': 1 , 'col': 6 },
+    direction: 'up'
+  }],
   faces: [
     [
       [' ',' ',' ',' ',' ',' ',' '],
@@ -53,11 +77,11 @@ const level = {
     ],
     [
       [' ',' ',' ',' ',' ',' ',' '],
-      [' ','●',' ',' ',' ','●',' '], // SIX
-      [' ',' ',' ',' ',' ',' ',' '], // ↑ left edge of 2
-      [' ','●',' ',' ',' ','●',' '], // → bottom edge of 3
-      [' ',' ',' ',' ',' ',' ',' '], // ↓ left edge of 5
-      [' ','●',' ',' ',' ','●',' '], // ← top edge of 4
+      [' ','●',' ','C',' ','●',' '], // SIX
+      [' ',' ','C','C','C',' ',' '], // ↑ left edge of 2
+      [' ','●','C','C','C','●',' '], // → bottom edge of 3
+      [' ',' ','C','C','C',' ',' '], // ↓ left edge of 5
+      [' ','●',' ','C',' ','●',' '], // ← top edge of 4
       [' ',' ',' ',' ',' ',' ',' ']
     ]
   ]
