@@ -2,25 +2,17 @@ const level = {
   title: 'The Void',
   tileset: 'snow',
   entrance: { 'face': 0, 'row': 2, 'col': 3 },
-  pickups: [{
-    type: 'sword',
-    location: { 'face': 0, 'row': 5, 'col': 5 },
-    container: 'stone',
-  }],
-  enemies: [{
-    type: 'skeleton-archer',
-    location: { 'face': 0, 'row': 2 , 'col': 5 },
-    direction: 'left'
-  }],
+  pickups: [],
+  enemies: [],
   faces: [
     [
-      ['A','A','A','A','A','A','A'],
-      ['A','F','F','Y',' ',' ','A'], // ONE
-      ['A','●',' ',' ',' ',' ','A'], // ↑ right edge of 5
-      ['A','A','A',' ','A','A','A'], // → top edge of 3
-      ['A','A','A',' ','A','A','A'], // ↓ right edge of 2
-      ['A','F','Y',' ',' ',' ','A'], // ← bottom edge of 4
-      ['A','A','A','A','A','A','A']
+      [' ',' ',' ',' ',' ',' ',' '],
+      [' ',' ',' ',' ',' ',' ',' '], // ONE
+      [' ',' ',' ',' ',' ',' ',' '], // ↑ right edge of 5
+      [' ',' ',' ','●',' ',' ',' '], // → top edge of 3
+      [' ',' ',' ',' ',' ',' ',' '], // ↓ right edge of 2
+      [' ',' ',' ',' ',' ',' ',' '], // ← bottom edge of 4
+      [' ',' ',' ',' ',' ',' ',' ']
     ],
     [
       [' ',' ',' ',' ',' ',' ',' '],

@@ -58,7 +58,7 @@
 			    <h2 class="menu__title">~ABOUT~</h2>
 			    <p>d6 was created in 2017 as an experiment in Vue by <a href="http://gregorterrill.com" target="_blank">Gregor Terrill</a>, who did all the programming, artwork, and sound effects.</p>
 	  			<br>
-	  			<p>The background music is <a target="_blank" href="https://soundcloud.com/eric-skiff/come-and-find-me">Come and Find Me</a> by <a target="_blank" href="http://ericskiff.com/music/">Eric Skiff</a> and is used under the Creative Commons license.</p>
+	  			<p>The background music is by <a target="_blank" href="http://ericskiff.com/music/">Eric Skiff</a> and <a href="http://freemusicarchive.org/music/visager" target="_blank">Visager</a> and is used under the Creative Commons license.</p>
 	  			<br>
 	  			<p>You can read more about the game in <a href="http://gregorterrill.com" target="_blank">this blog post</a>.</p>
 	  		</div>

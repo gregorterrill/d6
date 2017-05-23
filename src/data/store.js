@@ -10,7 +10,6 @@ import guardia from './levels/grass/guardia.js'
 import nibelheim from './levels/grass/nibelheim.js'
 
 //SNOW LEVELS
-import tulga from './levels/snow/tulga.js'
 import solstheim from './levels/snow/solstheim.js'
 import lothric from './levels/snow/lothric.js'
 import lordaeron from './levels/snow/lordaeron.js'
@@ -18,14 +17,11 @@ import bowerstone from './levels/snow/bowerstone.js'
 
 //DESERT LEVELS
 import aveh from './levels/desert/aveh.js'
-import varant from './levels/desert/varant.js'
 import calico from './levels/desert/calico.js'
 import figaro from './levels/desert/figaro.js'
-import lutgholein from './levels/desert/lut-gholein.js'
 
 //LAVA LEVELS
 import vvardenfell from './levels/lava/vvardenfell.js'
-import norfair from './levels/lava/norfair.js'
 import tristram from './levels/lava/tristram.js'
 
 const currentLevelNum = 1;
@@ -41,16 +37,12 @@ const levels = [
   nibelheim,
   lordaeron,
   bowerstone,
-  tulga,
   solstheim,
   lothric,
   calico,
   aveh,
   figaro,
-  varant,
-  lutgholein,
   vvardenfell,
-  norfair,
   tristram
 ];
 

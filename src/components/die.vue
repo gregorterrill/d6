@@ -24,8 +24,8 @@
 		</div>
 
 		<audio v-for="sound in sounds" :ref="'sound-' + sound" :src="getAudioSource(sound)" preload />
-		<!-- http://ericskiff.com/music/ -->
-		<audio ref="music" :src="getAudioSource('music')" preload autoplay loop />
+		
+		<audio ref="music" :src="getAudioSource('music-' + tileset)" preload autoplay loop />
 
 	</div>
 </template>
@@ -44,7 +44,7 @@ export default {
   },
   mounted() {
   	//set the music volume
-  	this.$refs['music'].volume = 0; //0.25;
+  	this.$refs['music'].volume = 0.25; //0.25;
   	//rotate the cube to the player face
   	store.player.location = store.currentLevel.entrance;
   	this.resetDieRotation();
@@ -136,8 +136,14 @@ export default {
 		// require the audio file, because webpack chokes on these when treated like other files
 		getAudioSource(soundName) {
 
-			if (soundName == 'music') {
-				return require('../assets/sound/come-and-find-me-by-eric-skiff.mp3');
+			if (soundName == 'music-grass') {
+				return require('../assets/sound/Eric_Skiff_Come_And_Find_Me.mp3');
+			} else if (soundName == 'music-snow') {
+				return require('../assets/sound/Visager_Windy_Bluffs.mp3');
+			} else if (soundName == 'music-desert') {
+				return require('../assets/sound/Visager_Pyramid_Level.mp3');
+			} else if (soundName == 'music-lava') {
+				return require('../assets/sound/Visager_Ice_Cave.mp3');
 			}
 
   		return require('../assets/sound/' + soundName + '.wav');
@@ -512,12 +518,12 @@ export default {
 			}
 
 			//PROJECTILES can move over open water and open land, rocks, open gates, bridges and pits
-			if (typeOfEntity === 'projectile' && ['X','P',' ','I','V','|','-','C'].includes(tileValue)) {
+			if (typeOfEntity === 'projectile' && ['X','P',' ','I','V','|','-','C','Q'].includes(tileValue)) {
 				passable = true;
 			}
 
 			//LINE OF SIGHT is the same as projectiles, but is also blocked by enemies and pickups
-			if (typeOfEntity === 'lineOfSight' && ['X','P',' ','I','V','|','-','C'].includes(tileValue)) {
+			if (typeOfEntity === 'lineOfSight' && ['X','P',' ','I','V','|','-','C','Q'].includes(tileValue)) {
 				passable = true;
 
 				for (let otherEnemy of store.currentLevel.enemies) {
