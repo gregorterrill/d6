@@ -9,16 +9,16 @@ import alefgard from './levels/grass/alefgard.js'
 import guardia from './levels/grass/guardia.js'
 import nibelheim from './levels/grass/nibelheim.js'
 
+//DESERT LEVELS
+import aveh from './levels/desert/aveh.js'
+import calico from './levels/desert/calico.js'
+import figaro from './levels/desert/figaro.js'
+
 //SNOW LEVELS
 import solstheim from './levels/snow/solstheim.js'
 import lothric from './levels/snow/lothric.js'
 import lordaeron from './levels/snow/lordaeron.js'
 import bowerstone from './levels/snow/bowerstone.js'
-
-//DESERT LEVELS
-import aveh from './levels/desert/aveh.js'
-import calico from './levels/desert/calico.js'
-import figaro from './levels/desert/figaro.js'
 
 //LAVA LEVELS
 import vvardenfell from './levels/lava/vvardenfell.js'
@@ -35,13 +35,13 @@ const levels = [
   hylia,
   balamb,
   nibelheim,
+  calico,
+  aveh,
+  figaro,
   lordaeron,
   bowerstone,
   solstheim,
   lothric,
-  calico,
-  aveh,
-  figaro,
   vvardenfell,
   tristram
 ];
@@ -56,6 +56,9 @@ const currentLevel = {
 };
 
 const windows = {
+  title: {
+    open: true
+  },
   menu: {
     open: false,
   },

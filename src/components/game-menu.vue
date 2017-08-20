@@ -56,7 +56,7 @@
 
 				<div v-show="currentPanel === 3" class="menu__panel-content">
 			    <h2 class="menu__title">~ABOUT~</h2>
-			    <p>d6 was created in 2017 as an experiment in Vue by <a href="http://gregorterrill.com" target="_blank">Gregor Terrill</a>, who did all the programming, artwork, and sound effects.</p>
+			    <p>PipSeek was created in 2017 as an experiment in Vue by <a href="http://gregorterrill.com" target="_blank">Gregor Terrill</a>, who did all the programming, artwork, and sound effects.</p>
 	  			<br>
 	  			<p>The background music is by <a target="_blank" href="http://ericskiff.com/music/">Eric Skiff</a> and <a href="http://freemusicarchive.org/music/visager" target="_blank">Visager</a> and is used under the Creative Commons license.</p>
 	  			<br>

@@ -1,36 +1,43 @@
 <template>
   <div id="app">
 
-    <gameMenu v-if="store.windows.menu.open"></gameMenu>
-    <dialogWindow v-if="store.windows.dialog.open" :messages="store.windows.dialog.messages"></dialogWindow>
-   
-    <div class="message message--top-left">
-      <p>~WORLD {{ store.currentLevelNum }}~</p>
-      <p>{{ store.currentLevel.title }}<p>
-    </div>
+    <titleScreen v-if="store.windows.title.open"></titleScreen>
 
-    <div class="message message--top-right">
-      <p>~MENU~ESC~</p>
-      <br>
-      <p>PIPS</p>
-      <p>&nbsp;{{ store.pips }}/21</p>
-      <br>
-      <p>STATUS</p>
-      <p :class="hpLevel">&nbsp;HP&nbsp;{{ store.player.hp }}/5</p>
-      <p>&nbsp;XP&nbsp;{{ store.player.xp }}</p>
-      <br>
-      <p>INVENTORY</p>
-      <p v-for="item in store.player.items">&nbsp;{{ item.charAt(0).toUpperCase() + item.slice(1).replace('-',' ') }}</p>
-    </div>
-    
-    <div class="die-container">
-      <die :level="store.currentLevel"></die>
+    <div class="screen-play" v-if="!store.windows.title.open">
+
+      <gameMenu v-if="store.windows.menu.open"></gameMenu>
+      <dialogWindow v-if="store.windows.dialog.open" :messages="store.windows.dialog.messages"></dialogWindow>
+     
+      <div class="message message--top-left">
+        <p>~WORLD {{ store.currentLevelNum }}~</p>
+        <p>{{ store.currentLevel.title }}<p>
+      </div>
+
+      <div class="message message--top-right">
+        <p>~MENU~ESC~</p>
+        <br>
+        <p>PIPS</p>
+        <p>&nbsp;{{ store.pips }}/21</p>
+        <br>
+        <p>STATUS</p>
+        <p :class="hpLevel">&nbsp;HP&nbsp;{{ store.player.hp }}/5</p>
+        <p>&nbsp;XP&nbsp;{{ store.player.xp }}</p>
+        <br>
+        <p>INVENTORY</p>
+        <p v-for="item in store.player.items">&nbsp;{{ item.charAt(0).toUpperCase() + item.slice(1).replace('-',' ') }}</p>
+      </div>
+      
+      <div class="die-container">
+        <die :level="store.currentLevel"></die>
+      </div>
+
     </div>
 
   </div>
 </template>
 
 <script>
+import titleScreen from './components/title-screen.vue'
 import gameMenu from './components/game-menu.vue'
 import dialogWindow from './components/dialog-window.vue'
 import die from './components/die.vue'
@@ -39,6 +46,7 @@ import store from './data/store.js'
 export default {
   name: 'app',
   components: {
+    titleScreen,
     gameMenu,
     die,
     dialogWindow

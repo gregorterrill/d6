@@ -44,7 +44,7 @@ export default {
   },
   mounted() {
   	//set the music volume
-  	this.$refs['music'].volume = 0.25; //0.25;
+  	this.$refs['music'].volume = 0; //0.25;
   	//rotate the cube to the player face
   	store.player.location = store.currentLevel.entrance;
   	this.resetDieRotation();
@@ -1538,6 +1538,7 @@ export default {
 }
 
 .core {
+	display:none; //DEBUG FOR DESERT
 	width: 100%;
 	height: 100%;
 	position: absolute;

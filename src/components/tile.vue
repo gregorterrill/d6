@@ -1,5 +1,5 @@
 <template>
-	<div :class="'die__tile die__tile--' + tileType">
+	<div :class="'die__tile die__tile--' + tileType" :data-face="face" :data-row="row" :data-col="col">
 		<div :class="'entity ' + entity" v-for="entity in tileEntities"></div>
 	</div>
 </template>
@@ -159,8 +159,24 @@ export default {
 .die__row {
 	display:block;
 }
+
+.die__tile:hover::after {
+	content: "FACE " attr(data-face) ", ROW " attr(data-row) ", COL " attr(data-col);
+	position:absolute;
+	top:0;
+	left:0;
+	background-color:#000;
+	color:#FFF;
+	padding:4px;
+	z-index:99;
+	font-size:12px;
+	line-height:1.5;
+	width:256px;
+}
+
 .die__tile,
 .die__tile--special::before {
+	//opacity:0.6; //DEBUG FOR DESERT
 	position:relative;
 	float:left;
 	width:64px;
