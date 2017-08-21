@@ -410,6 +410,14 @@ export default {
 	background-position:0 -192px;
 }
 
+//COURIER
+.enemy--courier {
+	background-position:0 0;
+	animation:animateSpriteThree 0.5s infinite;
+	&.enemy--attacking { animation:animateSpriteFour 0.5s infinite; }
+  &.enemy--dying { animation:animateSpriteThree 0.5s infinite, flash 0.5s linear infinite alternate, disappear 0.5s linear 1s infinite; }
+}
+
 //SKELETONS
 .enemy--skeleton {
 	background-position:0 0;

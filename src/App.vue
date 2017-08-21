@@ -2,8 +2,9 @@
   <div id="app">
 
     <titleScreen v-if="store.windows.title.open"></titleScreen>
+    <endScreen v-if="store.windows.end.open"></endScreen>
 
-    <div class="screen-play" v-if="!store.windows.title.open">
+    <div class="screen-play" v-if="gameInPlay">
 
       <gameMenu v-if="store.windows.menu.open"></gameMenu>
       <dialogWindow v-if="store.windows.dialog.open" :messages="store.windows.dialog.messages"></dialogWindow>
@@ -38,6 +39,7 @@
 
 <script>
 import titleScreen from './components/title-screen.vue'
+import endScreen from './components/end-screen.vue'
 import gameMenu from './components/game-menu.vue'
 import dialogWindow from './components/dialog-window.vue'
 import die from './components/die.vue'
@@ -47,6 +49,7 @@ export default {
   name: 'app',
   components: {
     titleScreen,
+    endScreen,
     gameMenu,
     die,
     dialogWindow
@@ -57,6 +60,11 @@ export default {
     }
   },
   computed: {
+
+    gameInPlay() {
+      return (store.windows.title.open || store.windows.end.open) === false;
+    },
+
     hpLevel() {
       if (store.player.hp <= 2) {
         return 'hp-critical';

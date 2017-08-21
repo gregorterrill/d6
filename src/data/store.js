@@ -57,7 +57,10 @@ const currentLevel = {
 
 const windows = {
   title: {
-    open: true
+    open: false, //DEBUG: set to true or title screen will be skipped
+  },
+  end: {
+    open: false,
   },
   menu: {
     open: false,

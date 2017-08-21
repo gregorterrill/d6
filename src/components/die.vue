@@ -44,7 +44,7 @@ export default {
   },
   mounted() {
   	//set the music volume
-  	this.$refs['music'].volume = 0; //0.25;
+  	this.$refs['music'].volume = 0.25;
   	//rotate the cube to the player face
   	store.player.location = store.currentLevel.entrance;
   	this.resetDieRotation();
@@ -537,6 +537,19 @@ export default {
 						if (targetTile.col !== store.player.location.col) {
 							passable = false;
 						}
+					}
+				}
+			}
+
+			//RUNNERS can move through open spaces, plus quicksand
+			if (typeOfEntity === 'runner' && [' ','Y','I','Q'].includes(tileValue)) {
+				passable = true;
+
+				//for enemies, we need to check if there's another (non-projectile) enemy
+				//on the tile as enemies can't move into other enemies
+				for (let otherEnemy of store.currentLevel.enemies) {
+					if (this.isEntityOnTile(otherEnemy, targetTile) && this.isAlive(otherEnemy)) {
+						passable = false;
 					}
 				}
 			}
@@ -1214,7 +1227,79 @@ export default {
 						directionsChecked++;
 					}
 				}
-			//pacers and projectiles just try to go in the direction they're going
+			//runners act like pacers unless the runner is on their face, in which case they run away
+			} else if (enemyBehavior === 'runner') {
+
+				let xRelativeToPlayer = enemy.location.col - store.player.location.col,
+						yRelativeToPlayer =  enemy.location.row - store.player.location.row,
+						directionsChecked = 0,
+						directionCheckOrder = [],
+						lastDirectionsToCheck = [];
+
+				//if the runner is on the same face as hero, they run in the opposite direction
+				//the hero just moved
+				if (store.player.location.face == enemy.location.face) {
+
+					//chose initial direction based on smallest distance
+					if (Math.abs(xRelativeToPlayer) < Math.abs(yRelativeToPlayer)) {
+						if (xRelativeToPlayer <= 0) {
+							directionCheckOrder.push('left');
+							lastDirectionsToCheck.push('right');
+						} else {
+							directionCheckOrder.push('right');
+							lastDirectionsToCheck.push('left');
+						}
+						if (yRelativeToPlayer <= 0) {
+							directionCheckOrder.push('up');
+							lastDirectionsToCheck.push('down');
+						} else {
+							directionCheckOrder.push('down');
+							lastDirectionsToCheck.push('up');
+						}
+					} else {
+						if (yRelativeToPlayer <= 0) {
+							directionCheckOrder.push('up');
+							lastDirectionsToCheck.push('down');
+						} else {
+							directionCheckOrder.push('down');
+							lastDirectionsToCheck.push('up');
+						}
+						if (xRelativeToPlayer <= 0) {
+							directionCheckOrder.push('left');
+							lastDirectionsToCheck.push('right');
+						} else {
+							directionCheckOrder.push('right');
+							lastDirectionsToCheck.push('left');
+						}
+					}
+
+					//check first two, followed by last two(reversed)
+					directionCheckOrder.push(lastDirectionsToCheck[1]);
+					directionCheckOrder.push(lastDirectionsToCheck[0]);
+
+				//not on same face, use as you would
+				} else {
+					directionCheckOrder = [enemy.direction, this.getClockwiseDirection(enemy.direction), this.getOppositeDirection(enemy.direction), this.getCounterClockwiseDirection(enemy.direction)];
+				}
+
+				//console.log(directionCheckOrder);
+
+				//attempt to move in the directions ordered above
+				for (let directionToCheck of directionCheckOrder) {
+
+					adjacentTile = this.findAdjacentTile(originTile, directionToCheck);
+					targetTile = adjacentTile.tile;
+
+					if (this.isTilePassable(targetTile, enemyBehavior)) {
+						//move and update the direction if we changed faces
+						this.moveEntityToTile(targetTile, enemy);
+						enemy.direction = adjacentTile.newDirection;
+						moved = true;
+						break;
+					}
+				}
+
+ 			//pacers and projectiles just try to go in the direction they're going
 			} else {
 				adjacentTile = this.findAdjacentTile(originTile, enemy.direction);
 				targetTile = adjacentTile.tile;
@@ -1320,7 +1405,7 @@ export default {
 				tier = 1;
 			} else if (['sea-serpent','skeleton'].includes(enemy.type)) {
 				tier = 2;
-			} else if (['skeleton-mage'].includes(enemy.type)) {
+			} else if (['skeleton-mage','courier'].includes(enemy.type)) {
 				tier = 3;
 			}
 
@@ -1342,6 +1427,9 @@ export default {
 			//sentries dont move, and shoot players in line of sight
 			} else if (['sea-serpent','skeleton-archer'].includes(enemy.type)) {
 				behavior = 'sentry';
+			//runners flee from the player
+			} else if (['courier'].includes(enemy.type)) {
+				behavior = 'runner';
 			//guards hug a wall and turn 90deg when they hit an obstacle
 			} else if (['skeleton'].includes(enemy.type)) {
 				behavior = 'guard';
@@ -1474,10 +1562,18 @@ export default {
 		//change levels and re-enable normal keypresses
 		completeLevel(e) {
 			if (e.keyCode === 32) {
-				this.goToLevel(store.currentLevelNum + 1);
 
-		  	window.removeEventListener('keyup', this.completeLevel);
-				window.addEventListener('keyup', this.handleKeyPress);
+				let nextLevelNum = store.currentLevelNum + 1;
+
+				//is the game over?
+				if (nextLevelNum >= store.levels.length) {
+					store.windows.end.open = true;
+					window.removeEventListener('keyup', this.completeLevel);
+				} else {
+					this.goToLevel(nextLevelNum);
+					window.removeEventListener('keyup', this.completeLevel);
+					window.addEventListener('keyup', this.handleKeyPress);
+				}
 			}
 		},
 

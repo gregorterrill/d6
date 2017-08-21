@@ -1,7 +1,5 @@
 <template>
 
-	
-
 	<div class="title">
 
 		<div class="title__logo message">
