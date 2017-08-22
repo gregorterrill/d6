@@ -80,6 +80,10 @@ export default {
 					type += 'quicksand';
 					break;
 
+				case 'S':
+					type += 'seal';
+					break;
+
 				case '-':
 					type += 'bridge-hor';
 					break;
@@ -223,7 +227,8 @@ export default {
 .die__tile--pit {
 	background-position:-192px -64px;
 }
-.die__tile--quicksand {
+.die__tile--quicksand,
+.die__tile--seal {
 	background-position:-256px -64px;
 }
 .die__tile--rocks {
@@ -434,6 +439,14 @@ export default {
 }
 
 .enemy--skeleton-mage {
+	background-position:0 -64px;
+	animation:animateSpriteThree 0.5s infinite;
+	&.enemy--attacking { animation:animateSpriteFour 0.5s infinite; }
+  &.enemy--dying { animation:animateSpriteThree 0.5s infinite, flash 0.5s linear infinite alternate, disappear 0.5s linear 1s infinite; }
+}
+
+//WRAITH
+.enemy--wraith {
 	background-position:0 -64px;
 	animation:animateSpriteThree 0.5s infinite;
 	&.enemy--attacking { animation:animateSpriteFour 0.5s infinite; }

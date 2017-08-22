@@ -32,6 +32,22 @@ const level = {
       type: 'enemyGroupDefeated',
       value: 'A',
     }]
+  },{
+    type: 'message',
+    location: { 'face': 0, 'row': 4, 'col': 3 },
+    content: 'CHANCELLOR: Did you see any COURIERS out there in the DESERT? I ordered a whole bunch of stuff from AVALON and I\'ve been waiting for DAYS.',
+  },{
+    type: 'message',
+    location: { 'face': 0, 'row': 2, 'col': 3 },
+    content: 'CHANCELLOR: Did you see any COURIERS out there in the DESERT? I ordered a whole bunch of stuff from AVALON and I\'ve been waiting for DAYS.',
+  },{
+    type: 'message',
+    location: { 'face': 0, 'row': 3, 'col': 2 },
+    content: 'CHANCELLOR: Did you see any COURIERS out there in the DESERT? I ordered a whole bunch of stuff from AVALON and I\'ve been waiting for DAYS.',
+  },{
+    type: 'message',
+    location: { 'face': 0, 'row': 3, 'col': 4 },
+    content: 'CHANCELLOR: Did you see any COURIERS out there in the DESERT? I ordered a whole bunch of stuff from AVALON and I\'ve been waiting for DAYS.',
   }],
   enemies: [{
     type: 'courier',

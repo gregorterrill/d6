@@ -66,27 +66,27 @@ const level = {
   }],
   faces: [
     [
-      ['Y',' ','A','H','A','A','A'],
+      ['Y',' ','A','H','F','A','A'],
       [' ',' ','A','P','A','X','X'], // ONE
-      ['A','P','A','P','A','X','X'], // ↑ right edge of 5
+      ['F','P','A','P','F','X','X'], // ↑ right edge of 5
       ['H','P','P','●','P','P','H'], // → top edge of 3
-      ['A','A','A','P','A','A','A'], // ↓ right edge of 2
-      ['Y','A','P','P','A','A','A'], // ← bottom edge of 4
+      ['A','A','F','P','A','F','A'], // ↓ right edge of 2
+      ['Y','A','P','P','F','A','A'], // ← bottom edge of 4
       [' ',' ','A','H','A','A','A']
     ],
     [
-      ['P',' ',' ','A','A',' ','Y'],
+      ['P',' ',' ','F','A',' ','Y'],
       [' ',' ','Y',' ','A','●',' '], // TWO
-      ['Y','X','X','Y','A','A','Y'], // ↑ left edge of 4
+      ['Y','X','X','Y','F','A','Y'], // ↑ left edge of 4
       ['X','X','X',' ',' ',' ',' '], // → bottom edge of 1
       [' ','X','X','X','Y','A','A'], // ↓ left edge of 3
       ['Y','●','Y',' ',' ','A','P'], // ← top edge of 6
-      [' ','Y',' ','Y','A','A',' ']
+      [' ','Y',' ','Y','A','F',' ']
     ],
     [
       [' ',' ',' ',' ','-','-',' '],
       ['A','P','A','A','X','▪','A'], // THREE
-      ['A','P','A','A',' ','X','A'], // ↑ right edge of 1
+      ['A','P','F','A',' ','X','A'], // ↑ right edge of 1
       ['Y',' ','Y','●','A','X','X'], // → top edge of 5
       ['A','A',' ','A','P',' ','P'], // ↓ right edge of 6
       ['A','●',' ','A','Y','P','P'], // ← bottom edge of 2
@@ -97,8 +97,8 @@ const level = {
       [' ','●','P','P',' ','●',' '], // FOUR
       [' ','Y',' ',' ','P',' ',' '], // ↑ left edge of 6
       ['A',' ','P','Y',' ',' ','P'], // → bottom edge of 5
-      ['A','A','A','W',' ','Y',' '], // ↓ left edge of 1
-      [' ','●','A','A',' ','●',' '], // ← top edge of 2
+      ['F','A','A','W',' ','Y',' '], // ↓ left edge of 1
+      [' ','●','A','F',' ','●',' '], // ← top edge of 2
       [' ',' ','P','P','Y',' ','Y']
     ],
     [

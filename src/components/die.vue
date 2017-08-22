@@ -44,7 +44,7 @@ export default {
   },
   mounted() {
   	//set the music volume
-  	this.$refs['music'].volume = 0.25;
+  	this.$refs['music'].volume = 0.5;
   	//rotate the cube to the player face
   	store.player.location = store.currentLevel.entrance;
   	this.resetDieRotation();
@@ -504,7 +504,7 @@ export default {
 			if (typeOfEntity === 'player' && !store.player.items.includes('boat')) {
 				
 				//on foot, you can pass through most terrain
-				if ([' ','-','|','Y','W','P','I','C','Q'].includes(tileValue)) {
+				if ([' ','-','|','Y','W','P','I','C','Q','S'].includes(tileValue)) {
 					passable = true;
 
 				//if the player is trying to move onto a water tile, check if it has a boat on it
@@ -523,7 +523,7 @@ export default {
 			}
 
 			//LINE OF SIGHT is the same as projectiles, but is also blocked by enemies and pickups
-			if (typeOfEntity === 'lineOfSight' && ['X','P',' ','I','V','|','-','C','Q'].includes(tileValue)) {
+			if (typeOfEntity === 'lineOfSight' && ['X','P',' ','I','V','|','-','C','Q','S'].includes(tileValue)) {
 				passable = true;
 
 				for (let otherEnemy of store.currentLevel.enemies) {
@@ -555,7 +555,7 @@ export default {
 			}
 
 			//NORMAL ENEMIES can move through land, bridges, gates, and trees
-			if (['pacer','guard','strafer'].includes(typeOfEntity) && [' ','-','|','Y','I'].includes(tileValue)) {
+			if (['pacer','guard','strafer','chaser'].includes(typeOfEntity) && [' ','-','|','Y','I'].includes(tileValue)) {
 				passable = true;
 
 				//for enemies, we need to check if there's another (non-projectile) enemy
@@ -1222,8 +1222,9 @@ export default {
 						directionsChecked++;
 					}
 				}
-			//runners act like pacers unless the runner is on their face, in which case they run away
-			} else if (enemyBehavior === 'runner') {
+			//runners act like pacers unless the player is on their face, in which case they run away
+			//chasers do the opposite
+			} else if (enemyBehavior === 'runner' || enemyBehavior === 'chaser') {
 
 				let xRelativeToPlayer = enemy.location.col - store.player.location.col,
 						yRelativeToPlayer =  enemy.location.row - store.player.location.row,
@@ -1231,12 +1232,19 @@ export default {
 						directionCheckOrder = [],
 						lastDirectionsToCheck = [];
 
-				//if the runner is on the same face as hero, they run in the opposite direction
-				//the hero just moved
+				//if the enemy is on the same face as player, they run in the opposite direction the player just moved
 				if (store.player.location.face == enemy.location.face) {
 
-					//chose initial direction based on smallest distance
-					if (Math.abs(xRelativeToPlayer) < Math.abs(yRelativeToPlayer)) {
+					//console.log('xRelativeToPlayer: ' + xRelativeToPlayer);
+					//console.log('yRelativeToPlayer: ' + yRelativeToPlayer);
+
+					//if the enemy is closer to the player in X than Y or adjacent in X and not adjacent in Y, move based on X first
+					//(adjacent is 2 distance because we're measuring the player (who's already moved) vs the enemy's starting position)
+					if ( ((Math.abs(xRelativeToPlayer) < Math.abs(yRelativeToPlayer)) || Math.abs(xRelativeToPlayer) == 2) && Math.abs(yRelativeToPlayer) != 2 ) {
+
+						//console.log('player is closer in X!');
+
+						//closer in X, so check X first
 						if (xRelativeToPlayer <= 0) {
 							directionCheckOrder.push('left');
 							lastDirectionsToCheck.push('right');
@@ -1244,6 +1252,7 @@ export default {
 							directionCheckOrder.push('right');
 							lastDirectionsToCheck.push('left');
 						}
+
 						if (yRelativeToPlayer <= 0) {
 							directionCheckOrder.push('up');
 							lastDirectionsToCheck.push('down');
@@ -1251,7 +1260,16 @@ export default {
 							directionCheckOrder.push('down');
 							lastDirectionsToCheck.push('up');
 						}
+
+						//check first two, followed by last two(reversed)
+						directionCheckOrder.push(lastDirectionsToCheck[1]);
+						directionCheckOrder.push(lastDirectionsToCheck[0]);
+
 					} else {
+
+						//console.log('player is closer in Y!');
+
+						//closer in Y, so check Y first
 						if (yRelativeToPlayer <= 0) {
 							directionCheckOrder.push('up');
 							lastDirectionsToCheck.push('down');
@@ -1259,6 +1277,7 @@ export default {
 							directionCheckOrder.push('down');
 							lastDirectionsToCheck.push('up');
 						}
+
 						if (xRelativeToPlayer <= 0) {
 							directionCheckOrder.push('left');
 							lastDirectionsToCheck.push('right');
@@ -1266,18 +1285,23 @@ export default {
 							directionCheckOrder.push('right');
 							lastDirectionsToCheck.push('left');
 						}
+
+						//check first two, followed by last two(reversed)
+						directionCheckOrder.push(lastDirectionsToCheck[1]);
+						directionCheckOrder.push(lastDirectionsToCheck[0]);
 					}
 
-					//check first two, followed by last two(reversed)
-					directionCheckOrder.push(lastDirectionsToCheck[1]);
-					directionCheckOrder.push(lastDirectionsToCheck[0]);
+					//chasers just invert the normal check order
+					if (enemyBehavior === 'chaser') {
+						directionCheckOrder = directionCheckOrder.slice().reverse();
+					}
 
-				//not on same face, use as you would
+				//console.log(directionCheckOrder);
+
+				//not on same face, do the same as a guard
 				} else {
 					directionCheckOrder = [enemy.direction, this.getClockwiseDirection(enemy.direction), this.getOppositeDirection(enemy.direction), this.getCounterClockwiseDirection(enemy.direction)];
 				}
-
-				//console.log(directionCheckOrder);
 
 				//attempt to move in the directions ordered above
 				for (let directionToCheck of directionCheckOrder) {
@@ -1402,6 +1426,8 @@ export default {
 				tier = 2;
 			} else if (['skeleton-mage','courier'].includes(enemy.type)) {
 				tier = 3;
+			} else if (['wraith'].includes(enemy.type)) {
+				tier = 5;
 			}
 
 			//allow manual overrides
@@ -1425,6 +1451,9 @@ export default {
 			//runners flee from the player
 			} else if (['courier'].includes(enemy.type)) {
 				behavior = 'runner';
+			//chasers chase the player
+			} else if (['wraith'].includes(enemy.type)) {
+				behavior = 'chaser';
 			//guards hug a wall and turn 90deg when they hit an obstacle
 			} else if (['skeleton'].includes(enemy.type)) {
 				behavior = 'guard';
