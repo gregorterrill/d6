@@ -1037,11 +1037,6 @@ export default {
 							this.showDialog(pickup.content, false);
 						}
 
-						//inns also need to show the healed message after their main text
-						if (pickup.behavior === 'inn') {
-							this.showDialog('You RESTED to recover full HP!', false);
-						}
-
 						//messages are done here
 						return;
 					}

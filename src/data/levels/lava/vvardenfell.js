@@ -1,12 +1,20 @@
 const level = {
-  title: 'The Ashlands of Vvardenfell (WIP)',
+  title: 'The Ashlands of Vvardenfell',
   tileset: 'lava',
   entrance: { 'face': 5, 'row': 3, 'col': 3 },
   pickups: [{
     type: 'message',
+    content: 'TRIBESMAN: This area is treacherous, and you\'re sure to take some falls. The SHAMAN in the VILLAGE nearby can HEAL your wounds, and he\'s left some POTIONS in CHESTS to help travellers that get stuck.',
+    location: { 'face': 5, 'row': 3, 'col': 2 },
+  },{
+    type: 'message',
     behavior: 'inn',
-    content: 'INNKEEPER: It\'s dangerous outside of town. Stay close, and come back to rest when you\'re hurt.',
+    content: 'SHAMAN: It\'s dangerous outside of the VILLAGE. Stay close, and come back to HEAL when you\'re hurt.',
     location: { 'face': 4, 'row': 1, 'col': 2 },
+  },{
+    type: 'message',
+    content: 'MINER: The ORE that the ANCIENTS mined to build the PIPS you\'ve been lighting come from these ROCK FORMATIONS.',
+    location: { 'face': 3, 'row': 4, 'col': 3 },
   },{
     type: 'key',
     container: 'chest',
@@ -89,7 +97,7 @@ const level = {
       [' ','●','P','P',' ','●',' '], // FOUR
       [' ','Y',' ',' ','P',' ',' '], // ↑ left edge of 6
       ['A',' ','P','Y',' ',' ','P'], // → bottom edge of 5
-      ['A','A','A',' ',' ','Y',' '], // ↓ left edge of 1
+      ['A','A','A','W',' ','Y',' '], // ↓ left edge of 1
       [' ','●','A','A',' ','●',' '], // ← top edge of 2
       [' ',' ','P','P','Y',' ','Y']
     ],
@@ -100,13 +108,13 @@ const level = {
       ['Y',' ','X','▪','X','X',' '], // → top edge of 1
       [' ',' ','Y','X','Y',' ',' '], // ↓ right edge of 4
       [' ','●',' ',' ',' ','●','A'], // ← bottom edge of 6
-      ['P',' ','Y','A','A',' ',' ']
+      ['P',' ','Y','F','F',' ',' ']
     ],
     [
       ['P','P','P','P','P','P','P'],
       ['P','●',' ','P',' ','●','P'], // SIX
       [' ','P',' ','P','P',' ',' '], // ↑ left edge of 2
-      ['P','●','P',' ','P','●','P'], // → bottom edge of 3
+      ['P','●','W',' ','P','●','P'], // → bottom edge of 3
       [' ','P','P','P','P',' ',' '], // ↓ left edge of 5
       ['P','●',' ','P','P','●','P'], // ← top edge of 4
       ['P','P','P',' ',' ','P','P']
