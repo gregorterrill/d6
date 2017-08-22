@@ -1549,36 +1549,107 @@ export default {
 			if (e.keyCode === 32) {
 				this.goToLevel(store.currentLevelNum);
 
+				//require a player input
 				window.removeEventListener('keyup', this.killPlayer);
 				window.addEventListener('keyup', this.handleKeyPress);
 			}
+		},
+
+		//kill the wraith!
+		showEndScene() {
+
+			//stop listening to keypress
+			window.removeEventListener('keyup', this.handleKeyPress);
+
+			let wraithFace = store.currentLevel.enemies[0].location.face;
+
+			//rotate to face wraith is on
+			if (wraithFace != store.player.location.face) {
+				this.rotateDie(store.player.location.face, wraithFace);
+				this.currentFace = wraithFace;
+			}
+
+			//hacky way of slow advancing text!
+			this.showDialog('What\'s this');
+
+			setTimeout(() => {
+				store.windows.dialog.messages = [];
+				this.showDialog('What\'s this.');
+			}, 400);
+
+			setTimeout(() => {
+				store.windows.dialog.messages = [];
+				this.showDialog('What\'s this..');
+			}, 800);
+
+			setTimeout(() => {
+				store.windows.dialog.messages = [];
+				this.showDialog('What\'s this...');
+			}, 1200);
+
+			setTimeout(() => {
+				store.windows.dialog.messages = [];
+				this.showDialog('What\'s this...?');
+			}, 1600);
+			
+			//wait a sec for dramatic effect, then kill the wraith
+			setTimeout(() => {
+          this.$set(store.currentLevel.enemies[0],'status','dying');
+          this.playSound('flame');
+          store.player.xp += 20;
+
+          setTimeout(() => {
+          	this.playSound('flame');
+          }, 300);
+          setTimeout(() => {
+          	this.playSound('flame');
+          }, 600);
+
+          //clear the dialog and show new one
+          store.windows.dialog.open = false;
+		  		store.windows.dialog.messages = [];
+					this.showDialog('As the FINAL PIP flickers to life, the WRAITH OF TRISTRAM fades away! You brought LIGHT back to TRISTRAM and all the other WORLDS! You gain 20 XP!');
+					this.showDialog('Press SPACE to CONTINUE.');
+
+					//require a player input
+					window.addEventListener('keyup', this.completeLevel);
+      }, 3200);
+		
 		},
 
 		//if we have 21 lit pips, display a success message and wait for input to continue
 		checkForLevelComplete() {
 			if (store.pips === 21) {
 
-				//we'll randomly tack one of these on to the level complete message
-				const successPhrases = [
-					'Everyone is very impressed!',
-					'You receive a ton of FAN MAIL!',
-					'The LOCALS hold a CELEBRATION in your honor!',
-					'Your MOTHER sends you a LETTER OF CONGRATULATIONS!',
-					'A BAR in town offers you a 50% OFF COUPON!',
-					'The PRINCESS still refuses to go on a DATE with you.',
-					'An ADORABLE CHILD names her pet SLIME after you.',
-					'An OLD WOMAN makes you a delicious CASSEROLE.',
-					'VILLAGES erect STATUES of you, but they don\'t really capture your ESSENCE.',
-					'The KING insists his ROYAL GUARD could have handled it.'
-				];
+				//if this is the final level, show the end scene
+				if (store.currentLevelNum === store.levels.length - 1) {
 
-				store.player.xp += 10;
-				this.showDialog('You brought LIGHT back to ' + store.currentLevel.title.toUpperCase() + '! ' + successPhrases[Math.floor(Math.random() * successPhrases.length)] + ' You gain 10 XP!', 'win', true);
-				this.showDialog('Press SPACE to travel to a NEW WORLD.');
+					this.showEndScene();
 
-				//require a player input, then continue murdering player
-				window.removeEventListener('keyup', this.handleKeyPress);
-				window.addEventListener('keyup', this.completeLevel);
+				} else {
+
+					//we'll randomly tack one of these on to the level complete message
+					const successPhrases = [
+						'Everyone is very impressed!',
+						'You receive a ton of FAN MAIL!',
+						'The LOCALS hold a CELEBRATION in your honor!',
+						'Your MOTHER sends you a LETTER OF CONGRATULATIONS!',
+						'A BAR in town offers you a 50% OFF COUPON!',
+						'The PRINCESS still refuses to go on a DATE with you.',
+						'An ADORABLE CHILD names her pet SLIME after you.',
+						'An OLD WOMAN makes you a delicious CASSEROLE.',
+						'VILLAGES erect STATUES of you, but they don\'t really capture your ESSENCE.',
+						'The KING insists his ROYAL GUARD could have handled it.'
+					];
+
+					store.player.xp += 10;
+					this.showDialog('You brought LIGHT back to ' + store.currentLevel.title.toUpperCase() + '! ' + successPhrases[Math.floor(Math.random() * successPhrases.length)] + ' You gain 10 XP!', 'win', true);
+					this.showDialog('Press SPACE to travel to a NEW WORLD.');
+
+					//require a player input
+					window.removeEventListener('keyup', this.handleKeyPress);
+					window.addEventListener('keyup', this.completeLevel);
+				}
 	  		
 	  	}
 		},
@@ -1658,7 +1729,7 @@ export default {
 }
 
 .core {
-	display:none; //DEBUG FOR DESERT
+	//display:none; //DEBUG FOR DESERT
 	width: 100%;
 	height: 100%;
 	position: absolute;

@@ -164,6 +164,7 @@ export default {
 	display:block;
 }
 
+/*
 .die__tile:hover::after {
 	content: "FACE " attr(data-face) ", ROW " attr(data-row) ", COL " attr(data-col);
 	position:absolute;
@@ -177,6 +178,7 @@ export default {
 	line-height:1.5;
 	width:256px;
 }
+*/
 
 .die__tile,
 .die__tile--special::before {
@@ -302,7 +304,7 @@ export default {
 	.die__tile--water::before,
 	.die__tile--wpip,
 	.die__tile--wpip-active,
-	.die__tile--rocks { opacity:1; }
+	.die__tile--rocks { opacity:0.9; }
 }
 
 // GENERAL GAME ENTITIES

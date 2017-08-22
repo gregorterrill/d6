@@ -14,9 +14,7 @@
 import store from '../data/store.js'
 
 export default {
-	props: [],
-	data() {},
-  methods: {}
+	props: []
 }
 </script>
 

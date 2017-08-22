@@ -15,7 +15,6 @@ import calico from './levels/desert/calico.js'
 import figaro from './levels/desert/figaro.js'
 
 //SNOW LEVELS
-import solstheim from './levels/snow/solstheim.js'
 import lothric from './levels/snow/lothric.js'
 import lordaeron from './levels/snow/lordaeron.js'
 import bowerstone from './levels/snow/bowerstone.js'
@@ -40,7 +39,6 @@ const levels = [
   figaro,
   lordaeron,
   bowerstone,
-  solstheim,
   lothric,
   vvardenfell,
   tristram

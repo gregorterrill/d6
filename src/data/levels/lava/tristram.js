@@ -1,6 +1,6 @@
 
 const level = {
-  title: 'The Abyss of Tristram (WIP)',
+  title: 'The Abyss of Tristram',
   tileset: 'lava',
   entrance: { 'face': 0, 'row': 2, 'col': 3 },
   pickups: [{
@@ -20,7 +20,8 @@ const level = {
   enemies: [{
     type: 'wraith',
     location: { 'face': 4, 'row': 3, 'col': 4 },
-    direction: 'down'
+    direction: 'down',
+    status: 'active'
   }],
   faces: [
     [
