@@ -80,7 +80,7 @@ const level = {
       ['Y','X','X','Y','F','A','Y'], // ↑ left edge of 4
       ['X','X','X',' ',' ',' ',' '], // → bottom edge of 1
       [' ','X','X','X','Y','A','A'], // ↓ left edge of 3
-      ['Y','●','Y',' ',' ','A','P'], // ← top edge of 6
+      ['Y','●','Y',' ',' ','D','P'], // ← top edge of 6
       [' ','Y',' ','Y','A','F',' ']
     ],
     [
@@ -89,7 +89,7 @@ const level = {
       ['A','P','F','A',' ','X','A'], // ↑ right edge of 1
       ['Y',' ','Y','●','A','X','X'], // → top edge of 5
       ['A','A',' ','A','P',' ','P'], // ↓ right edge of 6
-      ['A','●',' ','A','Y','P','P'], // ← bottom edge of 2
+      ['A','●',' ','A','Y','D','P'], // ← bottom edge of 2
       ['A','A','P','P',' ','P','A']
     ],
     [
@@ -112,12 +112,12 @@ const level = {
     ],
     [
       ['P','P','P','P','P','P','P'],
-      ['P','●',' ','P',' ','●','P'], // SIX
+      ['P','●',' ','D',' ','●','P'], // SIX
       [' ','P',' ','P','P',' ',' '], // ↑ left edge of 2
       ['P','●','W',' ','P','●','P'], // → bottom edge of 3
       [' ','P','P','P','P',' ',' '], // ↓ left edge of 5
-      ['P','●',' ','P','P','●','P'], // ← top edge of 4
-      ['P','P','P',' ',' ','P','P']
+      ['P','●',' ','D','P','●','P'], // ← top edge of 4
+      ['P','P','Y',' ',' ','P','P']
     ]
   ]
 }
