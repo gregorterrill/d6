@@ -449,7 +449,7 @@ export default {
 
 //WRAITH
 .enemy--wraith {
-	background-position:0 -64px;
+	background-position::0 -384px;
 	animation:animateSpriteThree 0.5s infinite;
 	&.enemy--attacking { animation:animateSpriteFour 0.5s infinite; }
   &.enemy--dying { animation:animateSpriteThree 0.5s infinite, flash 0.5s linear infinite alternate, disappear 0.5s linear 1s infinite; }

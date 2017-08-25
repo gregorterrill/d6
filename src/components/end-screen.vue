@@ -4,7 +4,7 @@
 
 		<div class="end__message message">
 
-			<h1>PIP&bull;SEEK</h1>
+			<h1>~PipQuest~</h1>
 			
 			<p>YOU WON!</p>
 
@@ -51,7 +51,7 @@ export default {
 			return ranking;
 		},
 		shareLink() {
-			let link = 'https://twitter.com/home?status=I%20just%20beat%20PIP%E2%80%A2SEEK%20with%20a%20score%20of%20' + store.player.xp + 'XP!%20Play%20at%20http%3A//pipseek.gregorterrill.com';
+			let link = 'https://twitter.com/home?status=I%20just%20beat%20PipQuest%20with%20a%20score%20of%20' + store.player.xp + 'XP!%20Play%20at%20http%3A//pipquest.gregorterrill.com';
 			return link;
 		}
 	}
@@ -73,8 +73,8 @@ export default {
 	bottom:20vh;
 	min-height:28rem;
 	left:50%;
-	width:40rem;
-	margin-left:-20rem;
+	width:45rem;
+	margin-left:-22.5rem;
 	text-align:center;
 
 	h1 {

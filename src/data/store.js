@@ -55,7 +55,7 @@ const currentLevel = {
 
 const windows = {
   title: {
-    open: false, //DEBUG: set to true or title screen will be skipped
+    open: true, //DEBUG: set to true or title screen will be skipped
   },
   end: {
     open: false,

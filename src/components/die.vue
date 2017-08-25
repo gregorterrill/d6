@@ -76,12 +76,12 @@ export default {
 
   		//determine which axes to shift based on col and row position for each face
   		const faceAxes = [
-  			{ col: 'y', colMultiplier: '-1', row: 'x', rowMultiplier: '1' }, //ONE
-  			{ col: 'y', colMultiplier: '-1', row: 'z', rowMultiplier: '1' }, //TWO
-  			{ col: 'z', colMultiplier: '1', row: 'x', rowMultiplier: '1' }, //THREE
-  			{ col: 'z', colMultiplier: '-1', row: 'x', rowMultiplier: '1' }, //FOUR
-  			{ col: 'y', colMultiplier: '-1', row: 'z', rowMultiplier: '1' }, //FIVE
-  			{ col: 'y', colMultiplier: '1', row: 'x', rowMultiplier: '1' }, //SIX
+  			{ col: 'y', colMultiplier: '-1', row: 'x', rowMultiplier: '1' }, 	//ONE
+  			{ col: 'y', colMultiplier: '-1', row: 'z', rowMultiplier: '1' }, 	//TWO
+  			{ col: 'z', colMultiplier: '1', row: 'x', rowMultiplier: '1' }, 	//THREE
+  			{ col: 'z', colMultiplier: '-1', row: 'x', rowMultiplier: '1' }, 	//FOUR
+  			{ col: 'y', colMultiplier: '-1', row: 'z', rowMultiplier: '1' }, 	//FIVE
+  			{ col: 'y', colMultiplier: '1', row: 'x', rowMultiplier: '1' }, 	//SIX
   		];
 
   		//make column-based adjustments

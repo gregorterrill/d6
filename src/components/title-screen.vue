@@ -3,8 +3,8 @@
 	<div class="title">
 
 		<div class="title__logo message">
-			<h1>PIP&bull;SEEK</h1>
-			<p>A Retro Aventure<br>by <a href="http://www.gregorterrill.com" target="_blank">Gregor Terrill</a></p>
+			<h1>~PipQuest~</h1>
+			<p>A Retro Adventure<br>by <a href="http://www.gregorterrill.com" target="_blank">Gregor Terrill</a></p>
 		</div>
 
 		<div class="title__menu message">
@@ -131,10 +131,11 @@ export default {
 .title__logo {
 	z-index:101;
 	position:fixed;
-	width:40rem;
+	width:45rem;
 	top:20vh;
   left:50%;
-  margin-left:-20rem;
+  margin-left:-22.5rem;
+  text-align:center;
 
 	h1 {
 		color:#FFF;
