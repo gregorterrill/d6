@@ -94,7 +94,7 @@ export default {
 
 @font-face {
     font-family: PressStart2P;
-    src: url('./assets/font/PressStart2P.ttf');
+    src: url('./assets/font/PressStart2P.ttf') format('embedded-opentype');
 }
 
 * {

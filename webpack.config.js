@@ -2,6 +2,7 @@ var path = require('path')
 var webpack = require('webpack')
 
 module.exports = {
+  //entry: ['babel-polyfill', './src/main.js'], //for OLD IE
   entry: './src/main.js',
   output: {
     path: path.resolve(__dirname, './dist'),

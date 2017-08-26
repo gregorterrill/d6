@@ -154,8 +154,8 @@ export default {
 			const soundEl = this.$refs['sound-' + soundName][0];
 
 			if (soundEl) {
-				soundEl.currentTime = 0;
 				soundEl.play();
+				soundEl.currentTime = 0;
 			}
 		},
 

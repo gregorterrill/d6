@@ -55,8 +55,8 @@ export default {
 			const soundEl = this.$refs['sound-blip'];
 
 			if (soundEl) {
-				soundEl.currentTime = 0;
 				soundEl.play();
+				soundEl.currentTime = 0;
 			}
 		},
 
