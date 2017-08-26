@@ -32,6 +32,10 @@ import store from '../data/store.js'
 
 export default {
 	props: [],
+	created() {
+		//send GA event
+		ga('send', 'event', 'PipQuest', 'complete', 'XP', store.player.xp);
+	},
 	data() {
     return {
       store

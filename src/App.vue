@@ -74,7 +74,7 @@ export default {
     }
   },
   beforeCreate() {
-    
+
     //get progress info from localstorage, if available
     if (localStorage.getItem('currentLevel') !== null) {
       store.currentLevelNum = parseInt(localStorage.getItem('currentLevel'));
@@ -94,7 +94,7 @@ export default {
 
 @font-face {
     font-family: PressStart2P;
-    src: url('./assets/font/PressStart2P.ttf') format('embedded-opentype');
+    src: url('./assets/font/PressStart2P.ttf');
 }
 
 * {

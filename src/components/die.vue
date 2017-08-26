@@ -194,6 +194,7 @@ export default {
 						store.player.hacking = false;
 					}
 					this.showDialog('WALLHACK toggled!');
+
 					break;
 
 				//MENU
@@ -243,15 +244,21 @@ export default {
 		      break;
 
 		    // DIE ROTATIONS
-
 		    case 49: //number key 1
 		    case 50: //number key 2
 		    case 51: //number key 3
 		    case 52: //number key 4
 		    case 53: //number key 5
 		    case 54: //number key 6
-		    	this.rotateDie(this.currentFace, e.keyCode - 49);
-		    	this.currentFace = e.keyCode - 49;
+
+		    	//don't allow these rotations on the last level - that's cheating!
+		    	if (store.currentLevelNum != 15) {
+		    		this.rotateDie(this.currentFace, e.keyCode - 49);
+		    		this.currentFace = e.keyCode - 49;
+		    	} else {
+		    		this.playSound('bump');
+		    	}
+		    	
 		    	break;
 
 		    case 48: //zero rotates back to current player face
@@ -802,7 +809,12 @@ export default {
 					blocked = false,
 					slid = false,
 					needEnemyStep = true,
-					originalDirection = store.player.direction;
+					originalDirection = store.player.direction,
+					changedFace = false,
+					inputDelay = 200;
+
+			//stop listening for keypresses until we're done here
+			window.removeEventListener('keyup', this.handleKeyPress);
 
 			//reset player status and update direction
 			store.player.status = 'active';
@@ -871,6 +883,10 @@ export default {
 
 		  //perform the actual move
 		  if (moved) {
+
+		  	if (targetTile.face != store.player.location.face) {
+		  		changedFace = true;
+		  	}
 		  	this.moveEntityToTile(targetTile);
 
 		  	//close any open dialogs
@@ -909,6 +925,15 @@ export default {
 		  	//if the player moved into a pickup, get it
 		  	this.collectPickups();
 		  }
+
+		  //slight delay, then re-enable keypresses (for slightly longer if we changed face to allow re-orientation)
+		  if (changedFace) {
+		  	inputDelay = 400;
+		  }
+		  setTimeout(() => {
+				window.addEventListener('keyup', this.handleKeyPress);
+			}, inputDelay);
+		  
 		},
 
 		//resolve attacks against enemies - we need the origin tile in case we get repelled back
@@ -1668,6 +1693,9 @@ export default {
 					this.goToLevel(nextLevelNum);
 					window.removeEventListener('keyup', this.completeLevel);
 					window.addEventListener('keyup', this.handleKeyPress);
+
+					ga('send', 'event', 'PipQuest', 'levelReached', 'Level', store.player.xp);
+
 				}
 			}
 		},
