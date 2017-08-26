@@ -10,7 +10,7 @@ const level = {
     location: { 'face': 0, 'row': 3, 'col': 2 },
   },{
     type: 'message',
-    content: 'SORCEROR: The WRAITH cannot pass over our SEAL, so we are safe here...for now.',
+    content: 'SORCEROR: The WRAITH and its MINIONS cannot pass over our SEAL, so we are safe here...for now.',
     location: { 'face': 0, 'row': 3, 'col': 4 },
   },{
     type: 'message',
@@ -21,6 +21,36 @@ const level = {
     type: 'wraith',
     location: { 'face': 4, 'row': 3, 'col': 4 },
     direction: 'down',
+    status: 'active'
+  },{
+    type: 'skeleton',
+    location: { 'face': 3, 'row': 2, 'col': 2 },
+    direction: 'left',
+    status: 'active'
+  },{
+    type: 'skeleton',
+    location: { 'face': 3, 'row': 2, 'col': 4 },
+    direction: 'up',
+    status: 'active'
+  },{
+    type: 'skeleton',
+    location: { 'face': 2, 'row': 4, 'col': 3},
+    direction: 'left',
+    status: 'active'
+  },{
+    type: 'skeleton',
+    location: { 'face': 1, 'row': 2, 'col': 6},
+    direction: 'left',
+    status: 'active'
+  },{
+    type: 'skeleton',
+    location: { 'face': 1, 'row': 4, 'col': 6},
+    direction: 'left',
+    status: 'active'
+  },{
+    type: 'skeleton',
+    location: { 'face': 4, 'row': 2, 'col': 3},
+    direction: 'up',
     status: 'active'
   }],
   faces: [

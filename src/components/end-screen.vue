@@ -8,7 +8,7 @@
 			
 			<p>YOU WON!</p>
 
-			<p>You gained a total of {{ store.player.xp }}XP!</p>
+			<p>You gained a total of {{ store.player.xp }} XP!</p>
 
 			<br>
 
@@ -20,7 +20,7 @@
 
 			<p>THANKS FOR PLAYING!</p>
 
-			<a class="twitter-share-button" :href="shareLink">TWEET YOUR SCORE</a>
+			<a class="twitter-share-button" :href="shareLink" target="_blank">TWEET YOUR SCORE</a>
 
 		</div>
 
@@ -34,7 +34,7 @@ export default {
 	props: [],
 	created() {
 		//send GA event
-		ga('send', 'event', 'PipQuest', 'complete', store.player.xp + 'XP', store.player.xp);
+		ga('send', 'event', 'PipQuest', 'complete', store.player.xp + ' XP', store.player.xp);
 	},
 	data() {
     return {
@@ -55,7 +55,7 @@ export default {
 			return ranking;
 		},
 		shareLink() {
-			let link = 'https://twitter.com/home?status=I%20just%20beat%20PipQuest%20with%20a%20score%20of%20' + store.player.xp + 'XP!%20Play%20at%20http%3A//pipquest.gregorterrill.com';
+			let link = 'https://twitter.com/home?status=I%20just%20completed%20%23PipQuest%20with%20a%20score%20of%20' + store.player.xp + '%20XP!%20Play%20at%20http%3A//pipquest.gregorterrill.com';
 			return link;
 		}
 	}

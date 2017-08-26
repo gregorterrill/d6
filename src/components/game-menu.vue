@@ -172,7 +172,7 @@ export default {
 	position:absolute;
 	top:0;
 	bottom:0;
-	overflow-y:scroll;
+	overflow-y:auto;
 }
 .menu__panel--left {
 	width:20%;

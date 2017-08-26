@@ -930,9 +930,13 @@ export default {
 		  if (changedFace) {
 		  	inputDelay = 400;
 		  }
-		  setTimeout(() => {
-				window.addEventListener('keyup', this.handleKeyPress);
-			}, inputDelay);
+
+		  //if we're not dead and havent finished the level, re-enable normal keypresses
+		  if (store.player.hp > 0 && store.pips < 21) {
+			  setTimeout(() => {
+					window.addEventListener('keyup', this.handleKeyPress);
+				}, inputDelay);
+			}
 		  
 		},
 
@@ -1619,9 +1623,12 @@ export default {
 				this.showDialog('What\'s this...?');
 			}, 1600);
 			
-			//wait a sec for dramatic effect, then kill the wraith
+			//wait a sec for dramatic effect, then kill the wraith and minions
 			setTimeout(() => {
-          this.$set(store.currentLevel.enemies[0],'status','dying');
+          store.currentLevel.enemies.forEach(function (enemy, i) {
+          	enemy.status = 'dying';
+          });
+
           this.playSound('flame');
           store.player.xp += 20;
 
@@ -1635,7 +1642,7 @@ export default {
           //clear the dialog and show new one
           store.windows.dialog.open = false;
 		  		store.windows.dialog.messages = [];
-					this.showDialog('As the FINAL PIP flickers to life, the WRAITH OF TRISTRAM fades away! You brought LIGHT back to TRISTRAM and all the other WORLDS! You gain 20 XP!');
+					this.showDialog('As the FINAL PIP flickers to life, the WRAITH OF TRISTRAM fades away along with its MINIONS! You brought LIGHT back to TRISTRAM and all the other WORLDS! You gain 20 XP!');
 					this.showDialog('Press SPACE to CONTINUE.');
 
 					//require a player input

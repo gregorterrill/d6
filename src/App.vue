@@ -27,6 +27,15 @@
         <p>INVENTORY</p>
         <p v-for="item in store.player.items">&nbsp;{{ item.charAt(0).toUpperCase() + item.slice(1).replace('-',' ') }}</p>
       </div>
+
+      <div class="btn-controls">
+        <button v-on:click="keyPress(27)" class="btn-controls__esc">ESC</button><!--
+        --><button v-on:click="keyPress(38)" class="btn-controls__up">↑</button><!--
+        --><button v-on:click="keyPress(32)" class="btn-controls__space">SPC</button><!--
+        --><button v-on:click="keyPress(37)" class="btn-controls__left">←</button><!--
+        --><button v-on:click="keyPress(40)" class="btn-controls__down">↓</button><!--
+        --><button v-on:click="keyPress(39)" class="btn-controls__right">→</button>
+      </div>
       
       <div class="die-container">
         <die :level="store.currentLevel"></die>
@@ -71,6 +80,27 @@ export default {
       } else {
         return 'hp-normal';
       }
+    }
+  },
+  methods: {
+    keyPress(keyCode) {
+
+      console.log(keyCode);
+
+      if (document.createEventObject) {
+          var eventObj = document.createEventObject();
+          eventObj.keyCode = keyCode;
+          window.fireEvent("onkeyup", eventObj);
+          eventObj.keyCode = keyCode;   
+      } else if(document.createEvent) {
+          var eventObj = document.createEvent("Events");
+          eventObj.initEvent("keyup", true, true);
+          eventObj.which = keyCode; 
+          eventObj.keyCode = keyCode;
+          window.dispatchEvent(eventObj);
+      }
+
+      return true;
     }
   },
   beforeCreate() {
@@ -180,6 +210,45 @@ a {
   right:1rem;
   min-width: 13rem;
 }
+
+.btn-controls {
+  right:1rem;
+  bottom:1rem;
+  padding:0;
+  position:absolute;
+  z-index:999;
+  width:9rem;
+}
+
+@media (min-width:1025px) {
+  .btn-controls {
+    display:none;
+  }
+}
+
+.btn-controls button {
+  display:inline-block;
+  vertical-align:top;
+  text-align:center;
+  padding:0;
+  margin:0;
+  width:3rem;
+  height:3rem;
+  background-color:#1a4f9f;
+  border:8px solid #FFF;
+  border-image: url('./assets/box.png') 8 round;
+  color:#FFF;
+  font-size:1.5rem;
+  line-height:1;
+  font-family:PressStart2P, monospace;
+
+  &:focus { outline:none; }
+}
+
+button.btn-controls__space,
+button.btn-controls__esc {
+  font-size:0.25rem;
+} 
 
 p.hp-critical {
   color:#de7c70;
