@@ -107,10 +107,14 @@ export default {
 			store.currentLevel = JSON.parse(JSON.stringify(store.levels[store.currentLevelNum]));
 			store.windows.title.open = false;
 
+			ga('send', 'event', 'PipQuest', 'newGame');
+
 		},
 
 		continueGame() {
 			store.windows.title.open = false;
+
+			ga('send', 'event', 'PipQuest', 'continueGame');
 		}
 
   },

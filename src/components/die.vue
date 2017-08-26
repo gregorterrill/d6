@@ -811,7 +811,7 @@ export default {
 					needEnemyStep = true,
 					originalDirection = store.player.direction,
 					changedFace = false,
-					inputDelay = 200;
+					inputDelay = 150;
 
 			//stop listening for keypresses until we're done here
 			window.removeEventListener('keyup', this.handleKeyPress);
@@ -1577,6 +1577,8 @@ export default {
 				//require a player input
 				window.removeEventListener('keyup', this.killPlayer);
 				window.addEventListener('keyup', this.handleKeyPress);
+
+				ga('send', 'event', 'PipQuest', 'playerDeath', 'Level ' + store.currentLevelNum);
 			}
 		},
 
@@ -1694,7 +1696,7 @@ export default {
 					window.removeEventListener('keyup', this.completeLevel);
 					window.addEventListener('keyup', this.handleKeyPress);
 
-					ga('send', 'event', 'PipQuest', 'levelReached', 'Level', store.player.xp);
+					ga('send', 'event', 'PipQuest', 'levelReached', 'Level ' + nextLevelNum);
 
 				}
 			}

@@ -34,7 +34,7 @@ export default {
 	props: [],
 	created() {
 		//send GA event
-		ga('send', 'event', 'PipQuest', 'complete', 'XP', store.player.xp);
+		ga('send', 'event', 'PipQuest', 'complete', store.player.xp + 'XP', store.player.xp);
 	},
 	data() {
     return {
