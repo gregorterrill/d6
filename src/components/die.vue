@@ -44,7 +44,17 @@ export default {
   },
   mounted() {
   	//set the music volume
-  	this.$refs['music'].volume = 0.5;
+  	this.$refs['music'].volume = 0.05;
+
+  	//set the sound volume
+  	this.sounds.forEach((sound, i) => {
+  		if (['flame'].includes(sound)) {
+  			this.$refs['sound-' + sound][0].volume = 0.15;
+  		} else {
+  			this.$refs['sound-' + sound][0].volume = 0.2;
+  		}
+  	});
+
   	//rotate the cube to the player face
   	store.player.location = store.currentLevel.entrance;
   	this.resetDieRotation();
