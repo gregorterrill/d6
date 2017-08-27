@@ -1,6 +1,12 @@
 # PipQuest
 
-> A retro adventure by Gregor Terrill
+> A Retro Adventure by Gregor Terrill
+
+## Game Info
+
+Play the game [here](http://pipquest.gregorterrill.com) (WebKit browsers only).
+
+Read more about it on [my blog](http://www.gregorterrill.com/blog/2017/pipquest-a-vue-experiment).
 
 ## Build Setup
 
@@ -14,7 +20,3 @@ npm run dev
 # build for production with minification
 npm run build
 ```
-
-## Game Info
-
-Read more about this game on [my blog](http://www.gregorterrill.com/blog/2017/pipquest-a-vue-experiment).
