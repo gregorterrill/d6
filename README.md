@@ -1,6 +1,6 @@
-# dungeon6
+# PipQuest
 
-> A new kind of dice game
+> A retro adventure by Gregor Terrill
 
 ## Build Setup
 
@@ -15,4 +15,6 @@ npm run dev
 npm run build
 ```
 
-For detailed explanation on how things work, consult the [docs for vue-loader](http://vuejs.github.io/vue-loader).
+## Game Info
+
+Read more about this game on [my blog](http://www.gregorterrill.com/blog/2017/pipquest-a-vue-experiment).

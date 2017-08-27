@@ -1,8 +1,13 @@
 {
-  "name": "dungeon6",
-  "description": "A new kind of dice game",
+  "name": "PipQuest",
+  "description": "A retro adventure by Gregor Terrill",
   "version": "1.0.0",
   "author": "Gregor Terrill <heygregor@gmail.com>",
+  "homepage": "http://pipquest.gregorterrill.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gregorterrill/d6/"
+  },
   "private": true,
   "scripts": {
     "dev": "cross-env NODE_ENV=development webpack-dev-server --open --hot",

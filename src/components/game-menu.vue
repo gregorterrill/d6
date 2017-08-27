@@ -60,7 +60,7 @@
 	  			<br>
 	  			<p>The background music is by <a target="_blank" href="http://ericskiff.com/music/">Eric Skiff</a> and <a href="http://freemusicarchive.org/music/visager" target="_blank">Visager</a> and is used under the Creative Commons license.</p>
 	  			<br>
-	  			<p>You can read more about the game in <a href="http://gregorterrill.com" target="_blank">this blog post</a>.</p>
+	  			<p>You can read more about the game in <a href="http://gregorterrill.com/blog/2017/pipquest-a-vue-experiment" target="_blank">this blog post</a>.</p>
 	  		</div>
 
 	  	</div>

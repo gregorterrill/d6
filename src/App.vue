@@ -31,7 +31,7 @@
       <div class="btn-controls">
         <button v-on:click="keyPress(27)" class="btn-controls__esc">ESC</button><!--
         --><button v-on:click="keyPress(38)" class="btn-controls__up">↑</button><!--
-        --><button v-on:click="keyPress(32)" class="btn-controls__space">SPC</button><!--
+        --><button v-on:click="keyPress(32)" class="btn-controls__space">SPACE</button><!--
         --><button v-on:click="keyPress(37)" class="btn-controls__left">←</button><!--
         --><button v-on:click="keyPress(40)" class="btn-controls__down">↓</button><!--
         --><button v-on:click="keyPress(39)" class="btn-controls__right">→</button>
@@ -208,7 +208,7 @@ a {
 .message--top-right {
   top:1rem;
   right:1rem;
-  min-width: 13rem;
+  min-width:12rem;
 }
 
 .btn-controls {
@@ -217,23 +217,20 @@ a {
   padding:0;
   position:absolute;
   z-index:999;
-  width:9rem;
+  width:13rem;
+  text-align:right;
 }
 
-@media (min-width:1025px) {
-  .btn-controls {
-    display:none;
-  }
-}
 
 .btn-controls button {
+  cursor:pointer;
   display:inline-block;
   vertical-align:top;
   text-align:center;
   padding:0;
   margin:0;
-  width:3rem;
-  height:3rem;
+  width:4.33rem;
+  height:4.33rem;
   background-color:#1a4f9f;
   border:8px solid #FFF;
   border-image: url('./assets/box.png') 8 round;
@@ -247,7 +244,7 @@ a {
 
 button.btn-controls__space,
 button.btn-controls__esc {
-  font-size:0.25rem;
+  font-size:0.5rem;
 } 
 
 p.hp-critical {
