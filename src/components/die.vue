@@ -176,36 +176,16 @@ export default {
 				window.removeEventListener('keyup', this.closeMenu);
 				window.addEventListener('keyup', this.handleKeyPress);
 			}
+
+			//if level skip cheat was activated, skip to that level
+			if (store.windows.menu.cheats && store.windows.menu.levelSkip !== false && store.windows.menu.levelSkip !== store.currentLevelNum) {
+				this.goToLevel(store.windows.menu.levelSkip);
+			}
 		},
 
 		// press some keys!
 		handleKeyPress(e) {
 			switch(e.keyCode) {
-
-				//DEBUG: LEVEL SKIP
-				case 188: //<
-					this.goToLevel(store.currentLevelNum - 1);
-					break;
-				case 190: //>
-					this.goToLevel(store.currentLevelNum + 1);
-					break;
-				case 219: //{
-					this.goToLevel(store.currentLevelNum - 5);
-					break;
-				case 221: //}
-					this.goToLevel(store.currentLevelNum + 5);
-					break;
-
-				//DEBUG: WALLHACK
-				case 72: //h
-					if (!store.player.hacking) {
-						store.player.hacking = true;
-					} else {
-						store.player.hacking = false;
-					}
-					this.showDialog('WALLHACK toggled!');
-
-					break;
 
 				//MENU
 

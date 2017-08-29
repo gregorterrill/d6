@@ -14,6 +14,7 @@
 					<li class="menu__option"><a @click.prevent="setPanel(1)" :class="'menu__link' + ((currentPanel === 1) ? ' active': '')" href="#">CONTROLS</a></li>
 					<li class="menu__option"><a @click.prevent="setPanel(2)" :class="'menu__link' + ((currentPanel === 2) ? ' active': '')" href="#">SAVE DATA</a></li>
 					<li class="menu__option"><a @click.prevent="setPanel(3)" :class="'menu__link' + ((currentPanel === 3) ? ' active': '')" href="#">ABOUT</a></li>
+					<li v-if="cheatsActive" class="menu__option"><a @click.prevent="setPanel(4)" :class="'menu__link' + ((currentPanel === 4) ? ' active': '')" href="#">CHEATS</a></li>
 				</ul>
 
 			</div>
@@ -63,6 +64,21 @@
 	  			<p>You can read more about the game in <a href="http://gregorterrill.com/blog/2017/pipquest-a-vue-experiment" target="_blank">this blog post</a>.</p>
 	  		</div>
 
+	  		<div v-show="currentPanel === 4" class="menu__panel-content">
+			    <h2 class="menu__title">~CHEATS~</h2>
+			    <p>WALLHACK</p>
+			    <ul class="menu__cheats">
+			    	<li :class="'menu__cheat' + ((wallhack == false) ? ' active' : '')"><a @click.prevent="toggleWallHack()" class="menu__cheat-link" href="#">OFF</a></li>
+			    	<li :class="'menu__cheat' + ((wallhack == true) ? ' active' : '')"><a @click.prevent="toggleWallHack()" class="menu__cheat-link" href="#">ON</a></li>
+			    </ul>
+			    <br>
+			    <p>LEVEL SELECT</p>
+			    <ul class="menu__cheats menu__cheats--square">
+			    	<li :class="'menu__cheat' + ((selectedLevel === levelNum) ? ' active' : '')" v-for="(level, levelNum) in levelList"><a @click.prevent="selectLevel(levelNum)" class="menu__cheat-link" href="#">{{ levelNum }}</a></li>
+			    </ul>
+			    <p>{{ levelList[selectedLevel].title }}</p>
+	  		</div>
+
 	  	</div>
 
 	  </div>
@@ -72,16 +88,44 @@
 </template>
 
 <script>
+import store from '../data/store.js'
+
 export default {
 	props: [],
 	data() {
   	return {
   		currentPanel: 0,
   		savedLevel: 'No data available.',
-  		savedXP: 'No data available.'
+  		savedXP: 'No data available.',
+  		selectedLevel: 0,
+  		wallhack: false
 	  }
   },
+  created() {
+  	this.selectedLevel = store.currentLevelNum;
+  	this.wallhack = store.player.hacking;
+  },
+  computed: {
+  	cheatsActive() {
+  		return store.windows.menu.cheats;
+  	},
+  	levelList() {
+  		return store.levels;
+  	}
+  },
   methods: {
+
+  	selectLevel(levelNum) {
+  		this.selectedLevel = levelNum;
+  		store.windows.menu.levelSkip = levelNum;
+  		this.playBlip();
+  	},
+
+  	toggleWallHack() {
+  		this.wallhack = !store.player.hacking;
+  		store.player.hacking = !store.player.hacking;
+  		this.playBlip();
+  	},
 
   	getSaveData(itemName) {
   		if (localStorage.getItem(itemName) !== null) {
@@ -126,8 +170,10 @@ export default {
 				case 83: //s
 		    case 40: //down
 		    	this.currentPanel++;
-					if (this.currentPanel > 3) {
+					if (!this.cheatsActive && this.currentPanel > 3) {
 						this.currentPanel = 3;
+					} else if (this.cheatsActive && this.currentPanel > 4) {
+						this.currentPanel = 4;
 					} else {
 						this.playBlip();
 					}
@@ -195,6 +241,7 @@ export default {
 h1.menu__title {
 	padding:1rem;
 }
+.menu__cheats,
 .menu__options {
 	list-style-type:none;
 	padding:0;
@@ -209,4 +256,27 @@ h1.menu__title {
 	&.active, &:hover { border-color:white; color: white; }
 	&:focus, &:active { color:white; }
 }
+.menu__cheats {
+	margin-top:1rem;
+}
+.menu__cheat {
+	display:inline-block;
+	color:#FFF;
+	margin: 0 1rem 0.5rem 0;
+	border:2px solid transparent;
+
+	&.active {
+		border-color:white; color:white;
+	}
+}
+.menu__cheat-link {
+	text-align:center;
+	display:block;
+	padding:0.25rem 0.5rem;
+}
+.menu__cheats--square .menu__cheat-link {
+	width:2.25rem;
+	padding:0.25rem 0;
+}
+
 </style>

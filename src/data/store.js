@@ -62,6 +62,8 @@ const windows = {
   },
   menu: {
     open: false,
+    cheats: false,
+    levelSkip: false,
   },
   dialog: {
     open: false,
@@ -77,7 +79,8 @@ const player = {
   xp: 0,
   location: { 'face': 0, 'row': 0, 'col': 0 },
   direction: 'right',
-  items: ['torch']
+  items: ['torch'],
+  hacking: false
 };
 
 export default {

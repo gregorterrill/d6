@@ -5,7 +5,31 @@ const level = {
   pickups: [{
     type: 'message',
     location: { 'face': 0, 'row': 1, 'col': 3 },
-    content: 'VILLAGE ELDER: The DARKNESS has brought EVIL to our world. You must light all the PIPS with your MAGIC TORCH to save us!'
+    content: 'VILLAGE ELDER: The DARKNESS has brought EVIL to our world. Please light the PIP nearby with your MAGIC TORCH! Go on, just thrust it in there!',
+    conditions: [{
+      type: 'tileValue',
+      location: { 'face': 0, 'row': 3, 'col': 3 },
+      value: '○',
+      content: 'VILLAGE ELDER: You lit the PIP and brought the LIGHT back to our VILLAGE! Please use your MAGIC TORCH to light the rest of the PIPS and save our WORLD! This KEY will open the GATE to the SOUTH.',
+    },{
+      type: 'hasItem',
+      value: 'key',
+      content: 'VILLAGE ELDER: That KEY will open the GATE to the SOUTH. Go light up the rest of the PIPS!',
+    },{
+      type: 'tileValue',
+      location: { 'face': 0, 'row': 6, 'col': 3 },
+      value: 'I',
+      content: 'VILLAGE ELDER: Okay great job, but really though, get going! You\'ve got a whole WORLD to save!'
+    }]
+  },{
+    type: 'key',
+    location: { 'face': 0, 'row': 1, 'col': 3 },
+    container: 'hidden',
+    conditions: [{
+      type: 'tileValue',
+      location: { 'face': 0, 'row': 3, 'col': 3 },
+      value: '○'
+    }]
   },{
     type: 'message',
     location: { 'face': 1, 'row': 1, 'col': 3 },
@@ -59,7 +83,7 @@ const level = {
       ['A','Y','A','●','F','F','A'],
       ['A','Y','Y','F','F','F','A'],
       ['A',' ',' ','Y','F','F','A'],
-      ['A','A','A',' ','A','A','A']
+      ['A','A','A','H','A','A','A']
     ],
     [
       ['A','A','A','A','A','A','A'],

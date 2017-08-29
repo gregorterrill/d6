@@ -2,7 +2,11 @@ const level = {
   title: 'The Void',
   tileset: 'snow',
   entrance: { 'face': 0, 'row': 2, 'col': 3 },
-  pickups: [],
+  pickups: [{
+    type: 'message',
+    location: { 'face': 5, 'row': 3, 'col': 3 },
+    content: 'GREGOR: Cheating, huh? I\'m not even mad, I\'m impressed!'
+  }],
   enemies: [],
   faces: [
     [
@@ -53,9 +57,9 @@ const level = {
     [
       [' ',' ',' ',' ',' ',' ',' '],
       [' ','●',' ',' ',' ','●',' '], // SIX
-      [' ',' ',' ',' ',' ',' ',' '], // ↑ left edge of 2
-      [' ','●',' ',' ',' ','●',' '], // → bottom edge of 3
-      [' ',' ',' ',' ',' ',' ',' '], // ↓ left edge of 5
+      [' ',' ','A','A','A',' ',' '], // ↑ left edge of 2
+      [' ','●','A','W','A','●',' '], // → bottom edge of 3
+      [' ',' ','A','A','A',' ',' '], // ↓ left edge of 5
       [' ','●',' ',' ',' ','●',' '], // ← top edge of 4
       [' ',' ',' ',' ',' ',' ',' ']
     ]

@@ -34,7 +34,8 @@ export default {
   	return {
   		currentOption: 0,
   		savedLevel: null,
-  		savedXP: null
+  		savedXP: null,
+  		keystrokes: []
 	  }
   },
   methods: {
@@ -66,7 +67,40 @@ export default {
 			this.currentOption = optionNum;
 		},
 
+		checkForKCode(keyCode) {
+
+			const kCode = [38,38,40,40,37,39,37,39,66,65],
+						position = this.keystrokes.length - 1;
+
+			if (position === -1 || this.keystrokes[position] === kCode[position] ) {
+				this.keystrokes.push(keyCode);
+				
+				if (this.keystrokes.length === kCode.length) {
+					//activate cheats
+					store.windows.menu.cheats = true;
+					this.keystrokes = [];
+
+					//tripblip
+					this.playBlip();
+					setTimeout(() => {
+						this.playBlip()
+					}, 200);
+					setTimeout(() => {
+						this.playBlip()
+					}, 400);
+				}
+
+			} else {
+				this.keystrokes = [];
+			}
+		},
+
   	handleKeyPress(e) {
+
+  		if (!store.windows.menu.cheats) {
+  			this.checkForKCode(e.keyCode);
+  		}
+
 			switch(e.keyCode) {
 
 				case 13: //enter
@@ -89,7 +123,6 @@ export default {
 				case 83: //s
 		    case 40: //down
 		    	if (this.savedLevel === null) {
-		    		console.log('no');
 		    		return false;
 		    	}
 		    	if (this.currentOption !== 1) {
